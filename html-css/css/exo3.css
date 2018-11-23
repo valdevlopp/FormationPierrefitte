@@ -1,0 +1,45 @@
+body{
+    text-align: center;
+}
+
+header {
+ background: yellow;
+ height: 80px;
+     }
+
+nav {
+    background: cadetblue;
+    height: 60px;
+    font-size: 30px;
+}
+
+section {
+    width: 100%;
+    height: 700px;
+    background: cornflowerblue;
+}
+
+#rose
+{
+    background: purple;
+    width: 50%;
+    height: 700px;
+    float: right;
+}
+
+footer {
+    background: yellow;
+    height: 60px;
+}
+
+div{
+    background: gray;
+    height: 60px;
+}
+h1{
+    background: gray;
+    height: 60px;
+    margin: 0;
+    padding: 0;
+
+}

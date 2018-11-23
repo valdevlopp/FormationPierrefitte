@@ -1,0 +1,23 @@
+body{
+    text-align: center;
+}
+
+header {
+ background: yellow;
+ height: 80px;
+     }
+
+nav {
+    background: cadetblue;
+    height: 60px;
+}
+
+section {
+    height: 700px;
+    background: cornflowerblue;
+}
+
+footer {
+    background: yellow;
+    height: 60px;
+}

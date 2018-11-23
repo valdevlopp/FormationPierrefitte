@@ -1,0 +1,56 @@
+body{
+    background: url(https://www.inspirant.fr/wp-content/uploads/2017/05/guerri%C3%A8re-du-c%C5%93ur.jpg) no-repeat center /cover;
+    /* background-repeat: no-repeat */
+    font-family: 'Indie-Flower', cursive;
+    color: white
+    
+}
+h1,h2,h3,h4,h5,h6, p
+{font-family: 'Josefin-Sans-serif'
+}
+
+p {
+ width: 50em;
+text-align: center;
+margin-left: auto;
+margin-right: auto;
+}
+
+.toto{
+margin-top:2px;
+ margin-right:5px;
+ margin-bottom:2em;
+ margin-left:0;
+}
+.title1{
+    height: 30%;
+    width: 30%;
+    left: 500px;
+    margin-left: 35%;
+
+}
+div h1{
+    color:red;
+    margin-left: 3%;
+    text-transform: ;
+}
+
+.title2 h1{
+    color: green;
+    text-align: center;
+    border: solid 1px;
+    border-color: tomato;
+    height: 30%;
+    width: 30%;
+    left: 500px;
+    background-color: seashell;
+    margin-left: 35%;
+}
+.triangle {
+ width:0px;
+ height:0px;
+ border-left: 100px solid transparent;
+ border-right: 100px solid transparent;
+ border-top: 100px solid red;
+ 
+}
