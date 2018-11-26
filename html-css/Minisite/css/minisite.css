@@ -1,0 +1,84 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background: url(../img/lille1.jpg) no-repeat center/100% 100%;
+    height: 1000px;
+}
+
+header {
+ height: 100px;
+ }
+
+nav {
+
+   background: beige;
+   height: 100px;
+  
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+ 
+ float: left;
+ width: 20%;
+}
+
+li a {
+    color: black;
+    font-size: 22px;
+    text-align: center;
+    text-decoration: none;
+    padding: 16px 16px;
+}
+
+li a:hover {
+    background: bisque;
+}
+
+section{
+   height: 900px;
+
+}
+.A {
+    font-size:25px;
+    color:red;
+    float: right;
+    height: 50%;
+    width: 40%;
+    }
+
+ .B {
+    font-size:25px;
+    color:black;
+    float: left;
+    height: 50%;
+    width: 50%;
+ }
+
+.C {
+    font-size:25px;
+    color:purple;
+    width: 30%;
+    float: right;
+}
+.D {
+    font-size:25px;
+    color:darkblue;
+    width: 30%;
+    float: left;
+}
+
+
+ footer { 
+    background: white;
+    height: 50px;
+    color: #a93226;
+}

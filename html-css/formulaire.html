@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/formulaire.css">
+</head>
+
+<body>
+    <h1>Mon premier formulaire</h1>
+
+    <form>
+
+        <fieldset class="fieldset-1">
+            <legend>Informations personnelles</legend>
+
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" autofocus required>
+            <br>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" autofocus required>
+            <br>
+
+            <label for="tel">Tél:</label>
+            <input type="tel" name="tel" id="tel" autofocus required>
+            <br>
+
+            <label for="password">Mot de passe:</label>
+            <input type="password" name="password" id="password" autofocus required>
+            <br>
+
+        </fieldset>
+
+        <fieldset class="fieldset-2">
+
+            <legend>Checkbox & radios</legend>
+
+            <label for="radio">Homme</label>
+            <input type="radio" name="radio" id="radio" value="homme" checked>
+
+
+            <label for="radio">Femme</label>
+            <input type="radio" name="radio" id="radio" value="femme">
+            <br>
+
+            <label for="item_01">Item 01</label>
+            <input type="checkbox" name="item_01" id="checkbox_01" value="item_01">
+
+
+            <label for="item_02">Item 02</label>
+            <input type="checkbox" name="item_02" id="checkbox_02" value="item_02">
+
+
+            <label for="item_03">Item 03</label>
+            <input type="checkbox" name="item_03" id="checkbox_03" value="item_03">
+
+
+            <label for="item_04">Item 04</label>
+            <input type="checkbox" name="item_04" id="checkbox_04" value="item_04">
+
+
+            <label for="item_05">Item 05</label>
+            <input type="checkbox" name="item_05" id="checkbox_05" value="item_05">
+        </fieldset>
+
+        <fieldset class="fieldset-3">
+
+            <legend>Date & texte & select</legend>
+
+            <label for="textarea">Message</label>
+            <textarea name="textarea" id="Textarea" cols="80" rows="30"></textarea>
+
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" autofocus>
+            <br>
+
+            <label for="select">Select</label>
+            <select name="select" id="select">
+                <option>Selectionnez un pays</option>
+
+                <optgroup label="Europe">
+                    <option value="France" checked>France</option>
+                    <option value="Allemagne">Allemagne</option>
+                    <option value="Belgique">Belgique</option>
+                </optgroup>
+
+                <optgroup label="Afrique">
+                    <option value="Mauritanie">Mauritanie</option>
+                    <option value="Gabon">Gabon</option>
+                    <option value="Benin">Bénin</option>
+                </optgroup>
+            </select>
+            <br>
+        </fieldset>
+
+
+        <input type="submit" value="Envoyer" id="button">
+        <br>
+
+        <!-- Ajouter un label et un champ telephone -->
+        <!-- Ajouter un label et un champ mot de passe -->
+        <!-- Ajouter un bouton d'envoi avec "envoyer" comme texte -->
+
+    </form>
+
+</body>
+
+</html>

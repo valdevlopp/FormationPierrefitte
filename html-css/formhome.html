@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/formhome.css">
+
+
+</head>
+
+<body>
+    <form>
+        <h1>Besoin d'évasion.. nous vous proposons des destinations insolites </h1>
+
+        <fieldset class="fieldset1">
+            <legend>Vos coordonnées</legend>
+
+            <label for="name" class="label1">Nom</label>
+            <input type="text" class="input1" name="name" id="name" autofocus>
+            <br>
+
+            <label for="firstame" class="label1">Prénom</label>
+            <input type="text" class="input1" name="firstname" id="firstname" autofocus>
+            <br>
+
+            <label for="tel" class="label1">Numéro de téléphone</label>
+            <input type="tel" class="input1" name="tel" id="tel" autofocus>
+            <br>
+
+            <label for="email" class="label1">Email</label>
+            <input type="email" class="input1" name="email" id="email" autofocus>
+            <br>
+
+            <label for="naissance" class="label1">Date de naissance</label>
+            <input type="date" class="input1" name="naissance" id="naissance" autofocus>
+            <br>
+
+            <label for="heure" class="label1">Heure de naissance</label>
+            <input type="time" class="input1" name="heure" id="heure" autofocus>
+            <br>
+
+            <label for="selection" class="label1">Sexe</label>
+            <select id="sexe">
+                <option value="F" name="sexe">Femme</option>
+                <option value="H" name="sexe">Homme</option>
+            </select>
+            <br>
+
+            <label for="checkbox" class="label1">Etre contacter par email</label>
+            <input type="checkbox" name="checkbox" id="checkbox" autofocus>
+            <br>
+
+            <label for="checkbox" class="label1">Etre contacter par téléphone</label>
+            <input type="checkbox" name="checkbox" id="checkbox" autofocus>
+            <br>
+
+        </fieldset>
+
+
+        <fieldset class="fieldset2">
+            <legend>Envoyez la photo du lieu qui vous fait rêver</legend>
+
+            <label for="photo" class="label2">Ajouter une photo</label>
+            <input type="file" name="photo" id="photo" autofocus>
+            <br>
+
+        </fieldset>
+
+
+        <fieldset class="fieldset3">
+            <legend>Décrivez votre voyage idéal</legend>
+
+            <label for="comments" class="label3"></label>
+            <textarea name="comments" id="comments" cols="20" rows="4">
+                </textarea>
+
+        </fieldset>
+
+        <p>
+            <input type="button" value="Envoyer" autofocus/>
+            <input type="reset" value="Annuler" autofocus/>
+        </p>
+    </form>
+
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+body {
+    height: 900px;
+    background: url(https://cdn.shopify.com/s/files/1/0747/3829/products/mGR0281_1024x1024.jpeg?v=1485013794) no-repeat center /cover;
+}
+
+h1 {
+    color: #7E3300;
+    font-size: 24px;
+    font-weight: 600px;
+    margin-left: 700px;
+}
+
+.fieldset1, .fieldset2, .fieldset3 {
+    width: 500px;
+    padding: 10px;
+    margin-right: 280px;
+    margin-top: 23px;
+    float: right;
+    border:2px solid #A0522D;
+    border-radius:8px;
+}
+
+.fieldset2{
+    margin-top: 2%;
+    margin-left: 30%;
+}
+
+legend {
+    color: #7E3300;
+    font-variant-caps: small-caps;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+.label1 {
+    color: #7E3300;
+    width: 300px;
+    display: inline-block;
+    margin: 6px;
+}
+
+.input1 {
+    border-radius:8px;
+  }
+
+.label2, .label3 {
+    color: #7E3300;
+    width: 130px;
+    display: inline-block;
+    margin: 6px;
+  }
+
+  textarea {
+    width: 500px;
+    height: 130px;
+    border: 1px solid#A0522D;
+    border-radius:8px;
+  }
+
+p {
+    width: 500px;
+    padding: 0;
+    float: right;
+    position: relative;
+    top: 230px;
+    left: 510px;
+  }
+
+  input[type=button], input[type=reset] {
+    border-radius:8px;
+    width: 100px;
+    height: 30px;
+    margin-right: 60px;
+  }
+
+  input[type=button] {
+    margin-left: 100px;
+  }
+
+  input[type=reset] {
+    margin-right: 50px;
+  }

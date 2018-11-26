@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/form.css">
+</head>
+
+
+<body>
+    <form>
+        <h1>Formulaire d'enregistrement</h1>
+
+        <fieldset class="fieldset-1">
+
+            <legend>Coordonnées</legend>
+
+            <label for="name">Nom:</label>
+            <input type="text" name="name" id="name" autofocus>
+            <br>
+
+            <label for="lastname">Prenom</label>
+            <input type="text" name="lastname" id="lastname" autofocus>
+            <br>
+
+            <label for="date">Date de naissance</label>
+            <input type="date" name="date" id="date" autofocus>
+            <br>
+
+            <label for="heure">Heure de naissance</label>
+            <input type="time" name="heure" id="heure" autofocus>
+            <br>
+
+            <label for="adresse">Adresse</label>
+            <input type="text" name="adresse" id="adresse" autofocus>
+            <br>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" autofocus>
+            <br>
+
+            <label for="password">Mot de passe:</label>
+            <input type="password" name="password" id="password" autofocus required>
+            <br>
+
+        </fieldset>
+
+        <fieldset class="fieldset-2">
+
+            <legend>Choisissez une option</legend>
+
+            <label for="radio">Homme</label>
+            <input type="radio" name="radio" id="radio" value="homme">
+            <br>
+
+            <label for="radio">Femme</label>
+            <input type="radio" name="radio" id="radio" value="femme">
+            <br>
+
+        </fieldset>
+
+        <fieldset class="fieldset-3">
+
+            <legend>Envoyer votre photo</legend>
+
+            <label for="photo">Photo</label>
+            <input type="file" value="Envoyer" id="button" autofocus>
+            <br>
+
+        </fieldset>
+
+
+        <fieldset>
+
+            <legend>Laissez nous un commentaire</legend>
+
+            <label for="textarea">Message</label>
+            <textarea name="textarea" id="Textarea" cols="80" rows="30"></textarea>
+
+            <label for="date">Date</label>
+            <input type="datetime" name="date" id="date" autofocus>
+            <br>
+
+
+        </fieldset>
+
+    </form>
+
+</body>
+
+</html>
