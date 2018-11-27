@@ -1,0 +1,16 @@
+body{
+   background:radial-gradient(at 10% 80%, 
+    rgba(100,100,255,1) 0%,
+    red 10%,
+    rgba(200,200,255,0.5) 30%);
+   height:400px;
+   width:300px;
+   background:radial-gradient(at 50% 100%, transparent 45%,
+     hsl(0, 100%, 50%) 50%,
+     hsl(51, 100%, 50%),
+     hsl(102, 100%, 50%),
+     hsl(153, 100%, 50%),
+     hsl(204, 100%, 50%),
+     hsl(255, 100%, 50%),
+     hsl(306, 100%, 50%), transparent 70%) no-repeat;
+}

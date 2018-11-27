@@ -1,0 +1,29 @@
+*{
+    font-family: fantasy;
+}
+
+body{
+    width: 50%;
+    margin: auto;
+}
+
+thead{
+    border: 1px solid lightgray;
+}
+
+table{
+    border-collapse: collapse;
+}
+
+th{
+    width: 20%;
+    padding: 14px;
+    border: 2px solid lightgray;
+    }
+
+td{
+    padding: 15px;
+    font-size: 100%;
+    border: 2px solid lightgray;
+    text-align: left;
+}

@@ -2,23 +2,20 @@
     padding: 0;
     margin: 0;
 }
-
-body {
-    background: url(../img/lille1.jpg) no-repeat center/100% 100%;
+ body {
     height: 1000px;
 }
 
-header {
- height: 100px;
+ header {
+    color: black;
+    height: 300px;
+    background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS88gXKIBLv5beD_gcWntp4AqRyoYq77s_2OCSakA6885_xKkcn) no-repeat center /cover;
  }
 
-nav {
-
-   background: beige;
-   height: 100px;
-  
+ nav {
+    background: beige;
+    height: 70px;
 }
-
 ul {
     list-style-type: none;
     margin: 0;
@@ -26,59 +23,90 @@ ul {
 }
 
 li {
- 
- float: left;
- width: 20%;
-}
+float: left; 
+width: 20%;
+} 
 
 li a {
     color: black;
-    font-size: 22px;
     text-align: center;
     text-decoration: none;
-    padding: 16px 16px;
+    font-size: 18px;
+    padding: 14px 16px;
+    margin-left: 150px;
 }
 
 li a:hover {
     background: bisque;
 }
 
-section{
-   height: 900px;
-
-}
-.A {
-    font-size:25px;
-    color:red;
-    float: right;
-    height: 50%;
-    width: 40%;
-    }
-
- .B {
-    font-size:25px;
-    color:black;
-    float: left;
-    height: 50%;
-    width: 50%;
+ section{
+   height: 500px;
+   margin: 20px;
  }
 
-.C {
-    font-size:25px;
-    color:purple;
-    width: 30%;
-    float: right;
-}
-.D {
-    font-size:25px;
-    color:darkblue;
-    width: 30%;
+.article1 {
+    font-size: 16px;
+    color: black;
+    height: 250px;
+    width: 480px;
+    float: left;
+    }
+
+.article2 {
+    font-size: 16px;
+    color: black;
+    height: 250px;
+    width: 480px;
+    float: left;
+   
+ }
+ .article3 {
+    font-size: 16px;
+    color: black;
+    height: 250px;
+    width: 480px;
     float: left;
 }
 
+.article4 {
+    font-size: 16px;
+    color: black;
+    height: 250px;
+    width: 480px;
+    float: left;
+}
 
- footer { 
-    background: white;
-    height: 50px;
+.plan {
+    
+    text-align: center;
+    height: 600px;
+    margin-left: 400px;
+}
+
+.maire {
+    height: 100px;
+    margin-left: 100px;
+    text-align: center;
+    border-bottom-color: #a93226;
+}
+
+.mairie1 {
+    height: 100px;
+    margin-left: 100px;
+    text-align: center;
+    border-bottom-color: #a93226;
+}
+
+.histoire {
+    
+    text-align: center;
+    height: 600px;
+    margin-left: 400px;
+}
+
+footer { 
+    background: beige;
+    height: 80px;
     color: #a93226;
 }

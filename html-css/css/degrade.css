@@ -1,0 +1,39 @@
+.contenu{
+    background: linear-gradient(to left, #40a497, #6840a4);
+    width: 45em;
+    height: 45em;
+    margin: 0 auto;
+    border-radius: 50%;
+}
+/* dégradé linéraire */
+/* to left = de la gauche vers la droite */
+/* border radius = pour faire un arrondi */
+
+.contenu2{
+    background: radial-gradient(circle at center, white, green);
+    width: 45em;
+    height: 45em;
+    margin: 0 auto;
+    border-radius: 50%;
+}
+/* em = valeur proportionnelle comme les pourcentages */
+/* crée un dégradé circulaire */
+
+.contenu3{
+    background: repeating-linear-gradient(to right, green, red, blue, green 200px);
+    width: 45em;
+    height: 45em;
+    margin: 0 auto;
+    border-radius: 50%;
+/* permet de répéter un dégradé linéaire */
+}
+/* Pour un dégradé linéraire les directions possible sont : to left, to right, to top, to bottom */
+/* Pour un dégradé circulaire les directions possible sont : circle at top, circle at center, closet-corner (vers le coin le plus proche), close */
+
+.contenu4{
+    background: repeating-radial-gradient(circle at center, red, gray, whitesmoke, black 200px);
+    width: 45em;
+    height: 45em;
+    margin: 0 auto;
+    border-radius: 50%;
+}

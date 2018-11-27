@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/tableau.css">
+</head>
+
+<body>
+    <!-- ouverture d'un tableau -->
+
+    <table>
+
+        <!-- Titre du tableau -->
+        <caption>VenteS</caption>
+
+        <!-- En tête du tableau -->
+        <thead>
+            <!-- Noms des colonnes du tableau -->
+
+            <!-- tr = pour ajouter une rangée (t = tableau / r = row = rangée) -->
+            <tr>
+                <!-- th = titre ou en-tête (t= tableau/ h=head = tete) -->
+                <th>Jour</th>
+                <th>Smartphone</th>
+                <th>Tablette</th>
+                <th>Portable</th>
+            </tr>
+        </thead>
+        <!-- tfoot = bas/fin du tableau /!\ Dans les normes du W3C mettent la balise tfoot avant celle du corps du tableau (tbody) -->
+        <tfoo>
+
+            <tr>
+                <!-- td = cellules du tableau -->
+                <td>Total</td>
+                <td>215</td>
+                <td>265</td>
+                <td>24</td>
+            </tr>
+        </tfoo>
+
+        <!-- tbody = corps (ou contenu) du tableau / à insérer que si on a un thead et un tfoot -->
+        <tbody>
+            <tr>
+                <td>Lundi</td>
+                <td>2</td>
+                <td>0</td>
+                <td>6</td>
+            </tr>
+
+            <tr>
+                <td>Mardi</td>
+                <td>22</td>
+                <td>10</td>
+                <td>65</td>
+            </tr>
+            <tr>
+                <td>Mercredi</td>
+                <td>25</td>
+                <td>56</td>
+                <td>78</td>
+            </tr>
+            <tr>
+                <td>Jeudi</td>
+                <td>25</td>
+                <td>89</td>
+                <td>78</td>
+            </tr>
+            <tr>
+                <td>Vendredi</td>
+                <td>26</td>
+                <td>56</td>
+                <td>78</td>
+            </tr>
+            <tr>
+                <td>Samedi</td>
+                <td>26</td>
+                <td>26</td>
+                <td>26</td>
+            </tr>
+            <tr>
+                <td>Dimanche</td>
+                <td>89</td>
+                <td>25</td>
+                <td>69</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+</body>
+
+</html>
