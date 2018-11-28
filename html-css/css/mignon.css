@@ -1,0 +1,33 @@
+body{
+    background: pink;
+    }
+
+section {
+    width: 60%;
+    margin: 0 auto 
+    /* margin 0 auto pour centrer */
+}
+td {
+   /* 1er=16px */
+    width: 4em; 
+    height: 4em;
+}
+.yellow {
+    background: yellow;
+}
+
+.gray {
+    background: gray;
+}
+
+.white{
+    background: white;
+}
+
+.black{
+    background: black
+}
+
+.blue{
+    background: blue
+}

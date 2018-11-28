@@ -1,0 +1,31 @@
+body{
+    background:beige;
+    }
+
+section {
+    width: 60%;
+    margin: 0 auto 
+    /* margin 0 auto pour centrer */
+}
+td {
+   /* 1er=16px */
+    width: 4em; 
+    height: 4em;
+}
+
+.black {
+background: black;
+}
+
+.marron{
+    background: maroon;
+}
+
+.marronclair
+{
+background: brown;
+}
+
+.beige{
+    background: bisque
+}

@@ -1,0 +1,24 @@
+.c1, .c2{
+    height: 10em;
+    width: 10em;
+    /* margin pour espacer les carrés */
+    margin: 5px;
+    float: left;
+    /* bordure pour mettre une bordure autour des éléments */
+    border: 1px solid gray;
+    /* Au choix: float left ou display: inline-block */
+    text-align: center;
+    border-radius: 20%;
+    }
+
+.c1 {
+    background-color: #7a43e0
+    }
+
+.c2 {
+    background: #43e07a;
+}
+/* clear both casse le flux et force l'élément a aller a la ligne */
+.clear{
+    clear: both;
+}

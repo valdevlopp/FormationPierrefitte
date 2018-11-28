@@ -1,0 +1,44 @@
+.a1, .a2, .a3, .a4, .a5, .vide  {
+    height: 10em;
+    width: 10em;
+    /* margin pour espacer les carrés */
+    margin: 5px;
+    float: left;
+    /* bordure pour mettre une bordure autour des éléments */
+        /* Au choix: float left ou display: inline-block */
+    text-align: center;
+    
+    }
+
+.a1{
+    background: green;
+    border-radius: 0 20% 0 20%;
+    border: 1px solid black;
+    }
+
+.a2{
+    background: lightblue;
+    border-radius: 20% 0 20% 0;
+    border: 1px solid black;
+}
+.a3 {
+    background-color:lightgreen;
+    border-radius: 60%;
+    border: 1px solid black;
+    }
+
+.a4{
+    background: bisque;
+    border-radius: 0 20% 0 20%;
+    border: 1px solid black;
+}
+
+section div:nth-child(18){
+    background: red;
+}
+
+
+/* clear both casse le flux et force l'élément a aller a la ligne */
+.clear{
+    clear: both;
+}
