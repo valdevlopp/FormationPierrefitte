@@ -1,0 +1,14 @@
+h1, h3, div, a, p, span, section{
+    text-align: center;
+    border: 1px solid orchid;
+    background: lightblue;
+}
+ /* Pour changer le type d'un élément. La propriété display définit le type d'affichage utilisée pour le rendu d'un élément. Ce type d'affichage possède deux composantes : le type d'affichage extérieur qui définit comment la boîte participe au flux et le type d'affichage intérieur qui définit l'organisation des éléments enfants. */
+
+.block {
+  display: block;
+}
+
+.inline {
+    display: inline;
+}

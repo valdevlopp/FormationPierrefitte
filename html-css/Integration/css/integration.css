@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+ header {
+    color: #fff;
+    height: 80px;
+    background: #000;
+ }
+
+.titre {
+    float: left;
+    color:white;
+    padding-top: 7px;
+    padding-left: 20px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0px;
+    padding-top: 35px;
+}
+
+li {
+    float: right;
+    width: 120px;
+}
+
+li a{
+    color: #fff;
+    text-decoration: none;
+}
+
+li a:hover {
+    background: blue;
+}
+
+.globale{
+    /* pour séparer l'img 960x360 on a ajouter un margin de 10px qui s'appliquera en haut en bas et l'auto pour à gauche et à droite qu'il définira lui-même */
+    margin: 10px auto;
+    width: 1000px;
+}
+
+section:{
+    padding: 20px;
+}
+.article1{
+    float: left;
+    height: 3%;
+    width: 3%;
+
+}
+
+
+
+    
+
