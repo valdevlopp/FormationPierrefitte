@@ -16,6 +16,13 @@
     padding-left: 20px;
 }
 
+h4{
+    color: gray;
+    text-transform: uppercase;
+    padding-top: 7px;
+    height: 31px;
+      }
+
 ul {
     list-style-type: none;
     margin: 0px;
@@ -39,20 +46,41 @@ li a:hover {
 .globale{
     /* pour séparer l'img 960x360 on a ajouter un margin de 10px qui s'appliquera en haut en bas et l'auto pour à gauche et à droite qu'il définira lui-même */
     margin: 10px auto;
-    width: 1000px;
+    width: 960px;
 }
 
-section:{
-    padding: 20px;
+section{
+   padding-bottom: 53px;
 }
+.article2{
+    height: 163px;
+    margin-top: 27px;
+    width: 240px;
+    float: left;
+}
+
 .article1{
     float: left;
-    height: 3%;
-    width: 3%;
+    margin-right: 10px;
+    }
 
+article a {
+    margin-left: 124px;
+    color: orange;}
+
+.clear {
+    clear: both;
 }
+.trait {
+    height:1px;
+    background-color: rgba(179, 177, 177, 0.979);
+}
+ .image1{
+    width: 309px;
+    /* padding-left: 20px; */
+    border: 4px double #000;
+   }
 
-
-
-    
-
+.divimage{
+    height: 100px;
+    }
