@@ -1,0 +1,84 @@
+Body{
+    font-family: sans-serif;
+    font-size: 1.5em;
+}
+
+.contenu{
+    width: 80%;
+    margin: 0 auto;
+}
+
+.gauche, .droite{
+    margin-top: 5em;
+    }
+
+ul{list-style-type: none;
+    float: left;
+    margin: 0; 
+    padding: 0;
+}
+
+.gauche ul{
+    margin: 3.4em 0 0 0;
+
+}
+
+.gauche ul li{
+    border-bottom: 1px solid #ccc;
+    width: 10em;
+    padding: 1em;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.gauche ul li:first-child {
+    border-top: 1px solid #ccc;
+}
+/* fin de la premiere colonne */
+
+/* ul.liste = cible les ul qui ont la classe liste */
+
+ul.liste li {
+    border-left: 1px solid #ccc;
+/* Sélectionne tous les <li> de la liste <uyl> ayant la classe lsite */
+}
+
+.droite .change ul li{
+    /* Selectione tous les <li> de la liste >ul> ayant la classe change, elle est enfant à l'intérieur d'une classe doite. le style css ne s'appliquera qu'à cette balise et écartera els autres. */
+    width: 10em;
+    padding:   1em;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.droite .change ul li:first-child{
+    color: #ffffff;
+    font-weight: 900;
+    background: #5d5d5d;
+}
+
+.droite .change ul li:last-child{
+    background: red;
+
+    /* last-child prend le dernier enfant */
+    /* nth-child et le numero nth-child(5) si c'est la 5ème liste*/
+}
+
+.droite .change ul:hover {
+    cursor: pointer;
+    transform: scale(1.4);
+    transition-duration: 2s;
+    background: linear-gradient(#dd55dd, #8a8a8a);
+}
+
+.droite .change ul:hover li:first-child{
+    background: #000;
+}
+
+.video, .carte {
+width: 50%;
+float: left !important;
+}
+
+

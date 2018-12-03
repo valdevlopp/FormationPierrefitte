@@ -1,0 +1,38 @@
+Body{
+    font-family: 'open Sans', sans-serif;
+    background: url(../img/bkg.jpg);
+    background-repeat: repeat;
+}
+
+header{
+    background: #333333;
+    text-align: center;
+    color:  #ffffff;
+    height: 80px;
+    line-height: 1.5; 
+    /* Line-height centre le texte au milieu de mon header de façon verticale
+    Quand on ne definit pas de px ou em, il prend la hauteur de la police x 2.5 */
+}
+
+h1{
+    /* Vue en largeur VW = view width
+    Vue en  */
+    padding: 1vw;
+}
+
+div{
+    background: #fff;
+    color: #000;
+    padding: 1vw;
+}
+
+code{
+    font-size: 1.5vw;
+    font-style: italic;
+    background: lightgray;
+}
+
+img{
+    margin: 1vw 0 1vw 0;
+}
+
