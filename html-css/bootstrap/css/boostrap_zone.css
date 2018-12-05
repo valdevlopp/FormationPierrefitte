@@ -1,0 +1,50 @@
+.col-md-12{
+    height: 150px;
+    text-align: center;
+    border: 1px solid black;
+   }
+
+.col-md{
+    height: 150px;
+    text-align: center;
+    border: 1px solid black;
+}
+.premiere, .deuxieme{
+    height: 50px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.troisieme{
+    height: 30px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.col-md-4{
+    height: 200px;
+    text-align: center;
+    border: 1px solid black;
+    }
+
+.col-md-8{
+    height: 200px;
+    text-align: center;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.toto{
+    height: 30px;
+}
+
+@media screen and (max-width:420px){
+    .off{
+       display: none; 
+    }
+}
+
+.quatrieme{
+    height: 30px;
+    border: 1px solid black;
+    }
