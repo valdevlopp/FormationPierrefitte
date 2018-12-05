@@ -71,10 +71,12 @@ article a {
 .clear {
     clear: both;
 }
+
 .trait {
     height:1px;
     background-color: rgba(179, 177, 177, 0.979);
 }
+
  .image1{
     width: 309px;
     /* padding-left: 20px; */
