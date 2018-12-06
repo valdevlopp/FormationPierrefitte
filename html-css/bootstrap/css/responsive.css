@@ -1,0 +1,26 @@
+.responsiv {
+    height: 100px;
+    background: red;
+}
+
+/* En utilisant "max-width" le style sera éxécuté si a fnetre est inférieur à la taille défini */
+
+@media screen and (min-width:768px) {
+    /* toute valeur en dessous de 768px sera d'une autre couleur. A partir de 768px la couleur devient jaune et jusqu'à la valeur suivante de 992 */
+    .responsiv{
+        background: yellow;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .responsiv{
+        background:blue;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .responsiv{
+        background:green;
+    }
+}
+

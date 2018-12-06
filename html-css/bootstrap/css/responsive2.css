@@ -1,0 +1,78 @@
+#container{
+    width: 1200px;
+    height: 1120px;
+    margin: 0 auto;
+    border: 2px solid black;
+}
+
+.header{
+    height: 100px;
+    background: brown;
+}
+
+.nav{
+    margin: 0 0 30px 0;
+    height: 40px;
+    background: brown;
+}
+
+.navitem{
+    float: left;
+    margin-right: 20px;
+    list-style-type: none;
+    font-size: 24px;
+    padding-top: 4px;
+    text-align: center;
+}
+
+.gauche{
+    height: 413px;
+    width: 566px;
+    float: left;
+    background: lightcoral;
+    border: 16px solid white;
+    }
+
+.droite{
+    padding-left: 9px;
+    height: 413px;
+    width: 558px;
+    float: left;
+    background: rgb(32, 137, 178);
+    border: 16px solid white;
+}
+
+
+.footer{
+   padding-bottom: 42px;
+   background: brown;
+}
+
+@media screen and (min-width:500px) {
+    .header{background: blue;
+    }
+}
+
+@media screen and (min-width:768px) {
+    #container {
+        width: 874px;
+    }
+    .gauche{
+        width: 400px;
+        background: lightseagreen;
+      }
+      .droite{
+          width: 400px;
+          background: rgb(0, 174, 255);
+      }
+}
+
+@media screen and (min-width: 992px) {
+        .gauche{
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXQIT1zzaPdbKjXKRVG72YP7jQPrVHR73GGhHg7wacLlFKSfHG) no-repeat center / 100% 100%;
+    }
+}
+/* Au dessus de 992 l'image apparait, a partir de 991 l'image disparait */
+
+
+

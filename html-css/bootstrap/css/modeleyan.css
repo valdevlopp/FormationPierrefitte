@@ -1,0 +1,116 @@
+.container{
+   margin: 0 auto;
+   width: 80%;
+}
+.header{
+   height: 100px;
+   background: red;
+}
+.haut{
+   height: 50px;
+   background: purple;
+}
+.grand{
+   height: 900px;
+}
+.bas{
+   height: 100px;
+   background: red;
+}
+.item1{
+   height: 400px;
+   width:46%;
+   background: black;
+   float: left;
+   margin:1%;
+}
+.item2{
+   height: 400px;
+   width:46%;
+   background: yellow;
+   float: right;
+   margin:1%;
+}
+.item3{
+   height: 400px;
+   width:46%;
+   background: blue;
+   float: left;
+   margin:1%;
+}
+.item4{
+   height: 400px;
+   width:46%;
+   background: orange;
+   float: right;
+   margin: 1%;
+}
+@media screen and (max-width: 700px){
+   .header{
+       background: radial-gradient(blue,black);
+   }
+   .haut{
+       background: radial-gradient(blue,white);
+   }
+   .bas{
+       background: radial-gradient(blue,black);
+   }
+   .item1{
+       background: purple;
+   }
+   .item2{
+       background:  magenta;
+   }
+   .item3{
+       background: orchid;
+   }
+   .item4{
+       background: mediumpurple;
+   }
+   }
+@media screen and (min-width: 700px) and (max-width: 1000px) {
+   .header{
+       background: radial-gradient(red,black);
+   }
+   .haut{
+       background: radial-gradient(red,white);
+   }
+   .bas{
+       background: radial-gradient(red,black);
+   }
+   .item1{
+       background: red;
+   }
+   .item2{
+       background:  black;
+   }
+   .item3{
+       background: gray;
+   }
+   .item4{
+       background: orange;
+   }
+}
+@media screen and (min-width: 1000px) and (max-width: 1500px) {
+   .header{
+       background: radial-gradient(red,black);
+   }
+   .haut{
+       background: radial-gradient(red,white);
+   }
+   .bas{
+       background: radial-gradient(red,black);
+   }
+   .item1{
+       background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3UNGBbtoPhufHSE7Sj_hAVHUa2jUL3H8s_tnVBCoVm709I9wOmg);
+   }
+   .item2{
+       background:  black;
+   }
+   .item3{
+       background: gray;
+   }
+   .item4{
+       background: orange;
+   }
+}

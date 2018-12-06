@@ -1,3 +1,20 @@
 p{
     text-align: center;
 }
+
+.lien{
+     text-align: center;
+     /* margin-left: 100px; */
+     /* width: 100%; */
+}
+
+.logo{
+    padding-bottom: 67px;
+    margin-left: 126px; 
+    /* padding: 30px 0 30px 0; */
+    /* margin-left: 238px; */
+}
+
+@media screen and (max-width: 360px){
+    
+}
