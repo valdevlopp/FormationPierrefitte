@@ -1,0 +1,104 @@
+*{
+  padding: 0;
+  margin: 0;
+  }
+
+body{
+  background: #9fc5b6;
+}
+
+header{
+  background: url(../img/woodPlank.jpg) no-repeat center /100% 100%;
+  height: 500px;
+}
+
+.container{
+  width: 80%;
+  height: 80%;
+  margin: 0 auto;
+  }
+
+h1{
+float: left;
+}
+
+hr{
+
+}
+
+.nav1 {
+   margin:0;
+   padding-top:18px;
+   list-style-type:none;
+   padding-left: 71%;
+}
+
+.nav1 .nav2 a{
+/* display:block; */
+float:left;
+width:25%; /*hauteur de l'image de fond*/
+color:#000;
+text-decoration:none;
+text-align: center;
+}
+
+.story{
+  width: 100%;
+  height: 20%;
+  } 
+
+.gauche{
+    width: 47%;
+    float: left;
+    padding-top: 169px;
+    padding-bottom: 243px;
+    background: beige;
+    padding-right: 6px;
+ }
+
+.droite{
+  float: right;
+}
+
+.fresh{
+  width: 100%;
+  height: 20%;
+}
+
+.gauche1{
+    width: 51%;
+    float: left;
+    padding-top: 0px;
+      }
+
+.droite1{
+    padding-left: 10px;
+    background: beige;
+    width: 37%;
+    float: right;
+    height: 519px;
+}
+
+.soap{
+    height: 519px;
+    width: 122%;
+    float: left;
+ } 
+
+.titre{
+text-align: center;
+}
+
+p{
+text-align: center;
+}
+
+.local{
+  width: 100%;
+  height: 20%;
+}
+
+.moule{
+  height: 496px;
+  width: 80%;
+}
