@@ -1,0 +1,52 @@
+*{
+    padding: 0;
+    margin: 0 auto;
+}
+
+.container{
+    height: 600px;
+    width: 1200px;
+}
+
+.nav, .footer{
+    background: lightskyblue;
+}
+
+p{
+    color: pink;
+    padding-left: 5px;
+}
+
+h3{
+    color: lightblue;
+}
+
+.moncompte{
+    text-align: center;
+    color: white;
+    background: lightblue;
+}
+
+.article{
+    text-align: center;
+    color: white;
+    background: lightblue;
+}
+
+.panier{
+
+}
+
+.besoin{
+    color: lightblue;
+    border-radius: 25px;
+    border:2px solid lightblue;
+    margin: 0px;
+    margin-right: 147px;
+    padding-left: 56px;
+}
+
+.besoin2{
+    color: lightgray;
+    font-size: 13px;
+}
