@@ -5,13 +5,26 @@
 
 .container{
     height: 600px;
-    width: 1200px;
+    width: 1000px;
 }
 
 .nav, .footer{
     background: lightskyblue;
+    float: left;
+   }
+
+.nav1{    
+    padding-right: 15px;
 }
 
+.nav2{
+
+}
+
+.nav3{
+
+
+}
 p{
     color: pink;
     padding-left: 5px;
@@ -35,6 +48,7 @@ h3{
 
 .panier{
 
+    padding-right: 18px;
 }
 
 .besoin{
@@ -49,4 +63,8 @@ h3{
 .besoin2{
     color: lightgray;
     font-size: 13px;
+}
+
+.bandeau {
+        width: 970px;
 }
