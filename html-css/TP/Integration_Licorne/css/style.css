@@ -1,0 +1,90 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    background: url("../img/background.png");
+    font-family: Arial, sans-serif;
+}
+
+.container{
+    margin:0 auto;
+    width: 100%;
+    }
+
+header{
+    background: #C55394;
+    height: 55px;
+}
+
+section{
+    width: 1240px;
+    margin: 0 auto;
+    border-radius: 5px;
+    border: 5px solid lightgray;
+}
+
+h2{
+    width: 98%;
+    position: absolute;
+    top: 21%;
+    font-family: 'Courgette', cursive;
+    text-align: center;
+    color:  #EB43A3;
+   }
+
+.arcenciel{
+    position: relative;
+    top: 80px;
+    left: 34%;
+}
+
+h3{
+    font-family: 'Courgette', cursive;
+    color:  #EB43A3;
+}
+
+.titre{
+    font-family: 'Courgette', cursive;
+    color: white;
+    float: left;
+    padding-left: 44px;
+}
+
+
+.nav1{
+width: 100%;
+margin-left: 65%;
+list-style-type: none;
+}
+
+.nav1 .nav2 a{
+    float: left;
+    text-decoration: none;
+    width: 10%;
+    text-align: center;
+    color: white;
+    padding-top: 1%;
+    margin-left: 32px;
+    
+}
+
+a:hover{
+    background: #EB43A3;
+  
+}
+
+.principe{
+    padding-top: 33px;
+    padding-left: 26px;
+    padding-bottom: 51px;
+}
+
+.fa-star{
+    padding-right: 10px;
+}
+
+.figure{
+    float: left;
+}
