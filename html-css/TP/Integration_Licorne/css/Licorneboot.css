@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Courgette');
+
+/* On peut aussi mettre sur le titre un background image pour que l'image reste bien centré derrnière le titre */
+
+
+body{
+    background: url("../img/background.png");
+}
+
+.arcenciel{
+    position: absolute;
+    margin-left: 37%;
+    padding-top: 68px;
+}
+
+.premiere{
+    font-family: 'Courgette', cursive;
+    text-align: center;
+    font-size: 33px; 
+    padding-top: 138px;
+}
+
+.deuxieme{
+    font-family: 'Courgette', cursive;
+    font-size: 20px;
+    padding-top: 96px;
+}
+
+.troisieme{
+    font-family: 'Courgette', cursive;
+    font-size: 20px;
+    padding-top: 96px;
+}
+
+.container{
+    border: 5px solid lightgray;
+    border-radius: 5px;  
+    box-shadow: 3px 5px 3px 3px lightgrey;
+    margin-top: 75px;
+}
+/* On dit à la machine que dans la class image tu prends la figure et que dans la figure tu prends img et tu appliques la width */
+.image figure img{
+    width: 100%;
+}
+
+/* la width c'est 100% de la div comme ça l'image s'adapte à la largeur de la div */
