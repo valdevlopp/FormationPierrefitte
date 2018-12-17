@@ -1,0 +1,39 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+   
+@import url('https://fonts.googleapis.com/css?family=Charm');
+
+ul{
+    padding-left: 31%;
+    height: 100px;
+    background: lightgreen;
+}
+
+li{
+    list-style-type: none;
+    float: left;
+}
+
+a{
+    color: black !important;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-family: 'Charm', cursive;
+}
+
+.toto{
+    height: 150px;
+    margin-top: -10%;
+    background-repeat: repeat-x;
+    background-size: 10% 10%;
+    background: url(../img/pattern6.png);
+    padding-bottom: 13%;
+}
+
+.vert{
+    background: url(../img/pattern.jpg);
+        height: 200px;
+}
+
