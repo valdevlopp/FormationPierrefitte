@@ -1,0 +1,92 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body, html{
+  height: 100%;
+}
+
+.paralax{
+  /** L'image de fond*/
+  background: url(img/caraibes_martinique_boucaniers.jpg);
+/** la hauteur de l'image**/
+  height: 100%;
+  /** Les proporiétés qui vont créer l'effet parallax au scroll*/
+  background-attachment: fixed; /* attache l'image par rapport à l'écran afin d'éviter qu'elle ne défile au moment du scroll*/
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+
+
+div.scroll{
+  height: 280px;
+  font-size: 36px;
+}
+
+div.scroll p{
+  margin: 0;
+}
+
+#scroll-1{
+  background-image: -webkit-gradient(linear,
+    left bottom,
+    right bottom,
+    color-stop(0, rgb(230, 18, 18)),
+    color-stop(0, rgb(255, 202, 63)),
+    color-stop(0, rgb(63, 201, 50)),
+    color-stop(0, rgb(33, 54, 237)));
+  background-image: -webkit-linear-gradient(right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 0%, rgb(63, 201, 50) 50%, rgb(33, 54, 237) 100%);
+  }
+
+#scroll-2{
+  background-image: url('img/woodPlank.jpg');
+}
+
+#scroll-3{
+  background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop (0, rgb(230, 18, 18)), color-stop (1, rgb(255, 202, 63)));
+  background-image: -o-linear-gradient(right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 100%); /**opéra*/
+  background-image: -moz-linear-gradient(right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 100%); /*mozilla*/
+  background-image: -webkit-linear-gradient(right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 100%); /*google chrome*/
+  background-image: -ms-linear-gradient(right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 100%);  /**microsoft*/
+  background-image: linear-gradient(to right, rgb(230, 18, 18) 0%, rgb(255, 202, 63) 100%); /**mode normal*/
+}
+
+@media only screen and (max-device-width: 1366px){
+  .paralax{
+    background-attachment: scroll;
+  }
+}
+
+.paralax2{
+  background: url(img/ciel.jpg);
+  height: 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+#scroll-4{
+  background-image: url('img/Matrix-revolution.jpg');
+  }
+
+
+.paralax3{
+    background: url(img/pc.jpg);
+    height: 100%;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  #scroll-5{
+    background-image: url('img/sans-titre.png');
+    }
+
+  #scroll-6{
+    background-image: url('img/thumb-1920-515590.jpg');
+      }
