@@ -1,0 +1,1330 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Programmation orientée objet -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'oo';</script><div class="navigation"><a href="chapter7.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter9.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 8: </span>Programmation orientée objet</h1><div class="block"><p>Au début des années 90, une chose appelée <a name="key1"></a>programmation orientée objet
+souffla un vent nouveau sur l’industrie du logiciel. La plupart des idées
+derrière ce concept n’étaient pas vraiment nouvelles, mais elles avaient enfin
+suffisamment d’élan pour décoller, et devenir «&nbsp;à la mode&nbsp;». Des livres furent
+écrits sur le sujet, des cours furent organisés, des langages de programmation
+développés. Tout d’un coup, tout le monde se mit à vanter les mérites de la
+programmation orientée objet, appliquant ses recettes à tous les problèmes avec
+enthousiasme, se convainquant qu’on avait enfin trouvé <em>la bonne façon d’écrire
+des programmes</em>.</p><p>Ces choses arrivent souvent. Quand un problème est compliqué, les gens
+cherchent toujours une solution magique.  Quand arrive quelque chose qui
+ressemble à cette solution, ils sont prêts à s’y jeter corps et âme. Pour de
+nombreux programmeurs, encore aujourd’hui, l’orientation objet (ou du moins la
+vision qu’ils en ont) est la panacée. Si un programme n’est pas «&nbsp;en pur objet
+», quel que soit le sens de cette expression, il est considéré comme résolument
+inférieur.</p><p>Toutefois, peu d’engouements ont duré si longtemps. La longévité de la
+programmation orientée objet peut sûrement s’expliquer par le fait que les
+idées centrales de concept sont utiles et simples. Dans ce chapitre, nous
+allons parler de ces idées et de leur application, plutôt excentriques, au
+JavaScript. Les paragraphes précédents n’étaient absolument pas destinés à
+discréditer ces idées. Mon objectif était juste d’éviter qu’on ne jure plus que
+par elles.</p></div><hr/><div class="block"><p>Comme son nom l’indique, la programmation orientée objet est centrée sur la
+notion d’objet. Depuis le début, nous avons utilisé les objets comme des
+espèces de fourre-tout plein de valeurs, où l’on ajoute ou modifie des
+propriétés à notre guise. En fait, dans une approche orientée objet, les objets
+sont vus comme des microcosmes indépendants, qui ne communiquent avec
+l’extérieur qu’à travers un nombre limité d’<a name="key2"></a>interfaces, un ensemble de
+méthodes et propriétés spécifiques. La «&nbsp;liste des nœuds atteints&nbsp;» utilisée à
+la fin du <a href="chapter7.html">chapitre 7</a> en est un exemple : nous avons utilisé trois fonctions,
+<code>creerListePointsParcourus</code>, <code>stockerPointsParcourus</code> et
+<code>trouverPointsParcourus</code> pour interagir avec elle. Ces trois fonctions forment
+une interface pour cette sorte d’objets.</p><p>Les objets <code>Date</code>, <code>Error</code> et <code>BinaryHeap</code> que nous avons vus fonctionnent
+également comme cela. Au lieu de fournir des fonctions classiques pour
+travailler avec ces objets, ils fournissent une manière d’être créés, via le
+mot-clé <code>new</code>, et un certain nombre de méthodes et propriétés qui forment le
+reste de l’interface.</p></div><hr/><div class="block"><p>Pour faire une méthode d’objet, il suffit de définir une variable qui
+contiendra une fonction.</p><pre class="code"><span class="keyword">var</span> <span class="variable">lapin</span> = {};
+<span class="variable">lapin</span>.<span class="property">parler</span> = <span class="keyword">function</span>(<span class="variabledef">tirade</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Le lapin dit '&quot;</span>, <span class="localvariable">tirade</span>, <span class="string">&quot;'&quot;</span>);
+};
+
+<span class="variable">lapin</span>.<span class="property">parler</span>(<span class="string">&quot;Eh bien, maintenant c’est vous qui me le demandez.&quot;</span>);</pre><p>Dans la plupart des cas, la méthode aura besoin de savoir sur <em>qui</em> elle doit
+s’appliquer. Par exemple, s’il y a plusieurs lapins, la méthode <code>parler</code> doit
+pouvoir indiquer quel est le lapin qui parle. Pour ce faire, il y a une
+variable spéciale appelée <a name="key3"></a><code>this</code>, qui est toujours définie à l’intérieur
+d’une fonction et qui pointe vers l’objet sur lequel la fonction s’applique.
+Une fonction définie en tant que propriété d’un objet s’utilise comme une
+méthode, elle est appelée de la façon suivante : <code>objet.methode()</code>.</p><pre class="code"><span class="keyword">function</span> <span class="variable">parler</span>(<span class="variabledef">tirade</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Le lapin &quot;</span>, <span class="localvariable">this</span>.<span class="property">adjectif</span>, <span class="string">&quot; dit «&nbsp;&quot;</span>, <span class="localvariable">tirade</span>, <span class="string">&quot;&nbsp;»&quot;</span>);
+}
+<span class="keyword">var</span> <span class="variable">lapinBlanc</span> = {<span class="property">adjectif</span>: <span class="string">&quot;blanc&quot;</span>, <span class="property">parler</span>: <span class="variable">parler</span>};
+<span class="keyword">var</span> <span class="variable">grosLapin</span> = {<span class="property">adjectif</span>: <span class="string">&quot;gras&quot;</span>, <span class="property">parler</span>: <span class="variable">parler</span>};
+
+<span class="variable">lapinBlanc</span>.<span class="property">parler</span>(<span class="string">&quot;Par ma moustache et mes oreilles, comme il se fait tard&nbsp;!&quot;</span>);
+<span class="variable">grosLapin</span>.<span class="property">parler</span>(<span class="string">&quot;J’ai bien envie d’une carotte, maintenant.&quot;</span>);</pre></div><hr/><div class="block"><p>Je peux maintenant clarifier la présence du mystérieux premier argument de la
+méthode <a name="key4"></a><code>apply</code>, pour lequel nous avons toujours mis <code>null</code> dans le <a href="chapter6.html">chapitre 6</a>.
+Cet argument peut être utilisé pour spécifier un objet sur lequel la fonction
+s’appliquera, qui prendra donc le rôle de <code>this</code>. Toutefois, pour les fonctions
+qui ne sont pas des méthodes, cela n’a pas de sens, d’où le <code>null</code>.</p><pre class="code"><span class="variable">parler</span>.<span class="property">apply</span>(<span class="variable">grosLapin</span>, [<span class="string">&quot;Miam.&quot;</span>]);</pre><p>Les fonctions ont également une méthode <a name="key5"></a><code>call</code>, qui se comporte comme
+<code>apply</code>, à l’exception du fait que les arguments peuvent être fournis
+séparément, et non dans un tableau :</p><pre class="code"><span class="variable">parler</span>.<span class="property">call</span>(<span class="variable">grosLapin</span>, <span class="string">&quot;Rot.&quot;</span>);</pre></div><hr/><div class="block"><p>Le mot-clé <a name="key6"></a><code>new</code> fournit un bon moyen de créer de nouveaux objets. Quand une
+fonction est appelée avec le mot <code>new</code> devant, sa variable <a name="key7"></a><code>this</code> pointe sur
+un <em>nouvel</em> objet, qui sera automatiquement retourné (à moins que la fonction
+ne retourne explicitement autre chose). Les fonctions utilisées pour créer de
+nouveaux objets de cette manière sont appelées des <a name="key8"></a>constructeurs. En voici un
+pour les lapins :</p><pre class="code"><span class="keyword">function</span> <span class="variable">Lapin</span>(<span class="variabledef">adjectif</span>) {
+  <span class="localvariable">this</span>.<span class="property">adjectif</span> = <span class="localvariable">adjectif</span>;
+  <span class="localvariable">this</span>.<span class="property">parler</span> = <span class="keyword">function</span>(<span class="variabledef">tirade</span>) {
+    <span class="variable">print</span>(<span class="string">&quot;Le lapin &quot;</span>, <span class="localvariable">this</span>.<span class="property">adjectif</span>, <span class="string">&quot; dit '&quot;</span>, <span class="localvariable">tirade</span>, <span class="string">&quot;'&quot;</span>);
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">lapinTueur</span> = <span class="keyword">new</span> <span class="variable">Lapin</span>(<span class="string">&quot;tueur&quot;</span>);
+<span class="variable">lapinTueur</span>.<span class="property">parler</span>(<span class="string">&quot;GRAAAAAAAAAH&nbsp;!&quot;</span>);</pre><p>Il y a une convention, parmi les programmeurs JavaScript, qui consiste à faire
+débuter les noms de constructeurs par une lettre majuscule. Cela permet de
+mieux les reconnaître au milieu des autres fonctions.</p><p>Mais pourquoi le mot clé <code>new</code> est-il nécessaire&nbsp;? Après tout, nous aurions pu
+écrire simplement :</p><pre class="code"><span class="keyword">function</span> <span class="variable">creerLapin</span>(<span class="variabledef">adjectif</span>) {
+  <span class="keyword">return</span> {
+    <span class="property">adjectif</span>: <span class="localvariable">adjectif</span>,
+    <span class="property">parler</span>: <span class="keyword">function</span>(<span class="variabledef">tirade</span>) {<span class="comment">/*etc.*/</span>}
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">lapinNoir</span> = <span class="variable">creerLapin</span>(<span class="string">&quot;noir&quot;</span>);</pre><p>Mais ce n’est pas exactement la même chose. <code>new</code> en fait discrètement plus. En
+fait, notre fonction <code>lapinTueur</code> a une propriété appelée <a name="key9"></a><code>constructor</code>, qui
+pointe vers la fonction <code>Lapin</code> l’ayant créée. <code>lapinNoir</code> a également cette
+propriété, mais elle pointe vers la fonction <a name="key10"></a><code>Object</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">lapinTueur</span>.<span class="property">constructor</span>);
+<span class="variable">show</span>(<span class="variable">lapinNoir</span>.<span class="property">constructor</span>);</pre></div><hr/><div class="block"><p>D’où vient la propriété <code>constructor</code>&nbsp;? Elle fait partie du <a name="key11"></a>prototype d’un
+lapin. Les prototypes sont une partie importante du fonctionnement des objets
+en JavaScript. Chaque objet est basé sur un prototype, qui lui confère un
+ensemble de propriétés. Les objets simples que nous avons utilisés jusque-là
+sont tous basés sur le plus élémentaires des prototypes, celui associé au
+constructeur <code>Object</code>. En fait, taper <code>{}</code> est équivalent à taper <code>new
+Object()</code>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">objetSimple</span> = {};
+<span class="variable">show</span>(<span class="variable">objetSimple</span>.<span class="property">constructor</span>);
+<span class="variable">show</span>(<span class="variable">objetSimple</span>.<span class="property">toString</span>);</pre><p><a name="key12"></a><code>toString</code> est une méthode qui fait partie du prototype <code>Object</code>. Ça signifie
+que tous les objets de base ont une méthode <code>toString</code>, qui les convertit en
+chaîne de caractères. Nos objets lapin sont basés sur le prototype associé au
+constructeur <code>Lapin</code>. Il est possible d’utiliser la propriété <code>prototype</code> d’un
+constructeur pour accéder à… leur prototype :</p><pre class="code"><span class="variable">show</span>(<span class="variable">Lapin</span>.<span class="property">prototype</span>);
+<span class="variable">show</span>(<span class="variable">Lapin</span>.<span class="property">prototype</span>.<span class="property">constructor</span>);</pre><p>Chaque fonction est automatiquement munie d’une propriété <code>prototype</code>, dont la
+propriété <code>constructor</code> renvoie à la fonction. Puisque que le prototype lapin
+est lui-même un objet, il est basé sur le prototype <code>Object</code>, et partage sa
+méthode <code>toString</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">lapinTueur</span>.<span class="property">toString</span> == <span class="variable">objetSimple</span>.<span class="property">toString</span>);</pre></div><hr/><div class="block"><p>Même si les objets semblent partager des propriétés avec leur prototype, ce
+partage n’est qu’à sens unique. Les propriétés des prototypes influencent les
+objets basés dessus, mais les propriétés de cet objet ne changent jamais le
+prototype.</p><p>Les règles sont précisément les suivantes : pour trouver la valeur d’une
+propriété, JavaScript cherche d’abord parmi les propriétés de l’objet
+<em>lui-même</em>. Si une propriété porte le nom que l’on recherche, c’est sa valeur
+que l’on obtient. Si le nom n’existe pas, la recherche se poursuit à travers le
+prototype de l’objet, et ensuite à travers le prototype du prototype, et ainsi
+de suite. Si aucune propriété n’est trouvée, c’est la valeur <code>undefined</code> qui
+est renvoyée. À l’inverse, lorsqu’on <em>définit</em> la valeur d’une propriété,
+JavaScript ne remonte jamais au prototype, il attribue directement la valeur à
+une propriété de l’objet lui-même.</p><pre class="code"><span class="variable">Lapin</span>.<span class="property">prototype</span>.<span class="property">dents</span> = <span class="string">&quot;petites&quot;</span>;
+<span class="variable">show</span>(<span class="variable">lapinTueur</span>.<span class="property">dents</span>);
+<span class="variable">lapinTueur</span>.<span class="property">dents</span> = <span class="string">&quot;longues, pointues et sanglantes&quot;</span>;
+<span class="variable">show</span>(<span class="variable">lapinTueur</span>.<span class="property">dents</span>);
+<span class="variable">show</span>(<span class="variable">Lapin</span>.<span class="property">prototype</span>.<span class="property">dents</span>);</pre><p>Cela signifie que le prototype peut être utilisé pour ajouter des propriétés et
+des méthodes à tous les objets basés dessus. Par exemple, il se peut que nos
+lapins aient soudainement besoin de danser.</p><pre class="code"><span class="variable">Lapin</span>.<span class="property">prototype</span>.<span class="property">danser</span> = <span class="keyword">function</span>() {
+  <span class="variable">print</span>(<span class="string">&quot;Le lapin &quot;</span>, <span class="localvariable">this</span>.<span class="property">adjectif</span>, <span class="string">&quot; danse une jigue.&quot;</span>);
+};
+
+<span class="variable">lapinTueur</span>.<span class="property">danser</span>();</pre><p>Et, comme vous vous en doutez, le prototype de lapin est le meilleur endroit où
+ajouter des éléments communs à tous les lapins, comme la méthode <code>parler</code>.
+Voici donc une nouvelle approche pour notre constructeur de <code>Lapin</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">Lapin</span>(<span class="variabledef">adjectif</span>) {
+  <span class="localvariable">this</span>.<span class="property">adjectif</span> = <span class="localvariable">adjectif</span>;
+}
+<span class="variable">Lapin</span>.<span class="property">prototype</span>.<span class="property">parler</span> = <span class="keyword">function</span>(<span class="variabledef">tirade</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Le lapin &quot;</span>, <span class="localvariable">this</span>.<span class="property">adjectif</span>, <span class="string">&quot; dit '&quot;</span>, <span class="localvariable">tirade</span>, <span class="string">&quot;'&quot;</span>);
+};
+
+<span class="keyword">var</span> <span class="variable">noisetteLeLapin</span> = <span class="keyword">new</span> <span class="variable">Lapin</span>(<span class="string">&quot;noisette&quot;</span>);
+<span class="variable">noisetteLeLapin</span>.<span class="property">parler</span>(<span class="string">&quot;Good Frith!&quot;</span>);</pre></div><hr/><div class="block"><p>Le fait que tous les objets aient leur prototype et reçoivent des propriétés de
+ce prototype peut apporter quelques complications. Ça signifie qu’utiliser un
+objet pour stocker des trucs, comme les chats du <a href="chapter4.html">chapitre 4</a>, peut mal se passer.
+Par exemple, si nous nous étions demandé s’il y a un chat nommé «&nbsp;<code>constructor</code>
+», nous aurions implémenté le test suivant :</p><pre class="code"><span class="keyword">var</span> <span class="variable">pasUnSeulChat</span> = {};
+<span class="keyword">if</span> (<span class="string">&quot;constructor&quot;</span> in <span class="variable">pasUnSeulChat</span>)
+  <span class="variable">print</span>(<span class="string">&quot;Oui, il y a sans aucun doute un chat appelé «&nbsp;constructor&nbsp;».&quot;</span>);</pre><p>C’est problématique. Un autre problème tient au fait qu’il est souvent pratique
+d’étendre les prototypes des constructeurs standards comme <code>Object</code> ou <code>Array</code>
+avec de nouvelles fonctions. Par exemple, nous pouvons donner à tous les objets
+une méthode nommée <code>properties</code>, qui retourne un tableau contenant le nom des
+propriétés (non cachées) d’un objet.</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">properties</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">property</span> <span class="keyword">in</span> <span class="localvariable">this</span>)
+    <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="localvariable">property</span>);
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+};
+
+<span class="keyword">var</span> <span class="variable">test</span> = {<span class="property">x</span>: <span class="atom">10</span>, <span class="property">y</span>: <span class="atom">3</span>};
+<span class="variable">show</span>(<span class="variable">test</span>.<span class="property">properties</span>());</pre><p>Et cela met tout de suite le problème en évidence. Maintenant que le prototype
+<code>Object</code> a une propriété appelée <code>properties</code>, parcourir les propriétés de
+n’importe quel objet, en utilisant <code>for</code> et <a name="key13"></a><code>in</code>, renverra également cette
+propriété partagée, ce qui n’est généralement pas ce que nous souhaitons. Nous
+sommes seulement intéressés par les propriétés que l’objet a lui-même.</p><p>Heureusement, il y a un moyen de trouver si une propriété appartient à un objet
+lui-même, ou à l’un de ses prototypes. Malheureusement, cela complique un peu
+le parcours des propriétés d’un objet. Tout objet a une méthode appelée
+<a name="key14"></a><code>hasOwnProperty</code>, qui nous indique si l’objet possède une propriété dont le
+nom est passé en argument. En se basant sur ce mécanisme, nous pouvons réécrire
+notre méthode <code>properties</code> de la manière suivante :</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">properties</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">property</span> <span class="keyword">in</span> <span class="localvariable">this</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">hasOwnProperty</span>(<span class="localvariable">property</span>))
+      <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="localvariable">property</span>);
+  }
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+};
+
+<span class="keyword">var</span> <span class="variable">test</span> = {<span class="string">&quot;Gros Igor&quot;</span>: <span class="atom">true</span>, <span class="string">&quot;Boule de Feu&quot;</span>: <span class="atom">true</span>};
+<span class="variable">show</span>(<span class="variable">test</span>.<span class="property">properties</span>());</pre><p><a name="key15"></a>Et bien sûr, nous pouvons abstraire cela dans une fonction de
+haut niveau. Notez que la fonction <code>action</code> est appelée avec à la fois le nom
+de la propriété et la valeur qu’elle a dans l’objet.</p><pre class="code"><span class="keyword">function</span> <span class="variable">forEachIn</span>(<span class="variabledef">objet</span>, <span class="variabledef">action</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">property</span> <span class="keyword">in</span> <span class="localvariable">objet</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">objet</span>.<span class="property">hasOwnProperty</span>(<span class="localvariable">property</span>))
+      <span class="localvariable">action</span>(<span class="localvariable">property</span>, <span class="localvariable">objet</span>[<span class="localvariable">property</span>]);
+  }
+}
+
+<span class="keyword">var</span> <span class="variable">chimere</span> = {<span class="property">visage</span>: <span class="string">&quot;lion&quot;</span>, <span class="property">corps</span>: <span class="string">&quot;chèvre&quot;</span>, <span class="property">derrière</span>: <span class="string">&quot;serpent&quot;</span>};
+<span class="variable">forEachIn</span>(<span class="variable">chimere</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Un &quot;</span>, <span class="localvariable">nom</span>, <span class="string">&quot; de &quot;</span>, <span class="localvariable">valeur</span>, <span class="string">&quot;.&quot;</span>);
+});</pre><p>Mais, que se passe-t-il si on rencontre un chat nommé <code>hasOwnProperty</code>&nbsp;? (on ne
+sait jamais.) Il sera stocké dans l’objet, et la tentative suivante de
+parcourir la collection de chats, utilisant <code>objet.hasOwnProperty</code>, sera un
+échec, car cette propriété ne pointera plus vers la fonction. Une façon
+d’éviter ce problème est d’agir encore plus salement :</p><pre class="code"><span class="keyword">function</span> <span class="variable">forEachIn</span>(<span class="variabledef">objet</span>, <span class="variabledef">action</span>) {
+   <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">property</span> <span class="keyword">in</span> <span class="localvariable">objet</span>) {
+       <span class="keyword">if</span> (<span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">hasOwnProperty</span>.<span class="property">call</span>(<span class="localvariable">objet</span>, <span class="localvariable">property</span>))
+           <span class="localvariable">action</span>(<span class="localvariable">property</span>, <span class="localvariable">objet</span>[<span class="localvariable">property</span>]);
+   }
+}
+
+<span class="keyword">var</span> <span class="variable">test</span> = {<span class="property">name</span>: <span class="string">&quot;Mardochée&quot;</span>, <span class="property">hasOwnProperty</span>: <span class="string">&quot;Oh-oh&quot;</span>};
+<span class="variable">forEachIn</span>(<span class="variable">test</span>, <span class="keyword">function</span> (<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+   <span class="variable">print</span> (<span class="string">&quot;Property &quot;</span>, <span class="localvariable">nom</span>, <span class="string">&quot; = &quot;</span>, <span class="localvariable">valeur</span>);
+});</pre><p>(Note : Cet exemple ne fonctionne pas pour l’instant correctement dans Internet
+Explorer 8, qui a semble-t-il des problèmes avec la redéfinition des propriétés
+intégrées.)</p><p>Ici, au lieu d’utiliser la méthode trouvée dans l’objet lui-même, nous prenons
+la méthode fournie par le prototype <code>Object</code>, et l’appliquons en utilisant
+<code>call</code> sur le bon objet. À moins que quelqu’un n’ait joué avec la méthode de
+<code>Object.prototype</code> (et ne faites pas ça), le programme devrait fonctionner
+correctement.</p></div><hr/><div class="block"><p><code>hasOwnProperty</code> peut également être utilisée dans les situations où l’on
+utilise l’opérateur <a name="key16"></a><code>in</code> pour savoir si un objet contient une propriété
+particulière. Mais il y a encore une subtilité. Nous avons vu dans le <a href="chapter4.html">chapitre 4</a>
+que certaines propriétés, comme <code>toString</code>, sont «&nbsp;cachées&nbsp;», et ne sont donc
+pas considérées lors du parcours des éléments d’un objet via une instruction
+<code>for</code>/<code>in</code>. Il s’avère que les navigateurs de la famille Gecko (Firefox
+principalement) donnent à chaque objet une propriété cachée nommée <code>__proto__</code>,
+qui pointe vers le prototype de cet objet. <code>hasOwnProperty</code> retourne <code>true</code>,
+pour cette propriété, même si le programme ne l’a pas explicitement ajoutée.
+Avoir accès au prototype d’un objet peut être très pratique, mais en faire une
+propriété comme ça n’était pas une très bonne idée. Toutefois, Firefox est un
+navigateur web très utilisé, et il convient de faire attention à cela quand
+vous écrivez des programmes pour le web. Il y a une méthode
+<a name="key17"></a><code>propertyIsEnumerable</code>, qui retourne <code>false</code>, pour les propriétés cachées, et
+peut donc être utilisé pour filtrer les étrangetés comme <code>__proto__</code>. Pour
+contourner ce problème de manière fiable, on peut utiliser une expression
+comme :</p><pre class="code"><span class="keyword">var</span> <span class="variable">objet</span> = {<span class="property">foo</span>: <span class="string">&quot;bar&quot;</span>};
+<span class="variable">show</span> (<span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">hasOwnProperty</span>.<span class="property">call</span>(<span class="variable">objet</span>, <span class="string">&quot;foo&quot;</span>) &amp;&amp;
+   <span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">propertyIsEnumerable</span>.<span class="property">call</span>(<span class="variable">objet</span>, <span class="string">&quot;foo&quot;</span>));</pre><p>Simple et agréable n’est-ce pas&nbsp;? C’est l’un des aspects de JavaScript qui ne
+sont pas si bien conçus que ça. Les objets jouent à la fois le rôle de «
+valeurs avec méthodes&nbsp;», qui fonctionnent très bien avec les prototypes, et «
+d’ensemble de propriétés&nbsp;», pour lesquels les prototypes ne font que déranger.</p></div><hr/><div class="block"><p>Écrire l’expression ci-dessus à chaque fois qu’on a besoin de vérifier la
+présence d’une propriété dans un objet n’est pas viable. Nous pourrions le
+mettre dans une fonction, mais une meilleure approche est encore d’écrire un
+constructeur et un prototype dédié aux situations où nous voulons utiliser un
+objet simplement comme un ensemble propriétés. Puisqu’il est prévu pour pouvoir
+y chercher des choses par leurs noms, nous l’appellerons <a name="key18"></a><code>Dictionary</code>
+(dictionnaire).</p><pre class="code"><span class="keyword">function</span> <span class="variable">Dictionary</span>(<span class="variabledef">valeursInitiales</span>) {
+  <span class="localvariable">this</span>.<span class="property">valeurs</span> = <span class="localvariable">valeursInitiales</span> || {};
+}
+<span class="variable">Dictionary</span>.<span class="property">prototype</span>.<span class="property">store</span> = <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+  <span class="localvariable">this</span>.<span class="property">valeurs</span>[<span class="localvariable">nom</span>] = <span class="localvariable">valeur</span>;
+};
+<span class="variable">Dictionary</span>.<span class="property">prototype</span>.<span class="property">lookup</span> = <span class="keyword">function</span>(<span class="variabledef">nom</span>) {
+  <span class="keyword">return</span> <span class="localvariable">this</span>.<span class="property">valeurs</span>[<span class="localvariable">nom</span>];
+};
+<span class="variable">Dictionary</span>.<span class="property">prototype</span>.<span class="property">contains</span> = <span class="keyword">function</span>(<span class="variabledef">nom</span>) {
+  <span class="keyword">return</span> <span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">hasOwnProperty</span>.<span class="property">call</span>(<span class="localvariable">this</span>.<span class="property">valeurs</span>, <span class="localvariable">nom</span>) &amp;&amp;
+    <span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">propertyIsEnumerable</span>.<span class="property">call</span>(<span class="localvariable">this</span>.<span class="property">valeurs</span>, <span class="localvariable">nom</span>);
+};
+<span class="variable">Dictionary</span>.<span class="property">prototype</span>.<span class="property">each</span> = <span class="keyword">function</span>(<span class="variabledef">action</span>) {
+  <span class="variable">forEachIn</span>(<span class="localvariable">this</span>.<span class="property">valeurs</span>, <span class="localvariable">action</span>);
+};
+
+<span class="keyword">var</span> <span class="variable">couleurs</span> = <span class="keyword">new</span> <span class="variable">Dictionary</span>({<span class="property">Grover</span>: <span class="string">&quot;bleu&quot;</span>,
+                              <span class="property">Elmo</span>: <span class="string">&quot;orange&quot;</span>,
+                              <span class="property">Bart</span>: <span class="string">&quot;jaune&quot;</span>});
+<span class="variable">show</span>(<span class="variable">couleurs</span>.<span class="property">contains</span>(<span class="string">&quot;Grover&quot;</span>));
+<span class="variable">show</span>(<span class="variable">couleurs</span>.<span class="property">contains</span>(<span class="string">&quot;constructor&quot;</span>));
+<span class="variable">couleurs</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">couleur</span>) {
+  <span class="variable">print</span>(<span class="localvariable">nom</span>, <span class="string">&quot; est &quot;</span>, <span class="localvariable">couleur</span>);
+});</pre><p>Désormais, tous les inconvénients de l’utilisation des objets en tant
+qu’ensemble de propriétés sont «&nbsp;cachés&nbsp;» derrière une interface pratique : un
+constructeur et quatre méthodes. Notez que la propriété <code>valeurs</code> d’un objet
+<code>Dictionary</code> ne fait pas partie de son interface, ce n’est qu’un détail
+interne, et quand vous utilisez des objets <code>Dictionary</code>, vous n’avez pas besoin
+de l’utiliser directement.</p><p>Chaque fois que vous écrivez une interface, il est utile d’y ajouter un
+commentaire retraçant rapidement ce qu’elle fait et comment l’utiliser. De
+cette manière, quand quelqu’un (éventuellement vous dans trois mois) souhaite
+travailler avec cette interface, il peut se faire rapidement une idée de
+comment l’utiliser, et n’a alors pas besoin d’étudier tout le programme.</p><p>La plupart du temps, quand vous concevez une nouvelle interface, des problèmes
+et des limitations dans ce que vous aviez prévu viennent rapidement se
+confronter à vous. En conséquence, vous changez votre interface. Pour éviter de
+perdre du temps, il est conseillé de ne documenter vos interfaces <em>qu’après</em>
+les avoir expérimentées un certain temps sur des cas concrets, et qu’elles se
+soient révélées efficaces. ―&nbsp;Bien sûr, cela pourrait augmenter la tentation de
+ne pas documenter du tout. Mais personnellement, je considère la documentation
+comme une «&nbsp;touche finale&nbsp;» à ajouter au système. Quand ça donne l’impression
+d’être prêt, c’est qu’il est temps d’écrire un peu sur le sujet, et de voir si
+ça sonne aussi bien en français (ou n’importe quelle autre langue vivante),
+qu’en JavaScript (où n’importe quel autre langage de programmation).</p></div><hr/><div class="block"><p>La distinction entre l’interface d’un objet et ses détails de fonctionnement
+internes est importante pour deux raisons. D’abord, avoir une petite interface
+bien décrite rend un objet plus facile à utiliser. Il suffit de garder
+l’interface en tête, sans plus se préoccuper du reste, à moins d’avoir à
+changer l’objet lui-même.</p><p>Ensuite, il arrive régulièrement d’avoir à changer quelque chose dans le
+fonctionnement interne d’un type<a class="footref" href="#footnote1">1</a> d’objet, pour le rendre plus efficace par
+exemple, ou pour corriger un problème. Si le code extérieur a accès à toutes
+les propriétés d’un objet, il est difficile de changer le moindre détail sans
+avoir à mettre à jour tout le reste du code. Si le code extérieur utilise une
+petite interface, vous pouvez changer le fonctionnement interne de l’objet
+comme bon vous semble, tant que l’interface ne change pas.</p><p>Certaines personnes vont assez loin avec ce concept. Ils n’incluent, par
+exemple, aucune propriété dans l’interface d’un objet, et n’y autorisent que
+des méthodes ―&nbsp;si leur type d’objet a une longueur, elle sera accessible via
+une méthode <code>getLength</code>, et pas directement comme une propriété <code>length</code>. De
+cette manière, si jamais ils décident de modifier leur objet de telle manière
+qu’il n’a plus de propriété <code>length</code>, par exemple parce que la longueur à
+retourner devient celle d’un tableau, ils peuvent mettre la fonction à jour,
+sans changer l’interface.</p><p>D’après mon point de vue personnel, dans la plupart des cas cela n’en vaut pas
+la peine. Ajouter une méthode <code>getLength</code> ne contenant que <code>return
+this.length;</code> est essentiellement un ajout de code inutile. En règle générale,
+je considère le code inutile plus problématique que la nécessité de modifier de
+temps à autre l’interface de mes objets.</p></div><hr/><div class="block"><p>Ajouter de nouvelles méthodes à des prototypes existants peut être très utile.
+En particulier les prototypes de <code>Array</code> et <code>String</code> en JavaScript peuvent
+recevoir quelques méthodes basiques supplémentaires. Nous pouvons, par exemple,
+remplacer <code>forEach</code> et <code>map</code> par des méthodes sur les tableaux, et transformer
+la fonction <code>chaineCommencePar</code> que nous avons écrite au <a href="chapter4.html">chapitre 4</a> en méthode sur
+les chaînes de caractère.</p><p>De plus, si votre programme doit fonctionner sur la même page web qu’un autre
+programme (qu’il soit de vous ou non) qui utilise naïvement <code>for</code>/<code>in</code> ― comme
+nous l’avons vu jusque-là ―&nbsp;alors ajouter des choses aux prototypes, et
+précisément à ceux d’<code>Object</code> et <code>Array</code> aura toutes les chances de casser
+quelque chose, vu que ces boucles vont d’un coup se mettre à inclure les
+nouvelles propriétés. Du coup, certaines personnes préfèrent ne pas toucher du
+tout à ces prototypes. Mais bien sûr, si vous êtes prudent, et qu’il n’y a
+aucune raison que votre code cohabite avec un code mal écrit, ajouter des
+méthodes aux prototypes standards est une très bonne technique.</p></div><hr/><div class="block"><p>Dans ce chapitre, nous allons fabriquer un terrarium virtuel, une boîte en
+verre avec des insectes vivants dedans. Ça impliquera de jouer avec des objets
+(ce qui tombe assez bien vu le nom du chapitre). Nous allons adopter une
+approche assez simple, en modélisant le terrarium par une grille à deux
+dimensions, comme la deuxième carte du <a href="chapter7.html">chapitre 7</a>. Sur cette grille, il y a un
+certain nombre de bestioles. Quand le terrarium est actif, toutes les bébêtes
+ont une opportunité d’agir (comme d’effectuer un déplacement) toutes les
+demi-secondes.</p><p>Du coup, on découpe l’espace et le temps en unités de taille fixe ―&nbsp;des cases
+pour l’espace et des demi-secondes pour le temps. Ça rend généralement les
+choses plus simple à modéliser dans un programme, mais ça a bien sûr
+l’inconvénient d’être largement imprécis. Heureusement, ce simulateur de
+terrarium n’a pas besoin d’être précis et nous pouvons donc faire avec.</p></div><hr/><div class="block"><p>Un terrarium peut être représenté comme un «&nbsp;plan&nbsp;», défini comme étant un
+tableau de chaînes de caractères. Nous aurions pu n’utiliser qu’une seule
+chaîne de caractères, mais comme les chaînes de caractères JavaScript ne
+doivent comporter qu’une seule ligne, ça aurait été beaucoup plus compliqué à
+taper.</p><pre class="code"><span class="keyword">var</span> <span class="variable">lePlan</span> =
+  [<span class="string">&quot;############################&quot;</span>,
+   <span class="string">&quot;#      #    #      o      ##&quot;</span>,
+   <span class="string">&quot;#                          #&quot;</span>,
+   <span class="string">&quot;#          #####           #&quot;</span>,
+   <span class="string">&quot;##         #   #    ##     #&quot;</span>,
+   <span class="string">&quot;###           ##     #     #&quot;</span>,
+   <span class="string">&quot;#           ###      #     #&quot;</span>,
+   <span class="string">&quot;#   ####                   #&quot;</span>,
+   <span class="string">&quot;#   ##       o             #&quot;</span>,
+   <span class="string">&quot;# o  #         o       ### #&quot;</span>,
+   <span class="string">&quot;#    #                     #&quot;</span>,
+   <span class="string">&quot;############################&quot;</span>];</pre><p>Les caractères <code>&quot;#&quot;</code> sont utilisés pour représenter les murs du terrarium (et
+les éléments de décors, comme les rochers au sol), les <code>&quot;o&quot;</code> représentent les
+bêtes et les espaces, comme vous vous en êtes sûrement doutés, représentent les
+espaces vides.</p><p>Un plan-tableau de ce type est approprié pour représenter un objet terrarium.
+Cet objet garde trace de la forme et du contenu du terrarium, et permet aux
+insectes à l’intérieur de bouger. Il a quatre méthodes : tout d’abord
+<code>toString</code>, qui convertit le terrarium en une chaîne de caractères affichable,
+permettant d’avoir un aperçu de ce qui se passe dedans. Ensuite, il y a <code>step</code>,
+qui permet à toutes les bêtes du terrarium de se déplacer d’une case si elles
+le veulent. Et enfin il y a <code>start</code> et <code>stop</code>, qui contrôlent l’activité du
+terrarium. Lorsqu’il fonctionne, <code>step</code> est appelé automatiquement toutes les
+demi-secondes, et donc les insectes se déplacent.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 8.1</div><div class="exercise"><p><a name="key19"></a>Les points sur la grille représenteront également des objets. Dans le
+<a href="chapter7.html">chapitre 7</a> nous avons utilisé trois fonctions : <code>point</code>, <code>ajouterPoints</code> et
+<code>pointsIdentiques</code> pour travailler avec les points. Cette fois, nous
+utiliserons un constructeur et deux méthodes. Écrire le constructeur <code>Point</code>,
+qui prend deux arguments, les coordonnées x et y du point, et produit un objet
+avec des propriétés <code>x</code> et <code>y</code>. Ajoutez au prototype de ce constructeur une
+méthode <code>add</code>, qui prend un autre point en argument et retourne un <em>nouveau</em>
+point dont les <code>x</code> et <code>y</code> sont la somme des <code>x</code> et <code>y</code> des deux points donnés.
+Ajoutez également une méthode <code>isEqualTo</code>, qui prend un point et renvoie un
+booléen, indiquant si le point local (<code>this</code>) a les mêmes coordonnées que le
+point donné.</p><p>En dehors des deux méthodes, les propriétés <code>x</code> et <code>y</code> font également partie de
+l’interface de ce type d’objets : le code utilisant des objets de type point
+pourra lire et modifier librement les <code>x</code> et <code>y</code>.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">Point</span>(<span class="variabledef">x</span>, <span class="variabledef">y</span>) {
+  <span class="localvariable">this</span>.<span class="property">x</span> = <span class="localvariable">x</span>;
+  <span class="localvariable">this</span>.<span class="property">y</span> = <span class="localvariable">y</span>;
+}
+<span class="variable">Point</span>.<span class="property">prototype</span>.<span class="property">add</span> = <span class="keyword">function</span>(<span class="variabledef">autre</span>) {
+  <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">Point</span>(<span class="localvariable">this</span>.<span class="property">x</span> + <span class="localvariable">autre</span>.<span class="property">x</span>, <span class="localvariable">this</span>.<span class="property">y</span> + <span class="localvariable">autre</span>.<span class="property">y</span>);
+};
+<span class="variable">Point</span>.<span class="property">prototype</span>.<span class="property">isEqualTo</span> = <span class="keyword">function</span>(<span class="variabledef">autre</span>) {
+  <span class="keyword">return</span> <span class="localvariable">this</span>.<span class="property">x</span> == <span class="localvariable">autre</span>.<span class="property">x</span> &amp;&amp; <span class="localvariable">this</span>.<span class="property">y</span> == <span class="localvariable">autre</span>.<span class="property">y</span>;
+};
+
+<span class="variable">show</span>((<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">3</span>, <span class="atom">1</span>)).<span class="property">add</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">2</span>, <span class="atom">4</span>)));</pre><p>Assurez-vous que votre version de <code>add</code> laisse le point local (<code>this</code>) intact
+et produise bien un nouvel objet Point. Une méthode qui change le point courant
+serait similaire à l’opérateur <code>+=</code>, alors qu’on la veut équivalente à
+l’opérateur <code>+</code>.</p></div></div><hr/><div class="block"><p>Quand on écrit des objets pour développer un programme, on ne sait pas toujours
+quelle fonctionnalité va où. Certaines choses sont mieux implémentées sous
+forme de méthodes de l’objet, d’autres mieux rangées dans des fonctions et
+d’autres encore mieux modélisées par de nouveaux types d’objets. Pour garder
+l’organisation limpide, il est important de garder le nombre de méthodes et de
+responsabilités des objets aussi petit que possible. Quand un objet en fait
+trop, il devient un gros bazar de fonctionnalités et une formidable source de
+confusions.</p><p>J’ai dit plus haut que l’objet terrarium serait responsable du stockage de son
+contenu et de permettre aux insectes de bouger. Tout d’abord, précisons qu’il
+ne fait que <em>permettre</em> aux insectes de bouger. Les bébêtes seront elles-mêmes
+des objets, et ces objets seront responsables de leur propres décisions. Le
+terrarium ne fournit en gros que l’infrastructure qui leur demande quoi faire
+chaque demi-seconde. Et s’ils décident de bouger, il s’assure que ça se fasse.</p><p>Stocker la grille sur laquelle le contenu du terrarium prend place peut vite se
+compliquer. Il faut définir une représentation, des moyens d’accéder à cette
+représentation, d’initialiser la grille depuis le «&nbsp;plan&nbsp;» (fourni sous forme
+de tableau) et de restituer le contenu de la grille sous la forme d’une chaîne
+de caractères pour la méthode <code>toString</code>, sans oublier le mouvement des
+insectes sur la grille.</p></div><hr/><div class="block"><p>Lorsque vous vous retrouvez à mélanger représentations de données et code
+spécifique à un problème donné dans un seul objet, c’est une bonne idée
+d’essayer de mettre la représentation des données dans un type d’objet séparé.
+Dans ce cas, nous avons besoin de représenter une grille de valeurs, j’ai donc
+écrit un type <code>Grille</code>, qui supporte les opérations dont ce terrarium aura
+besoin.</p><p>Pour stocker les valeurs de la grille, il y a deux options. L’une peut utiliser
+un tableau de tableaux :</p><pre class="code"><span class="keyword">var</span> <span class="variable">grille</span> = [[<span class="string">&quot;0,0&quot;</span>, <span class="string">&quot;1,0&quot;</span>, <span class="string">&quot;2,0&quot;</span>],
+             [<span class="string">&quot;0,1&quot;</span>, <span class="string">&quot;1,1&quot;</span>, <span class="string">&quot;2,1&quot;</span>]];
+<span class="variable">show</span>(<span class="variable">grille</span>[<span class="atom">1</span>][<span class="atom">2</span>]);</pre><p>Ou alors les valeurs peuvent toutes être mises dans un seul tableau. Dans ce
+cas, on retrouve l’élément <code>x</code>/<code>y</code> en cherchant dans le tableau l’élément en
+position <code>x + y * largeur</code>, où <code>largeur</code> est la largeur de la grille.</p><pre class="code"><span class="keyword">var</span> <span class="variable">grille</span> = [<span class="string">&quot;0,0&quot;</span>, <span class="string">&quot;1,0&quot;</span>, <span class="string">&quot;2,0&quot;</span>,
+              <span class="string">&quot;0,1&quot;</span>, <span class="string">&quot;1,1&quot;</span>, <span class="string">&quot;2,1&quot;</span>];
+<span class="variable">show</span>(<span class="variable">grille</span>[<span class="atom">2</span> + <span class="atom">1</span> * <span class="atom">3</span>]);</pre><p><a name="key20"></a>J’ai choisi la seconde représentation, car elle simplifie
+l’initialisation du tableau. <code>new Array(x)</code> produit un nouveau tableau de
+longueur <code>x</code>, rempli de valeurs <code>undefined</code> (indéfinies).</p><pre class="code"><span class="keyword">function</span> <span class="variable">Grille</span>(<span class="variabledef">largeur</span>, <span class="variabledef">hauteur</span>) {
+  <span class="localvariable">this</span>.<span class="property">largeur</span> = <span class="localvariable">largeur</span>;
+  <span class="localvariable">this</span>.<span class="property">hauteur</span> = <span class="localvariable">hauteur</span>;
+  <span class="localvariable">this</span>.<span class="property">cellules</span> = <span class="keyword">new</span> <span class="variable">Array</span>(<span class="localvariable">largeur</span> * <span class="localvariable">hauteur</span>);
+}
+<span class="variable">Grille</span>.<span class="property">prototype</span>.<span class="property">valeurEn</span> = <span class="keyword">function</span>(<span class="variabledef">point</span>) {
+  <span class="keyword">return</span> <span class="localvariable">this</span>.<span class="property">cellules</span>[<span class="localvariable">point</span>.<span class="property">y</span> * <span class="localvariable">this</span>.<span class="property">largeur</span> + <span class="localvariable">point</span>.<span class="property">x</span>];
+};
+<span class="variable">Grille</span>.<span class="property">prototype</span>.<span class="property">ecritValeurEn</span> = <span class="keyword">function</span>(<span class="variabledef">point</span>, <span class="variabledef">valeur</span>) {
+  <span class="localvariable">this</span>.<span class="property">cellules</span>[<span class="localvariable">point</span>.<span class="property">y</span> * <span class="localvariable">this</span>.<span class="property">largeur</span> + <span class="localvariable">point</span>.<span class="property">x</span>] = <span class="localvariable">valeur</span>;
+};
+<span class="variable">Grille</span>.<span class="property">prototype</span>.<span class="property">estDedans</span> = <span class="keyword">function</span>(<span class="variabledef">point</span>) {
+  <span class="keyword">return</span> <span class="localvariable">point</span>.<span class="property">x</span> &gt;= <span class="atom">0</span> &amp;&amp; <span class="localvariable">point</span>.<span class="property">y</span> &gt;= <span class="atom">0</span> &amp;&amp;
+         <span class="localvariable">point</span>.<span class="property">x</span> &lt; <span class="localvariable">this</span>.<span class="property">largeur</span> &amp;&amp; <span class="localvariable">point</span>.<span class="property">y</span> &lt; <span class="localvariable">this</span>.<span class="property">hauteur</span>;
+};
+<span class="variable">Grille</span>.<span class="property">prototype</span>.<span class="property">deplaceElement</span> = <span class="keyword">function</span>(<span class="variabledef">depuis</span>, <span class="variabledef">vers</span>) {
+  <span class="localvariable">this</span>.<span class="property">ecritValeurEn</span>(<span class="localvariable">vers</span>, <span class="localvariable">this</span>.<span class="property">valeurEn</span>(<span class="localvariable">depuis</span>));
+  <span class="localvariable">this</span>.<span class="property">ecritValeurEn</span>(<span class="localvariable">depuis</span>, <span class="atom">undefined</span>);
+};</pre></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 8.2</div><div class="exercise"><p>Nous allons également avoir besoin de parcourir tous les éléments de la grille,
+pour trouver les insectes qui ont besoin de bouger, ou pour convertir
+l’ensemble en une chaîne de caractères. Pour simplifier la chose, nous pouvons
+utiliser une fonction de haut niveau qui prend une action en argument. Ajouter
+une méthode <code>each</code> au prototype de <code>Grille</code>, qui prend en argument une fonction
+à deux arguments. Elle appelle cette fonction pour chaque point de la grille,
+lui donnant l’objet point comment premier argument, et la valeur du point sur
+la grille comme deuxième argument.</p><p>Parcourir les points depuis <code>0</code>, <code>0</code>, une ligne à la fois, de manière à ce que
+le point <code>1</code>, <code>0</code> soit parcouru avant <code>0</code>, <code>1</code>. Cela simplifiera l’écriture de
+la fonction <code>toString</code> du terrarium après. (Indice : mettre une boucle <code>for</code>
+pour la coordonnée <code>x</code> à l’intérieur de la boucle for de la coordonnée <code>y</code>.)</p><p>Il est conseillé de ne pas mettre son nez directement dans la propriété
+<code>cellules</code> de la grille, mais d’utiliser <code>valeurEn</code>, pour récupérer ces
+valeurs. De cette manière, si nous décidons (pour une raison ou pour une autre)
+d’utiliser une méthode différente pour stocker les valeurs, nous n’aurons qu’à
+réécrire la fonction <code>valeurEn</code> et <code>ecritValeurEn</code>, et les autres méthodes
+resterons intactes.</p></div><div class="solution"><pre class="code"><span class="variable">Grille</span>.<span class="property">prototype</span>.<span class="property">each</span> = <span class="keyword">function</span>(<span class="variabledef">action</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">y</span> = <span class="atom">0</span>; <span class="localvariable">y</span> &lt; <span class="localvariable">this</span>.<span class="property">hauteur</span>; <span class="localvariable">y</span>++) {
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">x</span> = <span class="atom">0</span>; <span class="localvariable">x</span> &lt; <span class="localvariable">this</span>.<span class="property">largeur</span>; <span class="localvariable">x</span>++) {
+      <span class="keyword">var</span> <span class="variabledef">point</span> = <span class="keyword">new</span> <span class="variable">Point</span>(<span class="localvariable">x</span>, <span class="localvariable">y</span>);
+      <span class="localvariable">action</span>(<span class="localvariable">point</span>, <span class="localvariable">this</span>.<span class="property">valeurEn</span>(<span class="localvariable">point</span>));
+    }
+  }
+};</pre></div></div><hr/><div class="block"><p>Enfin, pour tester l’objet grille :</p><pre class="code"><span class="keyword">var</span> <span class="variable">testGrille</span> = <span class="keyword">new</span> <span class="variable">Grille</span>(<span class="atom">3</span>, <span class="atom">2</span>);
+<span class="variable">testGrille</span>.<span class="property">ecritValeurEn</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">1</span>, <span class="atom">0</span>), <span class="string">&quot;#&quot;</span>);
+<span class="variable">testGrille</span>.<span class="property">ecritValeurEn</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">1</span>, <span class="atom">1</span>), <span class="string">&quot;o&quot;</span>);
+<span class="variable">testGrille</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">point</span>, <span class="variabledef">valeur</span>) {
+  <span class="variable">print</span>(<span class="localvariable">point</span>.<span class="property">x</span>, <span class="string">&quot;,&quot;</span>, <span class="localvariable">point</span>.<span class="property">y</span>, <span class="string">&quot;: &quot;</span>, <span class="localvariable">valeur</span>);
+});</pre></div><hr/><div class="block"><p>Avant d’écrire un nouveau constructeur <code>Terrarium</code>, nous devons être plus
+précis à propos de ces «&nbsp;objets insectes&nbsp;» qui évolueront à l’intérieur.
+Précédemment, j’ai dit que le terrarium demandera aux insectes quelle action
+ils veulent effectuer. Cela fonctionnera de la fonction suivante : chaque
+insecte aura une méthode <code>agit</code> qui, appelée, renverra une «&nbsp;action&nbsp;». Une
+action est un objet doté d’une propriété <code>type</code>, nommant le type d’action que
+l’insecte souhaitera effectuer. Par exemple <code>&quot;déplacement&quot;</code>. La plupart des
+actions porteront d’autres informations, par exemple la direction souhaitée par
+l’insecte qui voudra se déplacer.</p><p>Les insectes sont terriblement myopes, ils ne peuvent voir que les cases à côté
+d’eux sur la grille. Mais ils peuvent s’en servir pour déterminer leurs
+actions. Quand la méthode <code>agit</code> est appelée, il lui est fourni un objet avec
+des informations sur l’environnement de l’insecte en question. Il porte une
+propriété pour chacune des huit directions autour de l’insecte. La propriété
+indiquant ce qu’il y a au-dessus de l’insecte est appelé <code>&quot;n&quot;</code>, pour Nord, pour
+ce qu’il y a au-dessus à droite <code>&quot;ne&quot;</code>, pour Nord-Est, et ainsi de suite.  Pour
+savoir quelle direction explorer selon le nom de la direction, l’objet
+dictionnaire suivant sera utile :</p><pre class="code"><span class="keyword">var</span> <span class="variable">directions</span> = <span class="keyword">new</span> <span class="variable">Dictionary</span>(
+  {<span class="string">&quot;n&quot;</span>:  <span class="keyword">new</span> <span class="variable">Point</span>( <span class="atom">0</span>, -<span class="atom">1</span>),
+   <span class="string">&quot;ne&quot;</span>: <span class="keyword">new</span> <span class="variable">Point</span>( <span class="atom">1</span>, -<span class="atom">1</span>),
+   <span class="string">&quot;e&quot;</span>:  <span class="keyword">new</span> <span class="variable">Point</span>( <span class="atom">1</span>,  <span class="atom">0</span>),
+   <span class="string">&quot;se&quot;</span>: <span class="keyword">new</span> <span class="variable">Point</span>( <span class="atom">1</span>,  <span class="atom">1</span>),
+   <span class="string">&quot;s&quot;</span>:  <span class="keyword">new</span> <span class="variable">Point</span>( <span class="atom">0</span>,  <span class="atom">1</span>),
+   <span class="string">&quot;so&quot;</span>: <span class="keyword">new</span> <span class="variable">Point</span>(-<span class="atom">1</span>,  <span class="atom">1</span>),
+   <span class="string">&quot;o&quot;</span>:  <span class="keyword">new</span> <span class="variable">Point</span>(-<span class="atom">1</span>,  <span class="atom">0</span>),
+   <span class="string">&quot;no&quot;</span>: <span class="keyword">new</span> <span class="variable">Point</span>(-<span class="atom">1</span>, -<span class="atom">1</span>)});
+
+<span class="variable">show</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">4</span>, <span class="atom">4</span>).<span class="property">add</span>(<span class="variable">directions</span>.<span class="property">lookup</span>(<span class="string">&quot;se&quot;</span>)));</pre><p>Quand un insecte décide de se déplacer, il indique dans quelle direction il
+veut aller en renvoyant un objet action dont la propriété <code>direction</code> nomme
+laquelle de ces directions. Nous pouvons programmer un insecte primitif et
+idiot qui va toujours vers le sud, «&nbsp;vers la lumière&nbsp;», comme ceci :</p><pre class="code"><span class="keyword">function</span> <span class="variable">InsecteStupide</span>() {};
+<span class="variable">InsecteStupide</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>, <span class="property">direction</span>: <span class="string">&quot;s&quot;</span>};
+};</pre></div><hr/><div class="block"><p>Nous pouvons maintenir construire le type d’objet <code>Terrarium</code> lui-même.
+Commençons par son constructeur, qui reçoit un plan (un tableau de chaîne)
+comme argument, et initialise son objet grille.</p><pre class="code"><span class="keyword">var</span> <span class="variable">mur</span> = {};
+
+<span class="keyword">function</span> <span class="variable">Terrarium</span>(<span class="variabledef">plan</span>) {
+  <span class="keyword">var</span> <span class="variabledef">grille</span> = <span class="keyword">new</span> <span class="variable">Grille</span>(<span class="localvariable">plan</span>[<span class="atom">0</span>].<span class="property">length</span>, <span class="localvariable">plan</span>.<span class="property">length</span>);
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">y</span> = <span class="atom">0</span>; <span class="localvariable">y</span> &lt; <span class="localvariable">plan</span>.<span class="property">length</span>; <span class="localvariable">y</span>++) {
+    <span class="keyword">var</span> <span class="variabledef">ligne</span> = <span class="localvariable">plan</span>[<span class="localvariable">y</span>];
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">x</span> = <span class="atom">0</span>; <span class="localvariable">x</span> &lt; <span class="localvariable">ligne</span>.<span class="property">length</span>; <span class="localvariable">x</span>++) {
+      <span class="localvariable">grille</span>.<span class="property">ecritValeurEn</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="localvariable">x</span>, <span class="localvariable">y</span>),
+                      <span class="variable">elementdApresCaractere</span>(<span class="localvariable">ligne</span>.<span class="property">charAt</span>(<span class="localvariable">x</span>)));
+    }
+  }
+  <span class="localvariable">this</span>.<span class="property">grille</span> = <span class="localvariable">grille</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">elementdApresCaractere</span>(<span class="variabledef">caractere</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot; &quot;</span>)
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot;#&quot;</span>)
+    <span class="keyword">return</span> <span class="variable">mur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot;o&quot;</span>)
+    <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">InsecteStupide</span>();
+}</pre><p><code>mur</code> est un objet utilisé pour repérer la position des murs sur la grille.
+Comme un vrai mur, il ne fait pas grand-chose, juste être quelque part et
+occuper une partie de l’espace.</p></div><hr/><div class="block"><p>La méthode la plus évidente de l’objet terrarium est <code>toString</code>, qui transforme
+un terrarium en chaîne de caractères. Pour faciliter cette tâche, nous donnons
+à <code>mur</code> et au prototype de <code>InsecteStupide</code> une propriété <code>caractere</code>,
+contenant la représentation sous forme de caractère de ceux-ci.</p><pre class="code"><span class="variable">mur</span>.<span class="property">caractere</span> = <span class="string">&quot;#&quot;</span>;
+<span class="variable">InsecteStupide</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;o&quot;</span>;
+
+<span class="keyword">function</span> <span class="variable">caracteredApresElement</span>(<span class="variabledef">element</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">element</span> == <span class="atom">undefined</span>)
+    <span class="keyword">return</span> <span class="string">&quot; &quot;</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="localvariable">element</span>.<span class="property">caractere</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">caracteredApresElement</span>(<span class="variable">mur</span>));</pre></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 8.3</div><div class="exercise"><p>Maintenant, nous pouvons utiliser la méthode <code>each</code> de l’objet <code>Grille</code> pour
+construire une chaîne de caractères. Pour que le résultat soit lisible, il est
+préférable d’avoir un retour chariot à chaque ligne. La coordonnée <code>x</code> de
+chaque case de la grille sera utilisée pour déterminer si la fin d’une ligne
+est atteinte.  Ajouter une méthode <code>toString</code> au prototype de <code>Terrarium</code>.
+Cette méthode ne prend pas d’argument et renvoie une chaîne de caractères
+destinée à être passée à <code>print</code>, affichant ainsi une belle vue
+bidimensionnelle du terrarium.</p></div><div class="solution"><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">toString</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">caracteres</span> = [];
+  <span class="keyword">var</span> <span class="variabledef">finDeLigne</span> = <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">largeur</span> - <span class="atom">1</span>;
+  <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">point</span>, <span class="variabledef">valeur</span>) {
+    <span class="localvariable">caracteres</span>.<span class="property">push</span>(<span class="variable">caracteredApresElement</span>(<span class="localvariable">valeur</span>));
+    <span class="keyword">if</span> (<span class="localvariable">point</span>.<span class="property">x</span> == <span class="localvariable">finDeLigne</span>)
+      <span class="localvariable">caracteres</span>.<span class="property">push</span>(<span class="string">&quot;\n&quot;</span>);
+  });
+  <span class="keyword">return</span> <span class="localvariable">caracteres</span>.<span class="property">join</span>(<span class="string">&quot;&quot;</span>);
+};</pre><p>Et pour l’essayer …</p><pre class="code"><span class="keyword">var</span> <span class="variable">terrarium</span> = <span class="keyword">new</span> <span class="variable">Terrarium</span>(<span class="variable">lePlan</span>);
+<span class="variable">print</span>(<span class="variable">terrarium</span>.<span class="property">toString</span>());</pre></div></div><hr/><div class="block"><p>Il est possible qu’en essayant de résoudre l’exercice précédent, vous ayez
+voulu accéder à <code>this.grille</code> dans le corps de la fonction passé en argument de
+la méthode <code>each</code> de l’objet grille. Cela ne peut pas fonctionner, car l’appel
+à une fonction a pour conséquence qu’à l’intérieur de cette fonction, <code>this</code>
+prend une nouvelle valeur, même si elle n’est pas utilisée en tant que méthode.
+Ainsi, aucune variable <code>this</code> à l’extérieur d’une fonction ne peut être
+visible.</p><p>Parfois, il est nécessaire de contourner ceci en stockant les informations dont
+on a besoin dans une variable, par exemple <code>finDeLigne</code>, qui elle <em>est</em> visible
+dans la fonction imbriquée. Si vous avez besoin d’accéder à la variable <code>this</code>
+d’un objet, vous pouvez la stocker dans une autre variable. Le nom <code>self</code> (ou
+<code>that</code>) est souvent utilisée pour une telle
+variable.</p><p>Mais l’utilisation de ces variables en plus peut être source de confusion. Une
+autre bonne solution est d’utiliser une fonction proche de <code>partial</code> décrite
+dans le <a href="chapter6.html">chapitre 6</a>. Au lieu d’ajouter un argument à la fonction, celle-ci passe
+l’objet <code>this</code>, par l’intermédiaire du premier argument de la méthode <code>apply</code>
+dont disposent toutes les fonctions :</p><pre class="code"><span class="keyword">function</span> <span class="variable">bind</span>(<span class="variabledef">func</span>, <span class="variabledef">objet</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>(){
+    <span class="keyword">return</span> <span class="localvariable">func</span>.<span class="property">apply</span>(<span class="localvariable">objet</span>, <span class="localvariable">arguments</span>);
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">tableauTest</span> = [];
+<span class="keyword">var</span> <span class="variable">ajouterDansTest</span> = <span class="variable">bind</span>(<span class="variable">tableauTest</span>.<span class="property">push</span>, <span class="variable">tableauTest</span>);
+<span class="variable">ajouterDansTest</span>(<span class="string">&quot;A&quot;</span>);
+<span class="variable">ajouterDansTest</span>(<span class="string">&quot;B&quot;</span>);
+<span class="variable">show</span>(<span class="variable">tableauTest</span>);</pre><p>De cette façon, vous pouvez lier la variable <code>this</code> d’une fonction imbriquée à
+la variable <code>this</code> de la fonction appelante, les deux <code>this</code> seront identiques.</p></div><hr/><div class="block"><a name="exercise4"></a><div class="exercisenum">Ex. 8.4</div><div class="exercise"><p>Dans l’expression <code>bind(tableauTest.push, tableauTest)</code> le nom <code>tableauTest</code>
+est encore utilisé deux fois. Pouvez-vous concevoir une fonction <a name="key21"></a><code>method</code>,
+qui permet de lier un objet à une de ses méthodes <em>sans</em> nommer deux fois
+l’objet&nbsp;?</p></div><div class="solution"><p>Il est possible de passer à un objet une chaîne de caractères contenant le nom
+d’une de ses méthodes. De cette façon, la fonction <code>method</code> peut connaître le
+nom de la fonction à appliquer à l’objet.</p><pre class="code"><span class="keyword">function</span> <span class="variable">method</span>(<span class="variabledef">objet</span>, <span class="variabledef">nom</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>() {
+    <span class="localvariable">objet</span>[<span class="localvariable">nom</span>].<span class="property">apply</span>(<span class="localvariable">objet</span>, <span class="localvariable">arguments</span>);
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">ajouterDansTest</span> = <span class="variable">method</span>(<span class="variable">tableauTest</span>, <span class="string">&quot;push&quot;</span>);</pre></div></div><hr/><div class="block"><p>Nous aurons besoin de <code>bind</code> (ou <code>method</code>) quand nous écrirons la méthode
+<code>step</code> de l’objet terrarium. Cette méthode devra parcourir tous les insectes de
+la grille, en leur demandant quelle action ils veulent effectuer, et en
+effectuant pour eux cette action.  Vous pourriez être tenté d’utiliser <code>each</code>
+sur l’objet grille, et traiter les insectes un par un au fur et à mesure que
+vous les rencontriez. Mais ce faisant, si un insecte se déplaçait vers le sud
+ou l’est, vous le rencontriez à nouveau dans le même tour, et il serait à
+nouveau déplacé.</p><p>À la place, nous allons extraire tous les insectes vers un tableau, et partant
+de là, les traiter un par un.  La méthode ci-dessous extrait les insectes, et
+même tout objet qui possède une méthode <code>agit</code>, et enregistre ces objets, et
+leurs positions respectives avant déplacement, dans un tableau d’objets.</p><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">listeCreaturesEnAction</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">trouves</span> = [];
+  <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">point</span>, <span class="variabledef">valeur</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">valeur</span> != <span class="atom">undefined</span> &amp;&amp; <span class="localvariable">valeur</span>.<span class="property">agit</span>)
+      <span class="localvariable">trouves</span>.<span class="property">push</span>({<span class="property">object</span>: <span class="localvariable">valeur</span>, <span class="property">point</span>: <span class="localvariable">point</span>});
+  });
+  <span class="keyword">return</span> <span class="localvariable">trouves</span>;
+};</pre></div><hr/><div class="block"><a name="exercise5"></a><div class="exercisenum">Ex. 8.5</div><div class="exercise"><p>Lorsque l’on demande à un insecte quel déplacement il souhaite réaliser, il
+faut lui passer un objet lui décrivant les cases alentours. Cet objet utilisera
+les noms de direction que nous avons vu précédemment (<code>&quot;n&quot;</code>, <code>&quot;ne&quot;</code>, etc.)
+comme noms de propriétés. Chaque propriété contiendra une chaîne d’un caractère
+tel que renvoyé par <code>caracteredApresElement</code>, indiquant ce que peut voir
+l’insecte dans cette direction.</p><p>Ajouter une méthode <code>listeAlentours</code> au prototype de <code>Terrarium</code>. Elle prend un
+argument, le point où l’insecte se trouve, et renvoie un objet décrivant
+l’entourage de ce point. Quand un point se trouve à une bordure de la grille,
+utiliser <code>&quot;#&quot;</code> pour les directions qui débordent de la grille, ainsi l’insecte
+ne pourra s’y rendre.</p><p>Conseil : ne pas décrire chacune des directions, mais utiliser la méthode
+<code>each</code> sur le dictionnaire <code>directions</code>.</p></div><div class="solution"><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">listeAlentours</span> = <span class="keyword">function</span>(<span class="variabledef">centre</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = {};
+  <span class="keyword">var</span> <span class="variabledef">grille</span> = <span class="localvariable">this</span>.<span class="property">grille</span>;
+  <span class="variable">directions</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">direction</span>) {
+    <span class="keyword">var</span> <span class="variabledef">place</span> = <span class="localvariable">centre</span>.<span class="property">add</span>(<span class="localvariable">direction</span>);
+    <span class="keyword">if</span> (<span class="localvariable">grille</span>.<span class="property">estDedans</span>(<span class="localvariable">place</span>))
+      <span class="localvariable">resultat</span>[<span class="localvariable">nom</span>] = <span class="variable">caracteredApresElement</span>(<span class="localvariable">grille</span>.<span class="property">valeurEn</span>(<span class="localvariable">place</span>));
+    <span class="keyword">else</span>
+      <span class="localvariable">resultat</span>[<span class="localvariable">nom</span>] = <span class="string">&quot;#&quot;</span>;
+  });
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+};</pre><p>Remarquez l’utilisation de la variable <code>grille</code> pour passer outre les
+difficultés liées à l’usage de <code>this</code>.</p></div></div><hr/><div class="block"><p>Les deux méthodes ci-dessus ne font pas partie de l’interface externe de
+l’objet <code>Terrarium</code>, mais sont des détails internes à l’objet. Certains
+langages de programmation permettent de déclarer explicitement certaines
+méthodes et propriétés comme &quot;privées&quot;, et provoquent une erreur si on accède à
+celles-ci en dehors de l’objet.  Ce n’est pas le cas de JavaScript, c’est
+pourquoi vous pourriez utiliser des commentaires pour décrire l’interface d’un
+objet.  Parfois il est utile d’utiliser des conventions de nommage pour
+distinguer les propriétés externes et internes, par exemple en préfixant les
+propriétés internes avec un caractère souligné (&quot;_&quot;).  Cela permet de repérer
+plus facilement les utilisations accidentelles des propriétés qui ne font pas
+partie de l’interface des objets.</p></div><hr/><div class="block"><p>Voici encore une méthode interne, celle qui va demander à un insecte ce qu’il
+veut faire, et l’effectuer. Elle prend en argument un objet avec les propriétés
+<code>object</code> et <code>point</code>, comme le renvoie <code>listeCreaturesEnAction</code>.  Pour le
+moment, elle ne reconnaît que l’action <code>&quot;déplacement&quot;</code> :</p><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">actionnerUneCreature</span> = <span class="keyword">function</span>(<span class="variabledef">creature</span>) {
+  <span class="keyword">var</span> <span class="variabledef">alentours</span> = <span class="localvariable">this</span>.<span class="property">listeAlentours</span>(<span class="localvariable">creature</span>.<span class="property">point</span>);
+  <span class="keyword">var</span> <span class="variabledef">action</span> = <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">agit</span>(<span class="localvariable">alentours</span>);
+  <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;déplacement&quot;</span> &amp;&amp; <span class="variable">directions</span>.<span class="property">contains</span>(<span class="localvariable">action</span>.<span class="property">direction</span>)) {
+    <span class="keyword">var</span> <span class="variabledef">to</span> = <span class="localvariable">creature</span>.<span class="property">point</span>.<span class="property">add</span>(<span class="variable">directions</span>.<span class="property">lookup</span>(<span class="localvariable">action</span>.<span class="property">direction</span>));
+    <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">estDedans</span>(<span class="localvariable">to</span>) &amp;&amp; <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">valeurEn</span>(<span class="localvariable">to</span>) == <span class="atom">undefined</span>)
+      <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">deplaceElement</span>(<span class="localvariable">creature</span>.<span class="property">point</span>, <span class="localvariable">to</span>);
+  }
+  <span class="keyword">else</span> {
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Action invalide : &quot;</span> + <span class="localvariable">action</span>.<span class="property">type</span>);
+  }
+};</pre><p>Remarquez que la méthode vérifie si la direction choisie amène bien à une case
+vide. Dans le cas contraire, la méthode ignore le déplacement. De cette façon,
+les insectes peuvent bien demander tout ce qu’ils veulent ― l’action ne sera
+effectuée que si elle est possible.  Ce mécanisme agit comme une couche
+d’isolation entre les insectes et le terrarium, et nous autorise quelques
+approximations dans l’écriture des méthodes <code>agit</code> des insectes ―&nbsp;par exemple
+<code>InsecteStupide</code> ne se déplace que vers le sud, sans se demander si un mur se
+trouve sur son chemin.</p></div><hr/><div class="block"><p>Ces trois méthodes internes vont nous permettre enfin d’écrire la méthode
+<code>step</code>, qui permettra aux insectes de faire quelque chose (et même tout élément
+doté d’une méthode <code>agit</code> ―&nbsp;nous pourrions tout aussi bien donner une telle
+méthode à l’objet <code>mur</code> et les murs se déplaceraient).</p><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">step</span> = <span class="keyword">function</span>() {
+  <span class="variable">forEach</span>(<span class="localvariable">this</span>.<span class="property">listeCreaturesEnAction</span>(),
+          <span class="variable">bind</span>(<span class="localvariable">this</span>.<span class="property">actionnerUneCreature</span>, <span class="localvariable">this</span>));
+};</pre><p>Maintenant, construisons un terrarium et voyons les insectes se déplacer.</p><pre class="code"><span class="keyword">var</span> <span class="variable">terrarium</span> = <span class="keyword">new</span> <span class="variable">Terrarium</span>(<span class="variable">lePlan</span>);
+<span class="variable">print</span>(<span class="variable">terrarium</span>);
+<span class="variable">terrarium</span>.<span class="property">step</span>();
+<span class="variable">print</span>(<span class="variable">terrarium</span>);</pre></div><hr/><div class="block"><p>Examinons un instant l’instruction ci-dessus <code>print(terrarium)</code>, comment
+fait-elle pour renvoyer le contenu de notre méthode <a name="key22"></a><code>toString</code>&nbsp;? <code>print</code>
+transforme les arguments qui lui sont passés en chaîne de caractères, en
+utilisant la fonction <code>String</code>. Les objets sont transformés en chaîne de
+caractères par l’appel de leur méthode <code>toString</code>, aussi, écrire une méthode
+<code>toString</code> dans nos propres objets est un bon moyen de les rendre lisibles lors
+de l’appel de <code>print</code>.</p><pre class="code"><span class="variable">Point</span>.<span class="property">prototype</span>.<span class="property">toString</span> = <span class="keyword">function</span>() {
+  <span class="keyword">return</span> <span class="string">&quot;(&quot;</span> + <span class="localvariable">this</span>.<span class="property">x</span> + <span class="string">&quot;,&quot;</span> + <span class="localvariable">this</span>.<span class="property">y</span> + <span class="string">&quot;)&quot;</span>;
+};
+<span class="variable">print</span>(<span class="keyword">new</span> <span class="variable">Point</span>(<span class="atom">5</span>, <span class="atom">5</span>));</pre></div><hr/><div class="block"><p>Comme prévu, l’objet <code>Terrarium</code> sera doté de méthode <code>start</code> et <code>stop</code> pour
+démarrer et arrêter la simulation. Pour cela, nous utiliserons deux fonctions
+fournies par le navigateur web, appelées <a name="key23"></a><code>setInterval</code> et <a name="key24"></a><code>clearInterval</code>. 
+La première est utilisée dans le but que son premier argument (une fonction ou
+une chaîne de caractères contenant du code JavaScript) soit exécuté
+périodiquement. Son deuxième argument est la durée en millisecondes (1/1000 de
+seconde) entre les exécutions.  La fonction renvoie une valeur qui pourra
+servir d’argument à <code>clearInterval</code> pour arrêter les exécutions périodiques.</p><pre class="code"><span class="keyword">var</span> <span class="variable">pénible</span> = <span class="variable">setInterval</span>(<span class="keyword">function</span>() {<span class="variable">print</span>(<span class="string">&quot;Quoi?&quot;</span>);}, <span class="atom">400</span>);</pre><p>Et…</p><pre class="code"><span class="variable">clearInterval</span>(<span class="variable">pénible</span>);</pre><p>Il existe des fonctions proches pour exécuter une action une seule fois après
+un laps de temps. <a name="key25"></a><code>setTimeout</code> exécute une fonction ou une chaîne de
+caractères après un délai exprimé en millisecondes, et <a name="key26"></a><code>clearTimeout</code> permet
+d’annuler une telle action.</p></div><hr/><div class="block"><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">start</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (!<span class="localvariable">this</span>.<span class="property">running</span>)
+    <span class="localvariable">this</span>.<span class="property">running</span> = <span class="variable">setInterval</span>(<span class="variable">bind</span>(<span class="localvariable">this</span>.<span class="property">step</span>, <span class="localvariable">this</span>), <span class="atom">500</span>);
+};
+
+<span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">stop</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">running</span>) {
+    <span class="variable">clearInterval</span>(<span class="localvariable">this</span>.<span class="property">running</span>);
+    <span class="localvariable">this</span>.<span class="property">running</span> = <span class="atom">null</span>;
+  }
+};</pre></div><hr/><div class="block"><p>À ce stade, nous avons un terrarium avec des insectes très simplistes, que nous
+pouvons faire fonctionner. Mais pour voir ce qu’il s’y passe, il nous faut
+constamment exécuter <code>print(terrarium)</code>. Ce n’est pas très pratique. Ce serait
+agréable que le contenu s’affiche automatiquement. Ce serait encore mieux si,
+au lieu d’afficher par milliers les images successives des terraria, nous
+n’ayons qu’une seule image que nous mettrions à jour.  Pour ce dernier
+problème, cette page offre une fonction nommée <code>inPlacePrinter</code>. Elle renvoie
+une fonction comme <code>print</code> qui, au lieu d’effectuer un nouvel affichage,
+remplace l’affichage précédent.</p><pre class="code"><span class="keyword">var</span> <span class="variable">printHere</span> = <span class="variable">inPlacePrinter</span>();
+<span class="variable">printHere</span>(<span class="string">&quot;Actuellement vous voyez ceci.&quot;</span>);
+<span class="variable">setTimeout</span>(<span class="variable">partial</span>(<span class="variable">printHere</span>, <span class="string">&quot;Plus maintenant.&quot;</span>), <span class="atom">1000</span>);</pre><p>Pour que le terrarium s’affiche à chaque changement, nous modifions la méthode
+<code>step</code> comme suit:</p><pre class="code"><span class="variable">Terrarium</span>.<span class="property">prototype</span>.<span class="property">step</span> = <span class="keyword">function</span>() {
+  <span class="variable">forEach</span>(<span class="localvariable">this</span>.<span class="property">listeCreaturesEnAction</span>(),
+          <span class="variable">bind</span>(<span class="localvariable">this</span>.<span class="property">actionnerUneCreature</span>, <span class="localvariable">this</span>));
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">onStep</span>)
+    <span class="localvariable">this</span>.<span class="property">onStep</span>();
+};</pre><p>En faisant cela, si une propriété <code>onStep</code> est présente dans l’objet terrarium,
+elle est appelée à chaque étape.</p><pre class="code"><span class="keyword">var</span> <span class="variable">terrarium</span> = <span class="keyword">new</span> <span class="variable">Terrarium</span>(<span class="variable">lePlan</span>);
+<span class="variable">terrarium</span>.<span class="property">onStep</span> = <span class="variable">partial</span>(<span class="variable">inPlacePrinter</span>(), <span class="variable">terrarium</span>);
+<span class="variable">terrarium</span>.<span class="property">start</span>();</pre><p>Remarquez l’utilisation de <code>partial</code> ―&nbsp;cette méthode <code>partial</code> renvoie une
+fonction d’affichage appliquée à l’objet terrarium. La fonction d’affichage ne
+demandant qu’un seul argument, après application partielle, nous obtenons une
+fonction sans argument. C’est exactement ce dont nous avons besoin pour la
+propriété <code>onStep</code>.</p><p>N’oubliez pas d’arrêter la simulation du terrarium, quand il perd de son
+intérêt (ce qui ne devrait pas tarder), pour éviter de consommer les ressources
+de votre ordinateur inutilement :</p><pre class="code"><span class="variable">terrarium</span>.<span class="property">stop</span>();</pre></div><hr/><div class="block"><p>Qui voudrait d’une simulation de terrarium avec une seule sorte d’insecte,
+stupide qui plus est&nbsp;? Pas moi. Ce serait judicieux si nous pouvions ajouter
+différentes sortes d’insectes. Heureusement, il nous suffit pour cela de rendre
+la fonction <code>elementdApresCaractere</code> plus générale. Pour le moment, elle décrit
+trois possibilités «&nbsp;codés en dur&nbsp;», c’est-à-dire de façon linéaire et sans
+flexibilité :</p><pre class="code"><span class="keyword">function</span> <span class="variable">elementdApresCaractere</span>(<span class="variabledef">caractere</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot; &quot;</span>)
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot;#&quot;</span>)
+    <span class="keyword">return</span> <span class="variable">mur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot;o&quot;</span>)
+    <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">InsecteStupide</span>();
+}</pre><p>Les deux premiers cas restent tels quels, le dernier étant trop spécifique. Une
+meilleure approche serait de stocker les constructeurs des objets insectes et
+les caractères qui leur correspondent dans un dictionnaire, et de rechercher
+dans ce dictionnaire ces caractères :</p><pre class="code"><span class="keyword">var</span> <span class="variable">typesDeCreature</span> = <span class="keyword">new</span> <span class="variable">Dictionary</span>();
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span> = <span class="keyword">function</span>(<span class="variabledef">constructeurDeInsecte</span>) {
+  <span class="localvariable">this</span>.<span class="property">store</span>(<span class="localvariable">constructeurDeInsecte</span>.<span class="property">prototype</span>.<span class="property">caractere</span>, <span class="localvariable">constructeurDeInsecte</span>);
+};
+
+<span class="keyword">function</span> <span class="variable">elementdApresCaractere</span>(<span class="variabledef">caractere</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot; &quot;</span>)
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">caractere</span> == <span class="string">&quot;#&quot;</span>)
+    <span class="keyword">return</span> <span class="variable">mur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">typesDeCreature</span>.<span class="property">contains</span>(<span class="localvariable">caractere</span>))
+    <span class="keyword">return</span> <span class="keyword">new</span> (<span class="variable">typesDeCreature</span>.<span class="property">lookup</span>(<span class="localvariable">caractere</span>))();
+  <span class="keyword">else</span>
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Caractère inconnu: &quot;</span> + <span class="localvariable">caractere</span>);
+}</pre><p>Remarquez qu’une méthode <code>enregistre</code> est ajoutée à l’objet <code>typesDeCreature</code>
+―&nbsp;celui-ci est de type dictionnaire, ce qui n’empêche en rien de lui ajouter
+une méthode. Cette fonction extrait le caractère associé au constructeur de
+l’insecte, et stocke ce caractère dans le dictionnaire.  Cette méthode ne doit
+être appelée que sur des objets dont le prototype possède une propriété
+<code>caractere</code>.</p><p>La fonction <code>elementdApresCaractere</code> est modifiée pour rechercher le caractère
+présent dans <code>typesDeCreature</code>, et provoque une exception si elle tombe sur un
+caractère inconnu.</p></div><hr/><div class="block"><p>Voici une nouvelle sorte d’insecte, ainsi que les instructions pour enregistrer
+son caractère dans <code>typesDeCreature</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">InsecteaRebond</span>() {
+  <span class="localvariable">this</span>.<span class="property">direction</span> = <span class="string">&quot;ne&quot;</span>;
+}
+<span class="variable">InsecteaRebond</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">alentours</span>[<span class="localvariable">this</span>.<span class="property">direction</span>] != <span class="string">&quot; &quot;</span>)
+    <span class="localvariable">this</span>.<span class="property">direction</span> = (<span class="localvariable">this</span>.<span class="property">direction</span> == <span class="string">&quot;ne&quot;</span> ? <span class="string">&quot;so&quot;</span> : <span class="string">&quot;ne&quot;</span>);
+  <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>, <span class="property">direction</span>: <span class="localvariable">this</span>.<span class="property">direction</span>};
+};
+<span class="variable">InsecteaRebond</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;%&quot;</span>;
+
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span>(<span class="variable">InsecteaRebond</span>);</pre><p>Pouvez-vous comprendre ce qu’il fait&nbsp;?</p></div><hr/><div class="block"><a name="exercise6"></a><div class="exercisenum">Ex. 8.6</div><div class="exercise"><p>Créer un insecte nommé <code>InsecteIvre</code> qui essaie de se déplacer dans une
+direction quelconque à chaque tour, peu importe s’il y a un mur en face de
+lui.  Rappelez-vous le fonctionnement de <code>Math.random</code> dans le <a href="chapter7.html">chapitre 7</a>.</p></div><div class="solution"><p>Pour déterminer une direction de façon aléatoire, nous avons besoin d’un
+tableau avec la liste des directions. Nous pourrions juste écrire un tableau de
+cette façon : <code>[&quot;n&quot;, &quot;ne&quot;, …]</code>, mais cela dupliquerait des informations, et les
+duplications d’information me rendent nerveux. Nous pourrions également
+utiliser la méthode <code>each</code> sur le dictionnaire <code>directions</code> pour construire un
+nouveau tableau, ce serait déjà mieux.</p><p>Mais vous devez comprendre qu’il y a, ici, une façon bien plus générale de
+procéder.  Récupérer la liste des noms de propriété d’un dictionnaire est un
+outil utile, aussi, ajoutons-le au prototype de l’objet <code>Dictionary</code>.</p><pre class="code"><span class="variable">Dictionary</span>.<span class="property">prototype</span>.<span class="property">names</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">noms</span> = [];
+  <span class="localvariable">this</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {<span class="localvariable">noms</span>.<span class="property">push</span>(<span class="localvariable">nom</span>);});
+  <span class="keyword">return</span> <span class="localvariable">noms</span>;
+};
+
+<span class="variable">show</span>(<span class="variable">directions</span>.<span class="property">names</span>());</pre><p>Un programmeur vraiment névrosé voudrait immédiatement rétablir la symétrie en
+ajoutant une méthode <code>values</code> qui retournerait la liste des valeurs d’un
+dictionnaire. Mais je suppose que nous pouvons attendre d’en avoir <a href="http://www.c2.com/cgi/wiki?YouArentGonnaNeedIt">vraiment
+besoin</a>.</p><p>Voici une façon de prendre un élément d’un tableau au hasard :</p><pre class="code"><span class="keyword">function</span> <span class="variable">elementAuHasard</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">tableau</span>.<span class="property">length</span> == <span class="atom">0</span>)
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Le tableau est vide.&quot;</span>);
+  <span class="keyword">return</span> <span class="localvariable">tableau</span>[<span class="variable">Math</span>.<span class="property">floor</span>(<span class="variable">Math</span>.<span class="property">random</span>() * <span class="localvariable">tableau</span>.<span class="property">length</span>)];
+}
+
+<span class="variable">show</span>(<span class="variable">elementAuHasard</span>([<span class="string">&quot;face&quot;</span>, <span class="string">&quot;pile&quot;</span>]));</pre><p>Et l’insecte lui-même :</p><pre class="code"><span class="keyword">function</span> <span class="variable">InsecteIvre</span>() {};
+<span class="variable">InsecteIvre</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>,
+          <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="variable">directions</span>.<span class="property">names</span>())};
+};
+<span class="variable">InsecteIvre</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;~&quot;</span>;
+
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span>(<span class="variable">InsecteIvre</span>);</pre></div></div><hr/><div class="block"><p>Essayons maintenant ces nouveaux insectes :</p><pre class="code"><span class="keyword">var</span> <span class="variable">nouveauPlan</span> =
+  [<span class="string">&quot;############################&quot;</span>,
+   <span class="string">&quot;#                      #####&quot;</span>,
+   <span class="string">&quot;#    ##                 ####&quot;</span>,
+   <span class="string">&quot;#   ####     ~ ~          ##&quot;</span>,
+   <span class="string">&quot;#    ##       ~            #&quot;</span>,
+   <span class="string">&quot;#                          #&quot;</span>,
+   <span class="string">&quot;#                ###       #&quot;</span>,
+   <span class="string">&quot;#               #####      #&quot;</span>,
+   <span class="string">&quot;#                ###       #&quot;</span>,
+   <span class="string">&quot;# %        ###        %    #&quot;</span>,
+   <span class="string">&quot;#        #######           #&quot;</span>,
+   <span class="string">&quot;############################&quot;</span>];
+
+<span class="keyword">var</span> <span class="variable">terrarium</span> = <span class="keyword">new</span> <span class="variable">Terrarium</span>(<span class="variable">nouveauPlan</span>);
+<span class="variable">terrarium</span>.<span class="property">onStep</span> = <span class="variable">partial</span>(<span class="variable">inPlacePrinter</span>(), <span class="variable">terrarium</span>);
+<span class="variable">terrarium</span>.<span class="property">start</span>();</pre><p>Vous voyez comment les insectes à rebond rebondissent sur les insectes en état
+d’ébriété&nbsp;? Dramatique. De toute façon, quand vous en aurez assez de regarder
+ce spectacle fascinant, vous pourrez y mettre fin :</p><pre class="code"><span class="variable">terrarium</span>.<span class="property">stop</span>();</pre></div><hr/><div class="block"><p>Nous avons maintenant deux sortes d’objets possédant chacun une méthode <code>agit</code>
+et une propriété <code>caractere</code>. Comme ils partagent ces caractéristiques, le
+terrarium peut dialoguer avec eux d’une façon commune. Ceci nous autorise à
+avoir toutes sortes d’insectes, sans rien changer au code de l’objet terrarium.
+Cette technique est appelée <a name="key27"></a>polymorphisme, et c’est sûrement l’un des aspects
+les plus puissants de la programmation orientée objet.</p><p>L’idée de base du polymorphisme est que lorsqu’un morceau de programme est
+écrit pour manipuler des objets ayant une certaine interface, n’importe quel
+objet qui présente cette interface pourra être raccordé à ce morceau de
+programme, et le tout fonctionne.  Nous avons déjà vu un exemple de cela, à
+savoir la méthode <code>toString</code> de nombreux objets.  Tous les objets ayant une
+méthode <code>toString</code> pertinente peuvent être passés à la fonction <code>print</code>, ou
+toute autre fonction qui aura besoin de convertir un objet en chaîne de
+caractères, peu importe la façon dont cette dernière est produite.</p><p>De la même façon, <code>forEach</code> travaille sur de véritables objets tableau ou sur
+des objets similaires aux tableaux, <code>forEach</code> recevant cet objet tableau dans
+sa variable <code>arguments</code>, car tout ce dont cette fonction a besoin, ce sont des
+propriétés numérotées <code>0</code>, <code>1</code>, et ainsi de suite pour tous les éléments du
+tableau.</p></div><hr/><div class="block"><p>Pour rendre la vie dans le terrarium plus réelle, nous allons y ajouter les
+concepts de nourriture et de reproduction. Chaque créature vivante du terrarium
+reçoit une nouvelle propriété, <code>energie</code>, qui est diminuée lorsqu’elle effectue
+une action, et augmentée lorsqu’elle mange quelque chose. Lorsqu’elle a
+suffisamment d’énergie, une chose vivante peut se reproduire<a class="footref" href="#footnote2">2</a>, engendrant une
+nouvelle créature du même type.</p><p>S’il n’y avait que des insectes, les dépenses d’énergie de leurs déplacements,
+et le fait qu’ils se mangeraient entre eux, feraient que notre terrarium
+succomberait rapidement sous l’effet de l’entropie, serait à court d’énergie,
+et deviendrait un lieu abandonné et sans vie.  Pour empêcher que ceci se
+produise (au moins, que cela ne se produise pas trop vite), nous ajoutons du
+lichen au terrarium. Les lichens ne se déplacent pas, ils utilisent la
+photosynthèse pour produire de l’énergie et se reproduire.</p><p>Pour que cela fonctionne, nous aurons besoin d’un terrarium avec une méthode
+<code>actionnerUneCreature</code> différente. Nous pourrions simplement changer cette
+méthode dans le prototype de <code>Terrarium</code>, mais nous sommes très attachés à la
+simulation des insectes sauteurs et des insectes en état d’ébriété, et ne
+voulons pas casser ce premier terrarium.</p><p>Ce que nous pouvons faire est écrire un nouveau constructeur,
+<code>TerrariumPlusVivant</code>, dont le prototype est basé sur le prototype de
+<code>Terrarium</code>, mais qui possède une méthode <code>actionnerUneCreature</code> différente.</p></div><hr/><div class="block"><p>Il existe plusieurs façon de faire cela. Nous pourrions énumérer les propriétés
+de <code>Terrarium.prototype</code>, et les ajouter une à une dans
+<code>TerrariumPlusVivant.prototype</code>. Ce serait simple à faire, et dans certains cas
+la meilleure solution. Mais ici nous avons une façon plus propre de faire. Si
+nous faisons du prototype du premier objet terrarium le prototype du nouveau
+terrarium (prenez le temps de bien comprendre cette phrase), ce nouveau
+Terrarium en aurait toutes les propriétés.</p><p><a name="key28"></a>Malheureusement, JavaScript ne propose pas de moyen direct de créer
+un objet dont le prototype est celui d’un autre objet. Il est possible d’écrire
+une fonction qui fait cela, en utilisant l’astuce suivante :</p><pre class="code"><span class="keyword">function</span> <span class="variable">clone</span>(<span class="variabledef">objet</span>) {
+  <span class="keyword">function</span> <span class="variabledef">ConstructeurNouveauPourChaqueClone</span>(){}
+  <span class="localvariable">ConstructeurNouveauPourChaqueClone</span>.<span class="property">prototype</span> = <span class="localvariable">objet</span>;
+  <span class="keyword">return</span> <span class="keyword">new</span> <span class="localvariable">ConstructeurNouveauPourChaqueClone</span>();
+}</pre><p>Cette fonction clone déclare un constructeur nommé
+ConstructeurNouveauPourChaqueClone qui est vide et unique, dont le prototype
+est l’objet passé en argument.  En appelant <code>new</code> sur ce constructeur, un
+nouvel objet est créé, basé sur l’objet passé en argument.</p><pre class="code"><span class="keyword">function</span> <span class="variable">TerrariumPlusVivant</span>(<span class="variabledef">plan</span>) {
+  <span class="variable">Terrarium</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">plan</span>);
+}
+<span class="variable">TerrariumPlusVivant</span>.<span class="property">prototype</span> = <span class="variable">clone</span>(<span class="variable">Terrarium</span>.<span class="property">prototype</span>);
+<span class="variable">TerrariumPlusVivant</span>.<span class="property">prototype</span>.<span class="property">constructor</span> = <span class="variable">TerrariumPlusVivant</span>;</pre><p>Le nouveau constructeur n’a pas besoin de faire quoi que ce soit de plus que
+l’ancien, donc il se contente d’appeler l’ancien sur l’objet <code>this</code>. Il nous
+faut également restaurer la propriété <code>constructor</code> du nouveau prototype, sinon
+il clamerait que son constructeur est <code>Terrarium</code> (ce qui, bien sûr, n’est un
+problème que si on se sert de cette propriété, ce qui n’est pas notre cas).</p></div><hr/><div class="block"><p>Il est maintenant possible de remplacer certaines méthodes de l’objet
+<code>TerrariumPlusVivant</code>, et d’en ajouter d’autres. Nous avons un type d’objet
+basé sur un autre, ce qui nous épargne le travail de récrire toutes les
+méthodes communes à <code>Terrarium</code> et <code>TerrariumPlusVivant</code>.  Cette technique est
+appelée «&nbsp;<a name="key29"></a>héritage&nbsp;». Le nouveau type hérite des propriétés de l’ancien type.
+Dans la plupart des cas, cela signifie que le nouveau type possèdera toujours
+l’interface de l’ancien, bien qu’il puisse posséder des méthodes en plus, que
+l’ancien n’a pas.  De cette façon, les objets du nouveau type pourraient
+prendre la place (selon le polymorphisme) des objets de l’ancien type.</p><p>Dans les langages de programmation avec un support explicite de l’orientation
+objet, l’héritage est une chose très simple à mettre en œuvre. JavaScript n’a
+pas de moyen simple de le faire.  À cause de cela, les programmeurs en
+JavaScript ont inventé différentes approches pour le faire. Malheureusement,
+aucune d’entre elles n’est parfaite.</p><p>À la fin de ce chapitre, je vous montrerai d’autres façons de mettre en œuvre
+l’héritage, et leurs inconvénients.</p></div><hr/><div class="block"><p>Voici une nouvelle méthode <code>actionnerUneCreature</code>. Elle est volumineuse :</p><pre class="code"><span class="variable">TerrariumPlusVivant</span>.<span class="property">prototype</span>.<span class="property">actionnerUneCreature</span> = <span class="keyword">function</span>(<span class="variabledef">creature</span>) {
+  <span class="keyword">var</span> <span class="variabledef">alentours</span> = <span class="localvariable">this</span>.<span class="property">listeAlentours</span>(<span class="localvariable">creature</span>.<span class="property">point</span>);
+  <span class="keyword">var</span> <span class="variabledef">action</span> = <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">agit</span>(<span class="localvariable">alentours</span>);
+
+  <span class="keyword">var</span> <span class="variabledef">cible</span> = <span class="atom">undefined</span>;
+  <span class="keyword">var</span> <span class="variabledef">elementDansCible</span> = <span class="atom">undefined</span>;
+  <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">direction</span> &amp;&amp; <span class="variable">directions</span>.<span class="property">contains</span>(<span class="localvariable">action</span>.<span class="property">direction</span>)) {
+    <span class="keyword">var</span> <span class="variabledef">direction</span> = <span class="variable">directions</span>.<span class="property">lookup</span>(<span class="localvariable">action</span>.<span class="property">direction</span>);
+    <span class="keyword">var</span> <span class="variabledef">directionSouhaitee</span> = <span class="localvariable">creature</span>.<span class="property">point</span>.<span class="property">add</span>(<span class="localvariable">direction</span>);
+    <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">estDedans</span>(<span class="localvariable">directionSouhaitee</span> )) {
+      <span class="localvariable">cible</span> = <span class="localvariable">directionSouhaitee</span>;
+      <span class="localvariable">elementDansCible</span> = <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">valeurEn</span>(<span class="localvariable">cible</span>);
+    }
+  }
+
+  <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;déplacement&quot;</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">cible</span> &amp;&amp; !<span class="localvariable">elementDansCible</span>) {
+      <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">deplaceElement</span>(<span class="localvariable">creature</span>.<span class="property">point</span>, <span class="localvariable">cible</span>);
+      <span class="localvariable">creature</span>.<span class="property">point</span> = <span class="localvariable">cible</span>;
+      <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> -= <span class="atom">1</span>;
+    }
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;manger&quot;</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">elementDansCible</span> &amp;&amp; <span class="localvariable">elementDansCible</span>.<span class="property">energie</span>) {
+      <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">ecritValeurEn</span>(<span class="localvariable">cible</span>, <span class="atom">undefined</span>);
+      <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> += <span class="localvariable">elementDansCible</span>.<span class="property">energie</span>;
+    }
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;photosynthese&quot;</span>) {
+    <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> += <span class="atom">1</span>;
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;reproduction&quot;</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">cible</span> &amp;&amp; !<span class="localvariable">elementDansCible</span>) {
+      <span class="keyword">var</span> <span class="variabledef">espece</span> = <span class="variable">caracteredApresElement</span>(<span class="localvariable">creature</span>.<span class="property">object</span>);
+      <span class="keyword">var</span> <span class="variabledef">nouvelleCreature</span> = <span class="variable">elementdApresCaractere</span>(<span class="localvariable">espece</span>);
+      <span class="comment">//la créature parente perd 2 fois la quantité d’énergie de la créature naissante</span>
+      <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> -= <span class="localvariable">nouvelleCreature</span>.<span class="property">energie</span> * <span class="atom">2</span>;
+      <span class="keyword">if</span> (<span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> &gt; <span class="atom">0</span>)
+        <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">ecritValeurEn</span>(<span class="localvariable">cible</span>, <span class="localvariable">nouvelleCreature</span>);
+    }
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">action</span>.<span class="property">type</span> == <span class="string">&quot;attente&quot;</span>) {
+    <span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> -= <span class="atom">0.2</span>;
+  }
+  <span class="keyword">else</span> {
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Action invalide : &quot;</span> + <span class="localvariable">action</span>.<span class="property">type</span>);
+  }
+
+  <span class="keyword">if</span> (<span class="localvariable">creature</span>.<span class="property">object</span>.<span class="property">energie</span> &lt;= <span class="atom">0</span>)
+    <span class="localvariable">this</span>.<span class="property">grille</span>.<span class="property">ecritValeurEn</span>(<span class="localvariable">creature</span>.<span class="property">point</span>, <span class="atom">undefined</span>);
+};</pre><p>La fonction commence toujours par interroger les créatures pour une action. 
+Ensuite, si l’action possède une propriété <code>direction</code>, la fonction détermine
+immédiatement à quel endroit de la grille cette direction amène, et ce qu’il y
+a à cet endroit. Trois des cinq actions implantées dans notre simulation ont
+besoin de savoir cela, et le code serait encore plus difficile à comprendre si
+ces calculs étaient faits à part.  Si l’action n’a pas de propriété
+<code>direction</code>, ou si celle-ci est incorrecte, les variables <code>cible</code> et
+<code>elementDansCible</code> restent à leur valeur undefined.</p><p>Après cela, toutes les actions sont passées en revue. Certaines actions
+demandent des vérifications supplémentaires avant leur exécution, ce qui est
+fait en utilisant un <code>if</code> distinct pour que si une créature cherche, par
+exemple, à passer à travers un mur, une exception <code>&quot;Action invalide&quot;</code> ne soit
+pas générée.</p><p>Remarquez que dans l’action <code>&quot;reproduction&quot;</code>, la créature parente perd deux
+fois la quantité d’énergie reçue par la nouvelle créature (la procréation n’est
+pas une chose facile), et la nouvelle créature n’est placée sur la grille que
+si son parent a suffisant d’énergie pour l’engendrer.</p><p>Après qu’une action a été effectuée, nous regardons si la créature a encore de
+l’énergie. Si elle n’en a plus, elle meurt, et nous la supprimons.</p></div><hr/><div class="block"><p>Le lichen n’est pas un organisme très complexe. Nous allons utiliser le
+caractère <code>&quot;*&quot;</code> pour le représenter. Vérifiez que vous avez bien défini la
+fonction <code>elementAuHasard</code> pour l’<a href="chapter8.html#exercise6">exercice 8.6</a>, car elle sera utilisée de
+nouveau ici.</p><pre class="code"><span class="keyword">function</span> <span class="variable">Lichen</span>() {
+  <span class="localvariable">this</span>.<span class="property">energie</span> = <span class="atom">5</span>;
+}
+<span class="variable">Lichen</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">var</span> <span class="variabledef">espaceVide</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot; &quot;</span>);
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">energie</span> &gt;= <span class="atom">13</span> &amp;&amp; <span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;reproduction&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">energie</span> &lt; <span class="atom">20</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;photosynthese&quot;</span>};
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;attente&quot;</span>};
+};
+<span class="variable">Lichen</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;*&quot;</span>;
+
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span>(<span class="variable">Lichen</span>);
+
+<span class="keyword">function</span> <span class="variable">trouverDirections</span>(<span class="variabledef">alentours</span>, <span class="variabledef">directionSouhaite</span>) {
+  <span class="keyword">var</span> <span class="variabledef">trouve</span> = [];
+  <span class="variable">directions</span>.<span class="property">each</span>(<span class="keyword">function</span>(<span class="variabledef">name</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">alentours</span>[<span class="localvariable">name</span>] == <span class="localvariable">directionSouhaite</span>)
+      <span class="localvariable">trouve</span>.<span class="property">push</span>(<span class="localvariable">name</span>);
+  });
+  <span class="keyword">return</span> <span class="localvariable">trouve</span>;
+}</pre><p>Les lichens ne grandissent jamais au-delà de 20 unités d’énergie, sinon ils
+seraient trop imposants, quand, encerclés par d’autre lichens, ils n’ont plus
+de place pour se reproduire.</p></div><hr/><div class="block"><a name="exercise7"></a><div class="exercisenum">Ex. 8.7</div><div class="exercise"><p>Créez une créature dévoreuse de lichens, <code>MangeuseLichen</code>. Elle commence avec
+<code>10</code> unités d’énergie, et agit de la façon suivante :</p><ul><li>Quand elle a 30 ou plus d’énergie et une case vide près d’elle, elle se reproduit.</li><li>Sinon, s’il y a du lichen près d’elle, elle en mange un, choisi aléatoirement.</li><li>Sinon, s’il y a la place de se bouger, elle va vers une cases vide aléatoire.</li><li>Sinon elle attend.</li></ul><p>Utiliser les fonctions <code>trouverDirections</code> et <code>elementAuHasard</code> pour déterminer
+le contenu de l’entourage de la créature, et faire des choix aléatoires. Donner
+à cette créature le caractère <code>&quot;c&quot;</code> (pour faire penser à pac-man).</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">MangeuseLichen</span>() {
+  <span class="localvariable">this</span>.<span class="property">energie</span> = <span class="atom">10</span>;
+}
+<span class="variable">MangeuseLichen</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">var</span> <span class="variabledef">espaceVide</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot; &quot;</span>);
+  <span class="keyword">var</span> <span class="variabledef">lichen</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot;*&quot;</span>);
+
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">energie</span> &gt;= <span class="atom">30</span> &amp;&amp; <span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;reproduction&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">lichen</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;manger&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">lichen</span>)};
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;attente&quot;</span>};
+};
+<span class="variable">MangeuseLichen</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;c&quot;</span>;
+
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span>(<span class="variable">MangeuseLichen</span>);</pre></div></div><hr/><div class="block"><p>Et pour l’essayer.</p><pre class="code"><span class="keyword">var</span> <span class="variable">lichenPlan</span> =
+  [<span class="string">&quot;############################&quot;</span>,
+   <span class="string">&quot;#                     ######&quot;</span>,
+   <span class="string">&quot;#    ***                **##&quot;</span>,
+   <span class="string">&quot;#   *##**         **  c  *##&quot;</span>,
+   <span class="string">&quot;#    ***     c    ##**    *#&quot;</span>,
+   <span class="string">&quot;#       c         ##***   *#&quot;</span>,
+   <span class="string">&quot;#                 ##**    *#&quot;</span>,
+   <span class="string">&quot;#   c       #*            *#&quot;</span>,
+   <span class="string">&quot;#*          #**       c   *#&quot;</span>,
+   <span class="string">&quot;#***        ##**    c    **#&quot;</span>,
+   <span class="string">&quot;#*****     ###***       *###&quot;</span>,
+   <span class="string">&quot;############################&quot;</span>];
+
+<span class="keyword">var</span> <span class="variable">terrarium</span> = <span class="keyword">new</span> <span class="variable">TerrariumPlusVivant</span>(<span class="variable">lichenPlan</span>);
+<span class="variable">terrarium</span>.<span class="property">onStep</span> = <span class="variable">partial</span>(<span class="variable">inPlacePrinter</span>(), <span class="variable">terrarium</span>);
+<span class="variable">terrarium</span>.<span class="property">start</span>();</pre><p>La plupart du temps, vous devriez voir le lichen envahir rapidement le
+terrarium&nbsp;; cette abondance de nourriture provoquera une abondance de créatures
+voraces, si nombreuses qu’elles finiront par épuiser les ressources en lichen,
+et enfin s’épuiser elles-mêmes. La nature est si tragique.</p><pre class="code"><span class="variable">terrarium</span>.<span class="property">stop</span>();</pre></div><hr/><div class="block"><p>Constater que les occupants de votre terrarium disparaissent après quelques
+minutes est un peu déprimant. Pour y faire face, nous allons éduquer nos
+créatures dévoreuses de lichen au principe de l’agriculture raisonnée. En
+faisant qu’elles ne mangent du lichen que si elles sont à proximité de deux
+d’entre eux, quel que soit l’état de leur faim, elles ne pourront plus
+exterminer le lichen. Cela demande de la discipline, mais le résultat est un
+biotope qui ne s’autodétruit pas.  Voici une nouvelle méthode <code>agit</code> ―&nbsp;le seul
+changement est que l’action de manger ne se fait que si <code>lichen.length</code> est au
+moins égal à 2.</p><pre class="code"><span class="variable">MangeuseLichen</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">var</span> <span class="variabledef">espaceVide</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot; &quot;</span>);
+  <span class="keyword">var</span> <span class="variabledef">lichen</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot;*&quot;</span>);
+
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">energie</span> &gt;= <span class="atom">30</span> &amp;&amp; <span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;reproduction&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">lichen</span>.<span class="property">length</span> &gt; <span class="atom">1</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;manger&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">lichen</span>)};
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>, <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;attente&quot;</span>};
+};</pre><p>Faites fonctionner la simulation du terrarium <code>lichenPlan</code> à nouveau et
+constatez son évolution. À moins d’être très chanceux, vous allez probablement
+constater l’extinction des créatures dévoreuses au bout d’un certain temps,
+parce que lorsque survient la famine, ces créatures se déplacent de façon
+désordonnée, au lieu de rechercher le lichen qui n’est pas très loin d’elles.</p></div><hr/><div class="block"><a name="exercise8"></a><div class="exercisenum">Ex. 8.8</div><div class="exercise"><p>Cherchez un moyen de rendre la créature <code>MangeuseLichen</code> plus apte à la survie.
+Ne trichez pas ―&nbsp;une instruction <code>this.energie += 100</code> serait de la triche. Si
+vous réécrivez le constructeur, n’oubliez pas de l’enregistrer à nouveau dans
+le dictionnaire <code>typesDeCreature</code>, sinon le terrarium continuerait d’utiliser
+l’ancien constructeur.</p></div><div class="solution"><p>Une approche serait de restreindre le caractère aléatoire des déplacements. En
+choisissant systématiquement une direction aléatoire, elles reviennent très
+souvent sur leurs pas, sans rien trouver à manger. En se rappelant la direction
+d’où elles viennent, et en privilégiant cette direction, elles dépenseraient
+moins de temps et trouveraient plus facilement de la nourriture.</p><pre class="code"><span class="keyword">function</span> <span class="variable">MangeuseLichenHabile</span>() {
+  <span class="localvariable">this</span>.<span class="property">energie</span> = <span class="atom">10</span>;
+  <span class="localvariable">this</span>.<span class="property">direction</span> = <span class="string">&quot;ne&quot;</span>;
+}
+<span class="variable">MangeuseLichenHabile</span>.<span class="property">prototype</span>.<span class="property">agit</span> = <span class="keyword">function</span>(<span class="variabledef">alentours</span>) {
+  <span class="keyword">var</span> <span class="variabledef">espaceVide</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot; &quot;</span>);
+  <span class="keyword">var</span> <span class="variabledef">lichen</span> = <span class="variable">trouverDirections</span>(<span class="localvariable">alentours</span>, <span class="string">&quot;*&quot;</span>);
+
+  <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">energie</span> &gt;= <span class="atom">30</span> &amp;&amp; <span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>) {
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;reproduction&quot;</span>,
+            <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>)};
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">lichen</span>.<span class="property">length</span> &gt; <span class="atom">1</span>) {
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;manger&quot;</span>,
+            <span class="property">direction</span>: <span class="variable">elementAuHasard</span>(<span class="localvariable">lichen</span>)};
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">espaceVide</span>.<span class="property">length</span> &gt; <span class="atom">0</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">alentours</span>[<span class="localvariable">this</span>.<span class="property">direction</span>] != <span class="string">&quot; &quot;</span>)
+      <span class="localvariable">this</span>.<span class="property">direction</span> = <span class="variable">elementAuHasard</span>(<span class="localvariable">espaceVide</span>);
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;déplacement&quot;</span>,
+            <span class="property">direction</span>: <span class="localvariable">this</span>.<span class="property">direction</span>};
+  }
+  <span class="keyword">else</span> {
+    <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;attente&quot;</span>};
+  }
+};
+<span class="variable">MangeuseLichenHabile</span>.<span class="property">prototype</span>.<span class="property">caractere</span> = <span class="string">&quot;c&quot;</span>;
+
+<span class="variable">typesDeCreature</span>.<span class="property">enregistre</span>(<span class="variable">MangeuseLichenHabile</span>);</pre><p>Essayez-la avec le plan de terrarium précédent.</p></div></div><hr/><div class="block"><a name="exercise9"></a><div class="exercisenum">Ex. 8.9</div><div class="exercise"><p>Une chaîne alimentaire à un seul maillon est un peu rudimentaire. Pouvez-vous
+écrire une nouvelle créature, nommée <code>MangeuseMangeuseLichen</code>, (avec un
+caractère <code>&quot;@&quot;</code>), qui survit en mangeant des dévoreuses de lichens ? Trouver
+également un moyen pour cette nouvelle créature de s’intégrer dans l’écosystème
+sans qu’elles ne s’éteignent trop vite. Modifiez le tableau <code>lichenPlan</code> pour
+inclure quelques-unes d’entre elles, et essayez le tout.</p></div><div class="solution"><p>C’est maintenant à vous de jouer, je n’ai pas trouvé de moyen véritablement
+efficace d’empêcher ces créatures de s’éteindre immédiatement ou d’engloutir
+toutes les dévoreuses de lichen, et de s’éteindre ensuite.  L’astuce qui
+consiste à autoriser une créature à ne manger que lorsque deux unités de
+nourriture sont à proximité ne fonctionnent pas très bien pour elles, car, leur
+nourriture étant souvent en déplacement, il est rare d’en trouver deux à
+proximité l’une de l’autre.  Rendre les dévoreuses de dévoreuses très grasses
+(avec beaucoup d’énergie) à quelque efficacité, car elles peuvent survivre
+lorsque les dévoreuses de lichen se font rare et se reproduisent doucement, ce
+qui empêche une raréfaction trop rapide de leur nourriture.</p><p>Les lichens et les créatures qui les mangent sont dans un mouvement périodique
+―&nbsp;parfois les lichens sont abondants, ce qui provoque beaucoup de naissance de
+mangeurs de lichen, ce qui provoque ensuite une rareté du lichen, puis la
+rareté des mangeurs de lichen, enfin le lichen prospère à nouveau, et ainsi de
+suite.  Vous pouvez essayer de faire &quot;hiberner&quot; les mangeurs de mangeurs de
+lichen (utiliser l’action <code>&quot;attente&quot;</code> un certain temps), quand ils n’ont rien à
+manger pour quelques tours.  Une stratégie serait de trouver la bonne durée
+d’hibernation, en nombre de tours, ou de leur donner un moyen de se réveiller
+lorsqu’ils sentent beaucoup de nourriture.</p></div></div><hr/><div class="block"><p>Ceci termine notre discussion sur les terraria. Le reste de ce chapitre est
+dédié à une exploration en profondeur du concept d’héritage, et les problèmes
+liés à l’héritage en JavaScript.</p></div><hr/><div class="block"><p>Maintenant, un peu de théorie. Les étudiants qui abordent la programmation
+orientée objet sont souvent confrontés à des discussions longues et pleines de
+subtilité sur les façons correctes et incorrectes d’utiliser l’héritage. Il est
+important de garder à l’esprit qu’au bout du compte, l’héritage est un moyen
+pour des programmeurs paresseux<a class="footref" href="#footnote3">3</a> d’écrire moins de code. Ainsi, la question de
+savoir si l’héritage est correctement utilisé se résume à la question de savoir
+si le code produit fonctionne correctement et n’a pas de répétition inutile.
+Pour autant, les principes discutés par ces étudiants sont aussi une bonne
+façon d’aborder l’héritage.</p><p>L’héritage est la création de nouveaux types d’objet, les
+«&nbsp;<a name="key30"></a>sous-types&nbsp;», basés sur des types existants, les
+«&nbsp;<a name="key31"></a>super-types&nbsp;». Le sous-type commence avec la totalité des
+propriétés et des méthodes du super-type, il hérite de lui, ensuite, il en
+modifie quelques-uns, éventuellement en ajoute.  L’héritage est mieux utilisé
+quand les objets décrits par le sous-type peuvent être considérés comme <em>étant</em>
+également des objets du super-type.</p><p>Ainsi, un type <code>Piano</code> peut être un sous-type du type <code>Instrument</code>, parce qu’un
+piano <em>est</em> un instrument. Un piano comportant un tableau de touches, on peut
+être tenté de faire de <code>Piano</code> un sous-type de <code>Array</code>, mais un piano <em>n’est
+pas</em> un tableau, et l’implémenter de cette façon entraînerait de nombreux
+comportements idiots. Par exemple, un piano a aussi des pédales. Pourquoi
+<code>piano[0]</code> me renverrait-il la première touche, et non la première pédale&nbsp;? Il
+se trouve que, évidemment, le piano <em>possède</em> des touches, il est donc
+préférable de lui donner une propriété <code>touches</code>, et éventuellement une autre
+propriété <code>pédales</code>, ces deux propriétés étant des tableaux.</p><p>Il est possible pour un sous-type d’être le super-type d’un autre sous-type.
+Certains problèmes sont mieux résolus en construisant un arbre complexe de
+types. Prenez garde à ne pas être trop enthousiaste avec l’héritage. Une
+utilisation abusive de l’héritage est un bon moyen de transformer un programme
+en un bazar monstrueux.</p></div><hr/><div class="block"><p>Le fonctionnement du mot-clé <code>new</code> et la propriété <code>prototype</code> d’un
+constructeur suggèrent une certaine façon d’utiliser les objets. Pour des
+objets simples, comme les créatures du terrarium, cette façon fonctionne bien. 
+Malheureusement, quand un programme utilise l’héritage de façon plus développé,
+cette approche de la programmation objet devient pesante. Ajouter des fonctions
+pour prendre en charge les opérations les plus courantes peut rendre les choses
+plus fluides. De nombreuses personnes définissent, par exemple, des méthodes
+<code>inherit</code> et <code>method</code> sur les objets.</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">inherit</span> = <span class="keyword">function</span>(<span class="variabledef">constructeurDeBase</span>) {
+  <span class="localvariable">this</span>.<span class="property">prototype</span> = <span class="variable">clone</span>(<span class="localvariable">constructeurDeBase</span>.<span class="property">prototype</span>);
+  <span class="localvariable">this</span>.<span class="property">prototype</span>.<span class="property">constructor</span> = <span class="localvariable">this</span>;
+};
+<span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">method</span> = <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">func</span>) {
+  <span class="localvariable">this</span>.<span class="property">prototype</span>[<span class="localvariable">nom</span>] = <span class="localvariable">func</span>;
+};
+
+<span class="keyword">function</span> <span class="variable">TableauEtrange</span>(){}
+<span class="variable">TableauEtrange</span>.<span class="property">inherit</span>(<span class="variable">Array</span>);
+<span class="variable">TableauEtrange</span>.<span class="property">method</span>(<span class="string">&quot;push&quot;</span>, <span class="keyword">function</span>(<span class="variabledef">valeur</span>) {
+  <span class="variable">Array</span>.<span class="property">prototype</span>.<span class="property">push</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">valeur</span>);
+  <span class="variable">Array</span>.<span class="property">prototype</span>.<span class="property">push</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">valeur</span>);
+});
+
+<span class="keyword">var</span> <span class="variable">etrange</span> = <span class="keyword">new</span> <span class="variable">TableauEtrange</span>();
+<span class="variable">etrange</span>.<span class="property">push</span>(<span class="atom">4</span>);
+<span class="variable">show</span>(<span class="variable">etrange</span>);</pre><p>Si vous cherchez sur Internet les mots «&nbsp;JavaScript&nbsp;» et «&nbsp;héritage&nbsp;», vous
+trouverez de nombreuses variantes de ces fonctions, certaines sont plus
+complexes et plus subtiles que celles ci-dessus.</p><p>Remarquez comment la méthode <code>push</code> écrite ici utilise la méthode <code>push</code> du
+prototype de son type parent. C’est quelque chose qui se fait fréquemment lors
+de l’utilisation de l’héritage ―&nbsp;une méthode du sous-type utilise en interne
+une méthode du super-type, mais en la modifiant d’une manière ou d’une autre.</p></div><hr/><div class="block"><p>La plus grande difficulté dans cette approche simpliste est la dualité entre
+les constructeurs et les prototypes. Les constructeurs ont un rôle vraiment
+central, ils sont le moyen par lequel les objets prennent leur nom, et quand
+vous avez besoin d’accéder à un prototype, vous devez passer par le
+constructeur et sa propriété prototype.</p><p>Cela ajoute <em>beaucoup</em> de frappes au clavier (<code>&quot;prototype&quot;</code> prend 9 lettres),
+de plus, c’est déroutant. Nous avons eu besoin d’écrire un constructeur vide et
+inutile pour <code>TableauEtrange</code> dans l’exemple précédent. Quelquefois, il m’est
+arrivé d’ajouter par erreur des méthodes à un constructeur au lieu de son
+prototype, ou d’essayer d’appeler <code>Array.slice</code> alors que je voulais appeler
+<code>Array.prototype.slice</code>. Autant que je sache, le prototype lui-même est
+l’aspect le plus important d’un type d’objet, et le constructeur n’est qu’une
+extension de cela, une méthode spéciale.</p></div><hr/><div class="block"><p>En ajoutant quelques méthodes simples d’aide à <code>Object.prototype</code>, il devient
+possible de créer une approche alternative aux objets et à l’héritage. Dans
+cette approche, un type est représenté par son prototype, et nous allons
+utiliser des variables en majuscule pour stocker ces prototypes. Quand il faut
+faire un peu de travail de «&nbsp;construction&nbsp;», cela est réalisé par une méthode
+appelée <code>construct</code>. Nous ajoutons une méthode appelée <code>create</code> au prototype
+<code>Object</code>, qui est utilisée à la place du mot-clé <code>new</code>. Elle clone l’objet, et
+appelle sa méthode <code>construct</code>, si une telle méthode existe, en lui passant en
+argument ceux qui ont été passés à <code>create</code>.</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">create</span> = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> <span class="variabledef">objet</span> = <span class="variable">clone</span>(<span class="localvariable">this</span>);
+  <span class="keyword">if</span> (typeof <span class="localvariable">objet</span>.<span class="property">construct</span> == <span class="string">&quot;function&quot;</span>)
+    <span class="localvariable">objet</span>.<span class="property">construct</span>.<span class="property">apply</span>(<span class="localvariable">objet</span>, <span class="localvariable">arguments</span>);
+  <span class="keyword">return</span> <span class="localvariable">objet</span>;
+};</pre><p>L’héritage peut être réalisé en clonant un objet prototype et en ajoutant ou
+remplaçant certaines de ses propriétés. Nous fournissons également une aide
+pratique pour réaliser cela, une méthode <code>extend</code>, qui clone l’objet sur lequel
+on l’appelle et qui ajoute à ce clone les propriétés de l’objet qui lui est
+donné en argument.</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">extend</span> = <span class="keyword">function</span>(<span class="variabledef">properties</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = <span class="variable">clone</span>(<span class="localvariable">this</span>);
+  <span class="variable">forEachIn</span>(<span class="localvariable">properties</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+    <span class="localvariable">resultat</span>[<span class="localvariable">nom</span>] = <span class="localvariable">valeur</span>;
+  });
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+};</pre><p>Dans le cas où il n’est pas prudent de tripoter le prototype <code>Object</code>, cela
+peut bien évidemment être implémenté avec des fonctions classiques (pas des
+méthodes).</p></div><hr/><div class="block"><p>Voici un exemple, si vous êtes suffisamment vieux, vous avez peut-être déjà
+joué à un jeu d’aventure en mode texte, où vous vous déplaciez dans un monde
+virtuel en tapant au clavier des commandes, et obteniez des réponses sous forme
+de texte décrivant ce qu’il y avait autour de vous et les actions que vous
+effectuiez. Ces jeux ont eu leur temps.</p><p>Nous pouvons écrire un prototype pour un élément d’un jeu de ce type.</p><pre class="code"><span class="keyword">var</span> <span class="variable">Produit</span> = {
+  <span class="property">construct</span>: <span class="keyword">function</span>(<span class="variabledef">nom</span>) {
+    <span class="localvariable">this</span>.<span class="property">nom</span> = <span class="localvariable">nom</span>;
+  },
+  <span class="property">examiner</span>: <span class="keyword">function</span>() {
+    <span class="variable">print</span>(<span class="string">&quot;C’est &quot;</span>, <span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot;.&quot;</span>);
+  },
+  <span class="property">frapper</span>: <span class="keyword">function</span>() {
+    <span class="variable">print</span>(<span class="string">&quot;Blang&nbsp;!&quot;</span>);
+  },
+  <span class="property">prendre</span>: <span class="keyword">function</span>() {
+    <span class="variable">print</span>(<span class="string">&quot;Vous ne pouvez pas soulever &quot;</span>, <span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot;.&quot;</span>);
+  }
+};
+
+<span class="keyword">var</span> <span class="variable">lanterne</span> = <span class="variable">Produit</span>.<span class="property">create</span>(<span class="string">&quot;La lanterne en laiton&quot;</span>);
+<span class="variable">lanterne</span>.<span class="property">frapper</span>();</pre><p>Héritons de ce type de cette façon…</p><pre class="code"><span class="keyword">var</span> <span class="variable">ProduitDetaille</span> = <span class="variable">Produit</span>.<span class="property">extend</span>({
+  <span class="property">construct</span>: <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">details</span>) {
+    <span class="variable">Produit</span>.<span class="property">construct</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">nom</span>);
+    <span class="localvariable">this</span>.<span class="property">details</span> = <span class="localvariable">details</span>;
+  },
+  <span class="property">examiner</span>: <span class="keyword">function</span>() {
+    <span class="variable">print</span>(<span class="string">&quot;vous voyez &quot;</span>, <span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot;, &quot;</span>, <span class="localvariable">this</span>.<span class="property">details</span>, <span class="string">&quot;.&quot;</span>);
+  }
+});
+
+<span class="keyword">var</span> <span class="variable">paresseuxGeant</span> = <span class="variable">ProduitDetaille</span>.<span class="property">create</span>(
+  <span class="string">&quot;le paresseux géant&quot;</span>,
+  <span class="string">&quot;il s’accroche tranquillement sur un arbre en grignotant des feuilles&quot;</span>);
+<span class="variable">paresseuxGeant</span>.<span class="property">examiner</span>();</pre><p>Mettre à part l’utilisation de <code>prototype</code> simplifie les choses, par exemple le
+constructeur de <code>ProduitDetaille</code> peut appeler directement <code>Produit.contruct</code>. 
+Remarquez que ce serait une mauvaise idée d’écrire simplement <code>this.nom = nom</code>
+dans <code>ProduitDetaille.construct</code>. Cela duplique une ligne. Bien sûr, dupliquer
+cette ligne est plus court qu’appeler la fonction <code>Produit.construct</code> mais si
+on se retrouve à ajouter plus tard quelque chose dans le constructeur, nous
+devrons l’ajouter à deux endroits différents.</p></div><hr/><div class="block"><p>La plupart du temps, le constructeur d’un sous-type commencera par appeler le
+constructeur du super-type. De cette façon, il démarre avec un objet valide du
+super-type, qu’il peut alors étendre. Dans cette nouvelle approche des
+prototypes, les types qui n’ont pas besoin de constructeurs peuvent les laisser
+tomber. Ils hériteront automatiquement du constructeur de leur super-type.</p><pre class="code"><span class="keyword">var</span> <span class="variable">PetitProduit</span> = <span class="variable">Produit</span>.<span class="property">extend</span>({
+  <span class="property">frapper</span>: <span class="keyword">function</span>() {
+    <span class="variable">print</span>(<span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot; vole à travers la pièce.&quot;</span>);
+  },
+  <span class="property">prendre</span>: <span class="keyword">function</span>() {
+    <span class="comment">// (imaginez ici du code qui déplace l’objet dans votre poche)</span>
+    <span class="variable">print</span>(<span class="string">&quot;vous prenez &quot;</span>, <span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot;.&quot;</span>);
+  }
+});
+
+<span class="keyword">var</span> <span class="variable">stylo</span> = <span class="variable">PetitProduit</span>.<span class="property">create</span>(<span class="string">&quot;le stylo rouge&quot;</span>);
+<span class="variable">stylo</span>.<span class="property">prendre</span>();</pre><p>Même si <code>PetitProduit</code> ne définit pas son propre constructeur, le créer avec un
+argument <code>nom</code> fonctionne, car il hérite du constructeur du prototype
+<code>Produit</code>.</p></div><hr/><div class="block"><p>JavaScript possède un opérateur appelé <a name="key32"></a><code>instanceof</code>, qui peut être utilisé
+pour déterminer si un objet est basé sur un certain prototype. Vous lui donnez
+l’objet du côté gauche, et le constructeur du côté droit, et il renvoie un
+booléen, <code>true</code> si la propriété <code>prototype</code> du constructeur est le prototype
+direct ou indirect de l’objet, et <code>false</code> sinon.</p><p>Lorsque vous utilisez des constructeurs normaux, utiliser cet opérateur devient
+plutôt maladroit : il attend la fonction constructeur comme deuxième argument,
+mais nous avons seulement des prototypes. Une astuce similaire à la fonction
+<code>clone</code> peut être utilisée pour éviter cela . Nous utilisons un «&nbsp;faux
+constructeur&nbsp;», et nous lui appliquons <code>instanceof</code>.</p><pre class="code"><span class="variable">Object</span>.<span class="property">prototype</span>.<span class="property">hasPrototype</span> = <span class="keyword">function</span>(<span class="variabledef">prototype</span>) {
+  <span class="keyword">function</span> <span class="variabledef">FauxConstructeur</span>() {}
+  <span class="localvariable">FauxConstructeur</span>.<span class="property">prototype</span> = <span class="localvariable">prototype</span>;
+  <span class="keyword">return</span> <span class="localvariable">this</span> instanceof <span class="localvariable">FauxConstructeur</span>;
+};
+
+<span class="variable">show</span>(<span class="variable">stylo</span>.<span class="property">hasPrototype</span>(<span class="variable">Produit</span>));
+<span class="variable">show</span>(<span class="variable">stylo</span>.<span class="property">hasPrototype</span>(<span class="variable">ProduitDetaille</span>));</pre></div><hr/><div class="block"><p>Ensuite, nous voulons créer un petit élément qui possède une description
+détaillée. Il semblerait que cet élément devrait hériter à la fois de
+<code>ProduitDetaille</code> et <code>PetitProduit</code>. JavaScript ne permet pas à un objet
+d’avoir plusieurs prototypes, et même s’il le permettait, le problème ne serait
+pas simple à résoudre. Par exemple, si <code>PetitProduit</code> voulait, pour une raison
+quelconque, définir aussi une méthode <code>examiner</code>, quelle méthode <code>examiner</code> ce
+nouveau prototype devrait-il utiliser&nbsp;?</p><p>Dériver un type d’objet de plus d’un type parent est appelé <a name="key33"></a>héritage
+multiple. Certains langages se dégonflent et l’interdisent totalement,
+d’autres définissent des systèmes compliqués pour le faire marcher d’une
+manière pratique et bien définie. Il est possible d’implémenter un framework de
+multi-héritage décent en JavaScript. En fait, il y a, comme d’habitude, de
+nombreuses bonnes façons pour réaliser cela. Mais elles sont toutes trop
+compliquées pour en discuter ici. À la place, je vais vous montrer une approche
+très simple qui est suffisante dans la plupart des cas.</p></div><hr/><div class="block"><p>Un <a name="key34"></a>mix-in est un type spécifique de prototype qui peut être «&nbsp;incorporé&nbsp;» à
+l’intérieur d’autres prototypes. <code>PetitProduit</code> peut être considéré comme un de
+ces prototypes. En copiant ses méthodes <code>frapper</code> et <code>prendre</code> dans un autre
+prototype, nous allons incorporer la petitesse dans ce prototype.</p><pre class="code"><span class="keyword">function</span> <span class="variable">mixInto</span>(<span class="variabledef">object</span>, <span class="variabledef">mixIn</span>) {
+  <span class="variable">forEachIn</span>(<span class="localvariable">mixIn</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+    <span class="localvariable">object</span>[<span class="localvariable">nom</span>] = <span class="localvariable">valeur</span>;
+  });
+};
+
+<span class="keyword">var</span> <span class="variable">PetitProduitDetaille</span> = <span class="variable">clone</span>(<span class="variable">ProduitDetaille</span>);
+<span class="variable">mixInto</span>(<span class="variable">PetitProduitDetaille</span>, <span class="variable">PetitProduit</span>);
+
+<span class="keyword">var</span> <span class="variable">sourisMorte</span> = <span class="variable">PetitProduitDetaille</span>.<span class="property">create</span>(
+  <span class="string">&quot;Fred la souris&quot;</span>,
+  <span class="string">&quot;il est mort&quot;</span>);
+<span class="variable">sourisMorte</span>.<span class="property">examiner</span>();
+<span class="variable">sourisMorte</span>.<span class="property">frapper</span>();</pre><p>Rappelez-vous que <code>forEachIn</code> parcourt uniquement les <em>propres</em> propriétés de
+l’objet, il copiera donc <code>frapper</code> et <code>prendre</code>, mais pas le constructeur que
+<code>PetitProduit</code> a hérité de <code>Produit</code>.</p></div><hr/><div class="block"><p>Mélanger les prototypes devient plus complexe quand le mix-in a un
+constructeur, ou quand certaines de ses méthodes entrent en «&nbsp;collision&nbsp;» avec
+les méthodes du prototype dans lequel il est incorporé. Parfois, il est
+possible de faire un mix-in «&nbsp;manuellement&nbsp;». Disons que nous avons un
+prototype <code>Monstre</code>, qui a son propre constructeur, et nous voulons le mélanger
+avec <code>ProduitDetaille</code>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">Monstre</span> = <span class="variable">Produit</span>.<span class="property">extend</span>({
+  <span class="property">construct</span>: <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">estDangereux</span>) {
+    <span class="variable">Produit</span>.<span class="property">construct</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">nom</span>);
+    <span class="localvariable">this</span>.<span class="property">estDangereux</span> = <span class="localvariable">estDangereux</span>;
+  },
+  <span class="property">frapper</span>: <span class="keyword">function</span>() {
+    <span class="keyword">if</span> (<span class="localvariable">this</span>.<span class="property">estDangereux</span>)
+      <span class="variable">print</span>(<span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot; arrache votre tête avec ses dents.&quot;</span>);
+    <span class="keyword">else</span>
+      <span class="variable">print</span>(<span class="localvariable">this</span>.<span class="property">nom</span>, <span class="string">&quot; fuit en pleurant.&quot;</span>);
+  }
+});
+
+<span class="keyword">var</span> <span class="variable">MonstreDetaille</span> = <span class="variable">ProduitDetaille</span>.<span class="property">extend</span>({
+  <span class="property">construct</span>: <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">description</span>, <span class="variabledef">estDangereux</span>) {
+    <span class="variable">ProduitDetaille</span>.<span class="property">construct</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">nom</span>, <span class="localvariable">description</span>);
+    <span class="variable">Monstre</span>.<span class="property">construct</span>.<span class="property">call</span>(<span class="localvariable">this</span>, <span class="localvariable">nom</span>, <span class="localvariable">estDangereux</span>);
+  },
+  <span class="property">frapper</span>: <span class="variable">Monstre</span>.<span class="property">frapper</span>
+});
+
+<span class="keyword">var</span> <span class="variable">paresseuxGeant</span> = <span class="variable">MonstreDetaille</span>.<span class="property">create</span>(
+  <span class="string">&quot;le paresseux géant&quot;</span>,
+  <span class="string">&quot;il s’accroche tranquillement sur un arbre en grignotant des feuilles&quot;</span>,
+  <span class="atom">true</span>);
+<span class="variable">paresseuxGeant</span>.<span class="property">frapper</span>();</pre><p>Mais remarquez que cela conduit à appeler deux fois le constructeur de
+<code>Produit</code> lorsqu’on crée un <code>MonstreDetaille</code> : une fois à travers le
+constructeur de <code>ProduitDetaille</code>, et une fois à travers le constructeur de
+<code>Monstre</code>. Dans ce cas, il n’y a pas trop de dégâts, mais il existe des
+situations dans lesquelles cela pourrait poser problème.</p></div><hr/><div class="block"><p>Mais ne laissez pas ces complications vous décourager d’utiliser l’héritage.
+Les héritages multiples, même s’ils sont très utiles dans certaines situations,
+peuvent être ignorés sans problème la plupart du temps. C’est la raison pour
+laquelle certains langages comme Java s’en sortent en interdisant les héritages
+multiples. Et si, à un moment, vous pensez que vous en avez vraiment besoin,
+vous pouvez chercher sur Internet, faire quelques recherches, et trouver une
+approche qui fonctionne dans votre situation.</p><p>Maintenant que j’y pense, JavaScript serait probablement un fabuleux
+environnement de développement pour les aventures en mode texte. Cette capacité
+à modifier le comportement des objets à volonté, qui est ce que nous offre
+l’héritage par prototype, est très bien adapté à cela. Si vous avez un objet
+<code>herisson</code>, qui a la capacité unique de rouler quand on lui tape dedans, vous
+pouvez simplement changer sa méthode <code>frapper</code>.</p><p>Malheureusement, les aventures en mode texte ont suivi le même chemin que les
+disques vinyles, alors qu’ils étaient populaires à une époque, ils ne sont
+joués de nos jours que par une petite population d’<a href="http://groups.google.com/group/rec.arts.int-fiction/topics">enthousiates</a>.</p></div><ol class="footnotes"><li><a name="footnote1"></a>Ces types sont souvent appelés des «&nbsp;classes&nbsp;» dans d’autres langages de
+programmation.</li><li><a name="footnote2"></a>Pour rendre les choses plus simples, les créatures de notre terrarium se
+reproduiront de façon asexuée, d’elles-mêmes.</li><li><a name="footnote3"></a>La paresse, pour un programmeur, n’est pas forcément un péché. Les personnes
+qui, laborieusement, font et refont toujours les mêmes choses tendent à être de
+bon travailleurs à la chaîne et de mauvais programmeurs.</li></ol><div class="navigation"><a href="chapter7.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter9.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

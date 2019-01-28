@@ -1,0 +1,214 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Expressions rationnelles -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'regexp';</script><div class="navigation"><a href="chapter9.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter11.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 10: </span>Expressions rationnelles</h1><div class="block"><p>À diverses occasions dans les chapitres précédents, nous avons dû jeter un coup
+d’œil aux structures des valeurs de chaînes. Dans le <a href="chapter4.html">chapitre 4</a> nous avons extrait
+des valeurs de chaînes en notant les positions exactes dans lesquelles on peut
+trouver les nombres qui indiquent une partie de la date. Plus loin, dans le
+<a href="chapter6.html">chapitre 6</a>, nous avons vu des bouts de code assez laids destinés à chercher certains
+types de caractères dans une chaîne, par exemple ceux qui devaient être
+échappés en HTML.</p><p><a name="key1"></a>Les expressions rationnelles constituent un langage
+qui décrit les structures des chaînes. Il s’agit d’un petit langage spécifique
+mais qui est inclus dans le JavaScript (comme dans beaucoup d’autres langages
+de programmation, d’une façon ou d’une autre). Il n’est pas très lisible ― les
+expressions rationnelles volumineuses finissent par devenir complètement
+illisibles. C’est pourtant un outil très utile qui peut vraiment simplifier les
+programmes qui traitent les chaînes.</p></div><hr/><div class="block"><p>Tout comme on écrit les chaînes entre guillemets, les expressions rationnelles
+sont écrites entre des slash(<a name="key2"></a><code>/</code>). Ce qui implique que des slash à
+l’intérieur de l’expression devront être échappés.</p><pre class="code"><span class="keyword">var</span> <span class="variable">slash</span> = <span class="string">/\//</span>;
+<span class="variable">show</span>(<span class="string">&quot;AC/DC&quot;</span>.<span class="property">search</span>(<span class="variable">slash</span>));</pre><p>La méthode <a name="key3"></a><code>search</code> ressemble à la méthode <code>indexOf</code>, mais elle cherche une
+expression rationnelle et non une chaîne. Les structures indiquées dans les
+expressions rationnelles peuvent effectuer quelques petites choses que les
+chaînes ne peuvent pas faire. Pour commencer elles permettent à certains de
+leurs éléments de coïncider sur plus d’un seul caractère. Dans le <a href="chapter6.html">chapitre 6</a>, quand
+nous avons extrait les balises pour un document, nous avons eu besoin de
+trouver le premier astérisque ou la première accolade ouvrante dans une chaîne.
+Nous pouvions faire ainsi :</p><pre class="code"><span class="keyword">var</span> <span class="variable">asterisqueOuAccoladeOuvrante</span> = <span class="string">/[\{\*]/</span>;
+<span class="keyword">var</span> <span class="variable">histoire</span> =
+  <span class="string">&quot;Nous avons remarqué le *paresseux géant*, pendu à une énorme branche.&quot;</span>;
+<span class="variable">show</span>(<span class="variable">histoire</span>.<span class="property">search</span>(<span class="variable">asterisqueOuAccoladeOuvrante</span>));</pre><p>Les caractères <code>[</code> et <code>]</code> ont une signification particulière dans les
+expressions rationnelles. Lorsqu’ils encadrent d’autres caractères, ils
+signifient n’importe lequel de ces caractères.  Comme la plupart des caractères
+non alphanumériques ont une signification particulière dans les expressions
+rationnelles, c’est une bonne idée de les échapper systématiquement avec un
+antislash<a class="footref" href="#footnote1">1</a> pour qu’ils soient compris comme de simples caractères.</p></div><hr/><div class="block"><p>Il y a quelques raccourcis pour des ensembles de caractères souvent utilisés. 
+Le point (<code>.</code>) peut être utilisé pour n’importe quel caractère autre que le
+retour chariot, un «&nbsp;d&nbsp;» échappé (<code>\d</code>) signifie un chiffre, un «&nbsp;w&nbsp;» échappé
+(<code>\w</code>) correspond à n’importe quel caractère alphanumérique (y compris un
+souligné, pour certaines raisons) et un «&nbsp;s&nbsp;» échappé (<code>\s</code>) est équivalent aux
+caractères d’espaces (tabulation, retour chariot, espace).</p><pre class="code"><span class="keyword">var</span> <span class="variable">chiffreEncadreeParDesEspaces</span> = <span class="string">/\s\d\s/</span>;
+<span class="variable">show</span>(<span class="string">&quot;1a 2 3d&quot;</span>.<span class="property">search</span>(<span class="variable">chiffreEncadreeParDesEspaces</span>));</pre><p>Les caractères «&nbsp;d&nbsp;», «&nbsp;w&nbsp;» et «&nbsp;s&nbsp;» échappés peuvent être remplacés par la
+lettre capitale correspondante pour avoir la signification contraire. Par
+exemple, <code>\S</code> correspond à n’importe quel caractère qui n’est pas un espace
+blanc. Lorsqu’on utilise <code>[</code> et <code>]</code>, un motif peut être inversé en commençant
+par un caractère <code>^</code> :</p><pre class="code"><span class="keyword">var</span> <span class="variable">pasABC</span> = <span class="string">/[^ABC]/</span>;
+<span class="variable">show</span>(<span class="string">&quot;ABCBACCBBADABC&quot;</span>.<span class="property">search</span>(<span class="variable">pasABC</span>));</pre><p>Comme vous pouvez le voir, la façon dont les expressions rationnelles utilisent
+des caractères pour construire des motifs les rend a) très courts, et b) très
+difficiles à lire.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 10.1</div><div class="exercise"><p>Écrivez une expression rationnelle qui retrouve une date au format
+<code>&quot;XX/XX/XXXX&quot;</code>, dans laquelle les <code>X</code> sont des chiffres. Essayez sur cette
+chaîne <code>&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;</code>.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">motifDate</span> = <span class="string">/\d\d\/\d\d\/\d\d\d\d/</span>;
+<span class="variable">show</span>(<span class="string">&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;</span>.<span class="property">search</span>(<span class="variable">motifDate</span>));</pre></div></div><hr/><div class="block"><p>Vous aurez parfois besoin de vous assurer qu’un motif démarre au début d’une
+chaîne ou s’achève à son extrémité. Pour cela, on peut utiliser les caractères
+spéciaux <code>^</code> et <code>$</code>. Le premier coïncide avec le début de la chaîne, le
+deuxième avec la fin.</p><pre class="code"><span class="variable">show</span>(<span class="string">/a+/</span>.<span class="property">test</span>(<span class="string">&quot;blah&quot;</span>));
+<span class="variable">show</span>(<span class="string">/^a+$/</span>.<span class="property">test</span>(<span class="string">&quot;blah&quot;</span>));</pre><p>La première expression rationnelle retrouve toute chaîne qui contient un
+caractère <code>a</code>, la seconde seulement les chaînes qui sont entièrement
+constituées de caractères <code>a</code>.</p><p>Notez que les expressions rationnelles sont des objets et qu’elles ont des
+méthodes. Leur méthode <a name="key4"></a><code>test</code> renvoie un booléen qui indique si une chaîne
+donnée correspond avec l’expression.</p><p>Le code <code>\b</code> correspond à une «&nbsp;limite de mot&nbsp;», qui peut être une ponctuation,
+une espace ou le début ou la fin d’une chaîne de caractères.</p><pre class="code"><span class="variable">show</span>(<span class="string">/cat/</span>.<span class="property">test</span>(<span class="string">&quot;concaténer&quot;</span>));
+<span class="variable">show</span>(<span class="string">/\bcat\b/</span>.<span class="property">test</span>(<span class="string">&quot;concaténer&quot;</span>));</pre></div><hr/><div class="block"><p>On peut autoriser des parties d’un motif à se répéter un certain nombre de
+fois. Mettre un astérisque (<code>*</code>) après un élément l’autorise à être répété
+autant de fois qu’on veut, y compris zéro fois. Un plus (<code>+</code>) se comporte de la
+même façon mais a besoin que le motif apparaisse au moins une fois. Un point
+d’interrogation (<code>?</code>) rend l’élément facultatif ― il peut apparaître une fois
+ou aucune.</p><pre class="code"><span class="keyword">var</span> <span class="variable">texteEntreParentheses</span> = <span class="string">/\(.*\)/</span>;
+<span class="variable">show</span>(<span class="string">&quot;Ses (celles du paresseux) griffes étaient gigantesques!&quot;</span>.<span class="property">search</span>(<span class="variable">texteEntreParentheses</span>));</pre><p>Lorsque c’est nécessaire, des accolades peuvent être utilisées pour préciser le
+nombre de fois où un élément peut apparaître. Un nombre entre accolades (<code>{4}</code>)
+donne la quantité exacte de fois. Deux nombres séparés par une virgule
+indiquent que le motif doit apparaître au moins le nombre de fois indiqué par
+le premier nombre et au maximum le nombre de fois indiqué par le deuxième. De
+manière similaire, <code>{2,}</code> signifie deux occurrences ou plus tandis que <code>{,4}</code>
+signifie quatre occurrences ou moins.</p><pre class="code"><span class="keyword">var</span> <span class="variable">motifDate</span> = <span class="string">/\d{1,2}\/\d\d?\/\d{4}/</span>;
+<span class="variable">show</span>(<span class="string">&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;</span>.<span class="property">search</span>(<span class="variable">motifDate</span>));</pre><p>Les parties <code>/\d{1,2}/</code> et <code>/\d\d?/</code> signifient toutes deux «&nbsp;un ou deux
+chiffres&nbsp;».</p></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 10.2</div><div class="exercise"><p>Écrivez un motif qui correspond avec les adresses électroniques. Pour
+simplifier, considérez que les parties avant et après le <code>@</code> peuvent contenir
+seulement des caractères alphanumériques et des caractères <code>.</code> et <code>-</code> (point et
+tiret), tandis que la dernière partie de l’adresse, le code du pays après le
+dernier point, peut contenir des caractères alphanumériques et doit être long
+de deux ou trois caractères.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">adresseElectronique</span> = <span class="string">/\b[\w\.-]+@[\w\.-]+\.\w{2,3}\b/</span>;
+
+<span class="variable">show</span>(<span class="variable">adresseElectronique</span>.<span class="property">test</span>(<span class="string">&quot;kenny@test.net&quot;</span>));
+<span class="variable">show</span>(<span class="variable">adresseElectronique</span>.<span class="property">test</span>(<span class="string">&quot;J’ai envoyé un courriel à kenny@tets.nets, mais ça ne fonctionne pas&nbsp;!&quot;</span>));
+<span class="variable">show</span>(<span class="variable">adresseElectronique</span>.<span class="property">test</span>(<span class="string">&quot;le_paresseux_geant@gmail.com&quot;</span>));</pre><p>Les <code>\b</code> au début et à la fin du motif permettent de s’assurer que la deuxième
+chaîne de caractères ne correspond pas.</p></div></div><hr/><div class="block"><p>Des parties d’une expression rationnelle peuvent être rassemblées en les
+mettant entre parenthèses. Ce qui nous permet d’utiliser <code>*</code> et autres sur plus
+d’un caractère. Par exemple :</p><pre class="code"><span class="keyword">var</span> <span class="variable">criFaconCartoon</span> = <span class="string">/boo(hoo+)+/i</span>;
+<span class="variable">show</span>(<span class="string">&quot;Il s’exclama alors «&nbsp;Boohoooohoohooo&nbsp;»&quot;</span>.<span class="property">search</span>(<span class="variable">criFaconCartoon</span>));</pre><p>D’où vient le <code>i</code> à la fin de cette expression rationnelle&nbsp;? Après le slash
+fermant, une option peut être ajoutée à une expression rationnelle. Un <code>i</code> ici
+signifie que l’expression est insensible à la casse, ce qui permet d’utiliser
+un B minuscule dans le motif pour correspondre à celui en majuscule dans la
+chaîne de caractères.</p><p>Un caractère barre verticale (<code>|</code>) est utilisé pour permettre à un motif
+d’avoir le choix entre deux éléments. Par exemple :</p><pre class="code"><span class="keyword">var</span> <span class="variable">vacheSacree</span> = <span class="string">/(vache|bœuf|taureau) (sacré|sacrée|saint|sainte)/i</span>;
+<span class="variable">show</span>(<span class="variable">vacheSacree</span>.<span class="property">test</span>(<span class="string">&quot;Vache sacrée&nbsp;!&quot;</span>));</pre></div><hr/><div class="block"><p>Souvent, chercher un motif n’est que la première étape dans l’extraction d’un
+élément dans une chaîne. Dans les chapitres précédents, cette extraction était
+effectuée en appelant beaucoup les méthodes <code>indexOf</code> et <code>slice</code> de l’objet
+string. Maintenant que nous sommes conscients de l’existence des expressions
+rationnelles, nous pouvons utiliser plutôt la méthode <code>match</code>. Quand on teste
+la correspondance d’une chaîne à une expression rationnelle, le résultat sera
+<code>null</code> si la correspondance échoue ou un tableau de chaînes si des
+correspondances sont trouvées.</p><pre class="code"><span class="variable">show</span>(<span class="string">&quot;Non&quot;</span>.<span class="property">match</span>(<span class="string">/Oui/</span>));
+<span class="variable">show</span>(<span class="string">&quot;… oui&quot;</span>.<span class="property">match</span>(<span class="string">/oui/</span>));
+<span class="variable">show</span>(<span class="string">&quot;Grand singe&quot;</span>.<span class="property">match</span>(<span class="string">/grand (\w+)/i</span>));</pre><p>Le premier élément dans le tableau renvoyé est toujours la partie de la chaîne
+qui correspond au motif. Comme on le voit dans le dernier exemple, lorsqu’il y
+a des parties du motif entre parenthèses, celles qui correspondent sont
+également ajoutées au tableau. Souvent, cela facilite grandement l’extraction
+de fragments de chaînes.</p><pre class="code"><span class="keyword">var</span> <span class="variable">entreParentheses</span> = <span class="variable">prompt</span>(<span class="string">&quot;Dites-moi quelque chose&quot;</span>, <span class="string">&quot;&quot;</span>).<span class="property">match</span>(<span class="string">/\((.*)\)/</span>);
+<span class="keyword">if</span> (<span class="variable">entreParentheses</span> != <span class="atom">null</span>)
+  <span class="variable">print</span>(<span class="string">&quot;Vous avez mis entre parenthèses '&quot;</span>, <span class="variable">entreParentheses</span>[<span class="atom">1</span>], <span class="string">&quot;'&quot;</span>);</pre></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 10.3</div><div class="exercise"><p>Réécrivez la fonction <code>extraireDate</code> que nous avons écrite dans le <a href="chapter4.html">chapitre 4</a>.
+Lorsqu’on lui donne une chaîne à traiter, cette fonction cherche quelque chose
+qui suit le format de date que nous avons vu précédemment. Si elle peut
+retrouver une telle date, elle met la valeur dans l’objet <code>Date</code>. Sinon, elle
+lève une exception. Faites en sorte qu’elle accepte les dates dans lesquelles
+le jour ou le mois sont écrits avec un seul chiffre.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">extraireDate</span>(<span class="variabledef">chaine</span>) {
+  <span class="keyword">var</span> <span class="variabledef">trouves</span> = <span class="localvariable">chaine</span>.<span class="property">match</span>(<span class="string">/(\d\d?)\/(\d\d?)\/(\d{4})/</span>);
+  <span class="keyword">if</span> (<span class="localvariable">trouves</span> == <span class="atom">null</span>)
+    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Aucune date trouvée dans '&quot;</span> + <span class="localvariable">chaine</span> + <span class="string">&quot;'.&quot;</span>);
+  <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">Date</span>(<span class="variable">Number</span>(<span class="localvariable">trouves</span>[<span class="atom">3</span>]), <span class="variable">Number</span>(<span class="localvariable">trouves</span>[<span class="atom">2</span>]) - <span class="atom">1</span>,
+                  <span class="variable">Number</span>(<span class="localvariable">trouves</span>[<span class="atom">1</span>]));
+}
+
+<span class="variable">show</span>(<span class="variable">extraireDate</span>(<span class="string">&quot;Est né le 5/2/2007 (mère, Kaïra): Johnson Longues Oreilles&quot;</span>));</pre><p>Cette version est légèrement plus longue que la précédente mais elle a
+l’avantage de vérifier effectivement ce qui est fait et de faire retentir la
+sirène d’alarme quand une entrée illogique est faite. C’était beaucoup plus
+difficile sans expression rationnelle ―&nbsp;cela aurait nécessité beaucoup
+d’appels à <code>indexOf</code> pour déterminer si les nombres avaient un ou deux chiffres
+et si les tirets étaient à la bonne place.</p></div></div><hr/><div class="block"><p>La méthode <a name="key5"></a><code>replace</code> des valeurs de chaîne, que nous avons vue dans le <a href="chapter6.html">chapitre 6</a>,
+peut être employée comme premier argument d’une expression rationnelle.</p><pre class="code"><span class="variable">print</span>(<span class="string">&quot;Borobudur&quot;</span>.<span class="property">replace</span>(<span class="string">/[ou]/g</span>, <span class="string">&quot;a&quot;</span>));</pre><p>Remarquez le caractère <code>g</code> après l’expression rationnelle. Elle signifie «
+global&nbsp;» et veut dire que toute partie de chaîne qui coïncide avec le motif
+devrait être remplacée. Quand le <code>g</code> est omis, seul le premier <code>&quot;o&quot;</code> est
+remplacé.</p><p>Il est parfois nécessaire de conserver des parties de chaînes remplacées. Par
+exemple, nous avons une longue chaîne qui contient des noms de personnes, un
+nom par ligne, au format «nom, prénom&nbsp;». Nous voulons inverser l’ordre des
+informations et supprimer la virgule, pour obtenir un simple format «&nbsp;prénom,
+nom&nbsp;»</p><pre class="code"><span class="keyword">var</span> <span class="variable">noms</span> = <span class="string">&quot;Picasso, Pablo\nGauguin, Paul\nVan Gogh, Vincent&quot;</span>;
+<span class="variable">print</span>(<span class="variable">noms</span>.<span class="property">replace</span>(<span class="string">/([\w ]+), ([\w ]+)/g</span>, <span class="string">&quot;$2 $1&quot;</span>));</pre><p>Le <code>$1</code> et le <code>$2</code> de la chaîne de remplacement, font référence aux parties
+entre parenthèses dans le motif. <code>$1</code> est remplacée par le texte correspondant
+à la première paire de parenthèses du motif, <code>$2</code> par la deuxième et ainsi de
+suite jusqu’à <code>$9</code>.</p><p>Si vous avez plus de 9 parties entre parenthèses, cela ne fonctionnera plus.
+Cependant, il existe un autre moyen de remplacer des parties de chaînes de
+caractères, qui peut être utile dans certaines situations délicates. Lorsque le
+second argument donné à la méthode <code>replace</code> est une valeur fonction au lieu
+d’une chaîne de caractères, cette fonction est appelée à chaque fois qu’une
+correspondance est trouvée&nbsp;; le texte correspondant est alors remplacé par ce
+que la fonction renvoie. Les arguments donnés à la fonction sont les éléments
+qui correspondent, similaires aux valeurs trouvées dans les tableaux renvoyés
+par <code>match</code> : le premier est la correspondance complète, puis vient un argument
+pour chaque partie entre parenthèses du motif.</p><pre class="code"><span class="keyword">function</span> <span class="variable">mangeUnDeChaque</span>(<span class="variabledef">correspondance</span>, <span class="variabledef">quantite</span>, <span class="variabledef">unite</span>) {
+  <span class="localvariable">quantite</span> = <span class="variable">Number</span>(<span class="localvariable">quantite</span>) - <span class="atom">1</span>;
+  <span class="keyword">if</span> (<span class="localvariable">quantite</span> == <span class="atom">1</span>) {
+    <span class="localvariable">unite</span> = <span class="localvariable">unite</span>.<span class="property">slice</span>(<span class="atom">0</span>, <span class="localvariable">unite</span>.<span class="property">length</span> - <span class="atom">1</span>);
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">quantite</span> == <span class="atom">0</span>) {
+    <span class="localvariable">unite</span> = <span class="localvariable">unite</span> + <span class="string">&quot;s&quot;</span>;
+    <span class="localvariable">quantite</span> = <span class="string">&quot;aucun&quot;</span>;
+  }
+  <span class="keyword">return</span> <span class="localvariable">quantite</span> + <span class="string">&quot; &quot;</span> + <span class="localvariable">unite</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">stock</span> = <span class="string">&quot;1 citron, 2 carottes, et 101 oeufs&quot;</span>;
+<span class="variable">stock</span> = <span class="variable">stock</span>.<span class="property">replace</span>(<span class="string">/(\d+) (\w+)/g</span>, <span class="variable">mangeUnDeChaque</span>);
+
+<span class="variable">print</span>(<span class="variable">stock</span>);</pre></div><hr/><div class="block"><a name="exercise4"></a><div class="exercisenum">Ex. 10.4</div><div class="exercise"><p>Cette dernière astuce peut être utilisée pour rendre plus efficace la fonction
+d’échappement HTML vu dans le <a href="chapter6.html">chapitre 6</a>. Vous vous souvenez peut-être qu’elle
+ressemblait à cela :</p><pre class="code"><span class="keyword">function</span> <span class="variable">escapeHTML</span>(<span class="variabledef">texte</span>) {
+  <span class="keyword">var</span> <span class="variabledef">remplacements</span> = [[<span class="string">/&amp;/g</span>, <span class="string">&quot;&amp;amp;&quot;</span>], [<span class="string">/&quot;/g</span>, <span class="string">&quot;&amp;quot;&quot;</span>],
+                      [<span class="string">/&lt;/g</span>, <span class="string">&quot;&amp;lt;&quot;</span>], [<span class="string">/&gt;/g</span>, <span class="string">&quot;&amp;gt;&quot;</span>]];
+  <span class="variable">forEach</span>(<span class="localvariable">remplacements</span>, <span class="keyword">function</span>(<span class="variabledef">remplacement</span>) {
+    <span class="localvariable">texte</span> = <span class="localvariable">texte</span>.<span class="property">replace</span>(<span class="localvariable">remplacement</span>[<span class="atom">0</span>], <span class="localvariable">remplacement</span>[<span class="atom">1</span>]);
+  });
+  <span class="keyword">return</span> <span class="localvariable">texte</span>;
+}</pre><p>Écrivez une nouvelle fonction <code>escapeHTML</code>, qui fasse la même chose, mais qui
+n’appelle <code>replace</code> qu’une seule fois.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">escapeHTML</span>(<span class="variabledef">texte</span>) {
+  <span class="keyword">var</span> <span class="variabledef">remplacements</span> = {<span class="string">&quot;&lt;&quot;</span>: <span class="string">&quot;&amp;lt;&quot;</span>, <span class="string">&quot;&gt;&quot;</span>: <span class="string">&quot;&amp;gt;&quot;</span>,
+                      <span class="string">&quot;&amp;&quot;</span>: <span class="string">&quot;&amp;amp;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>: <span class="string">&quot;&amp;quot;&quot;</span>};
+  <span class="keyword">return</span> <span class="localvariable">texte</span>.<span class="property">replace</span>(<span class="string">/[&lt;&gt;&amp;&quot;]/g</span>, <span class="keyword">function</span>(<span class="variabledef">caractere</span>) {
+    <span class="keyword">return</span> <span class="localvariable">remplacements</span>[<span class="localvariable">caractere</span>];
+  });
+}
+
+<span class="variable">print</span>(<span class="variable">escapeHTML</span>(<span class="string">&quot;La balise pour le préformatage s’écrit \&quot;&lt;pre&gt;\&quot;.&quot;</span>));</pre><p>L’objet <code>remplacements</code> est un moyen rapide d’associer chaque caractère à sa
+version échappée. L’utiliser ainsi ne pose pas de problème (c’est-à-dire qu’un
+objet <code>Dictionary</code> n’est pas nécessaire) parce que les seules propriétés qui
+seront utilisées sont celles qui correspondent avec l’expression <code>/[&lt;&gt;&amp;&quot;]/</code>.</p></div></div><hr/><div class="block"><p>Il y a des cas où les motifs avec lesquels doivent correspondre les chaînes ne
+sont pas connus au moment où le code est écrit. Par exemple, si nous écrivons
+un filtre à obscénités (simpliste) pour un forum de discussions. Nous voulons
+autoriser uniquement les messages qui ne contiennent pas de mot obscène.
+L’administrateur du forum peut spécifier une liste de mots qu’il ou elle
+considère comme inacceptables.</p><p>Le moyen le plus efficace de vérifier un fragment du texte pour un ensemble de
+mots est d’utiliser une expression rationnelle. Si nous mettons notre liste de
+mots dans un tableau, nous pourrons construire l’expression rationnelle de la
+façon suivante :</p><pre class="code"><span class="keyword">var</span> <span class="variable">motsInterdits</span> = [<span class="string">&quot;primate&quot;</span>, <span class="string">&quot;singe&quot;</span>, <span class="string">&quot;simien&quot;</span>, <span class="string">&quot;gorille&quot;</span>, <span class="string">&quot;evolution&quot;</span>];
+<span class="keyword">var</span> <span class="variable">motif</span> = <span class="keyword">new</span> <span class="variable">RegExp</span>(<span class="variable">motsInterdits</span>.<span class="property">join</span>(<span class="string">&quot;|&quot;</span>), <span class="string">&quot;i&quot;</span>);
+<span class="keyword">function</span> <span class="variable">estAcceptable</span>(<span class="variabledef">texte</span>) {
+  <span class="keyword">return</span> !<span class="variable">motif</span>.<span class="property">test</span>(<span class="localvariable">texte</span>);
+}
+
+<span class="variable">show</span>(<span class="variable">estAcceptable</span>(<span class="string">&quot;Henry Kissinger a reçu le prix Nobel de la paix en 1973.&quot;</span>));
+<span class="variable">show</span>(<span class="variable">estAcceptable</span>(<span class="string">&quot;Ça suffit avec ces histoires de singes.&quot;</span>));</pre><p>Nous pourrions ajouter des motifs <code>\b</code> autour des mots, pour que les choses à
+propos de Henry Kissinger ne soient pas considérées comme irrecevables.
+Cependant, cela rendrait aussi le deuxième acceptable, ce qui n’est
+probablement pas correct. Les filtres parentaux sont difficiles à concevoir et
+à paramétrer (et la plupart du temps sont bien trop agaçant pour être une bonne
+idée).</p><p>Le premier argument pour le constructeur <a name="key6"></a><code>RegExp</code> est une chaîne contenant le
+motif, le deuxième argument peut être utilisé pour ajouter l’insensibilité à la
+casse ou la globalité. Quand on élabore une chaîne pour contenir le motif, on
+doit faire très attention aux antislashes. En effet, en principe, les
+antislashes sont supprimés quand une chaîne est interprétée, tous les
+antislashes qui doivent se trouver dans l’expression rationnelle elle-même
+doivent donc être échappés :</p><pre class="code"><span class="keyword">var</span> <span class="variable">chiffres</span> = <span class="keyword">new</span> <span class="variable">RegExp</span>(<span class="string">&quot;\\d+&quot;</span>);
+<span class="variable">show</span>(<span class="variable">chiffres</span>.<span class="property">test</span>(<span class="string">&quot;101&quot;</span>));</pre></div><hr/><div class="block"><p>Le plus important à savoir à propos des expressions rationnelles est qu’elles
+existent et peuvent augmenter de façon significative la puissance de votre code
+modificateur de chaînes. Elles sont tellement alambiquées qu’il vous faudra
+probablement regarder de très près leur détail les dix premières fois où vous
+voudrez les utiliser. Persévérez et vous écrirez vite sans les mains des
+expressions qui auront l’air de formules cabalistiques.</p><div class="illustration"><img src="img/xkcd_regular_expressions.png"/></div><p>(Bande dessinée de <a href="http://xkcd.com">Randall Munroe</a>.)</p></div><ol class="footnotes"><li><a name="footnote1"></a>Dans cet exemple, les antislash ne sont pas vraiment nécessaires, car il
+s’agit de caractères encadrés par <code>[</code> et <code>]</code> mais il est plus facile de les
+échapper tout de même et de ne plus avoir à y penser.</li></ol><div class="navigation"><a href="chapter9.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter11.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

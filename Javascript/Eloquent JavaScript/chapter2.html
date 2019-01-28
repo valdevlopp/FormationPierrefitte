@@ -1,0 +1,612 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Les bases du JavaScript : valeurs, variables et structures de contrôle -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'basics';</script><div class="navigation"><a href="chapter1.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter3.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 2: </span>Les bases du JavaScript : valeurs, variables et structures de contrôle</h1><div class="block"><p>Dans le monde des ordinateurs, seules les données existent. Ce qui n’est pas
+une donnée n’existe pas. Fondamentalement, toutes les données sont similaires,
+car elles ne sont par essence que des séquences de bits<a class="footref" href="#footnote1">1</a>. Cependant, chaque
+donnée joue un rôle qui lui est propre. Dans le système JavaScript, la plupart
+de ces données sont soigneusement réparties entre des choses appelées
+<a name="key1"></a>valeurs. Chaque valeur a un type qui détermine le rôle qu’elle peut jouer. Il
+y a six types de valeurs de base : les nombres (<code>number</code>), les chaînes de
+caractères (<code>string</code>), les booléens (<code>boolean</code>), les objets (<code>object</code>), les
+fonctions (<code>function</code>) et les valeurs indéfinies (<code>undefined</code>).</p><p>Pour créer une valeur, on doit seulement invoquer son nom. C’est très pratique.
+Vous n’avez pas à rassembler du matériel de construction pour vos valeurs, ou
+payer pour elles, il vous suffit d’en appeler une et <em>hop</em>, vous l’avez. Elles
+ne sont pas créées à partir de rien, évidemment. Chaque valeur doit être
+stockée quelque part, et si vous voulez en utiliser un grand nombre en même
+temps la mémoire de l’ordinateur pourrait venir à manquer. Heureusement, ce
+problème ne se présente que si vous devez les utiliser simultanément. Dès que
+vous n’utiliserez plus une valeur, elle se dissipera en ne laissant que
+quelques bits derrière elle. Ces bits sont recyclés pour fabriquer la
+génération suivante de valeurs.</p></div><hr/><div class="block"><p>Les valeurs de type <a name="key2"></a>nombre sont, comme vous l’aurez peut-être déduit, des
+valeurs numériques. Elles sont écrites de la manière dont sont habituellement
+écrits les nombres :</p><pre class="code expression"><span class="atom">144</span></pre><p>Saisissez cela dans la console et la même chose est affichée dans la fenêtre de
+sortie. Le texte que vous avez saisi a donné naissance à une valeur numérique&nbsp;;
+la console a pris ce nombre et l’a affiché de nouveau à l’écran. Dans ce cas,
+c’était assez inutile, mais nous produirons bientôt des valeurs de manières
+moins directes et il pourra être utile de «&nbsp;les essayer&nbsp;» dans la console pour
+voir ce qu’elles produisent.</p><p>Voilà à quoi ressemble <code>144</code> écrit sous forme de bits<a class="footref" href="#footnote2">2</a>:</p><pre class="preformatted">0100000001100010000000000000000000000000000000000000000000000000</pre><p>Le nombre précédent a 64 bits. C’est le cas de tous les nombres en JavaScript.
+Cela a une répercussion importante : il y a une quantité limitée de nombres
+pouvant être exprimés. Avec une décimale à trois chiffres, seuls les nombres de
+0 à 999 peuvent être écrits, soit 10<sup>3</sup> = 1000 nombres différents. Avec 64
+chiffres binaires, on peut écrire 2<sup>64</sup> nombres différents. Cela en fait
+beaucoup, plus de 10<sup>19</sup> (un 1 suivi de dix-neuf zéros).</p><p>Tous les nombres inférieurs à 10<sup>19</sup> ne tiennent cependant pas dans un nombre
+JavaScript. D’une part, il y a aussi les nombres négatifs, ce qui oblige à
+utiliser un des bits pour stocker le signe du nombre. Mais ensuite, la
+représentation des nombres décimaux est un problème encore plus important. Pour
+permettre celle-ci, 11 bits sont utilisés pour stocker la position de la
+virgule au sein du nombre.</p><p>Il nous reste donc 52 bits<a class="footref" href="#footnote3">3</a>. Tout nombre entier inférieur à 2<sup>52</sup>, ce qui
+correspond à plus de 10<sup>15</sup>, sera contenu sans risque dans un nombre JavaScript.
+Dans la plupart des cas, les nombres que nous utilisons restent bien en-deçà,
+nous n’avons donc absolument pas besoin de nous préoccuper des bits, ce qui
+nous arrange. Je n’ai rien de particulier contre les bits, mais vous <em>avez</em>
+besoin de beaucoup d’entre eux pour pouvoir faire quoi que ce soit. Chaque fois
+que c’est possible, il est donc plus agréable de travailler avec des outils
+plus abstraits.</p><p>Les nombres décimaux s’écrivent en utilisant un point.</p><pre class="code expression"><span class="atom">9.81</span></pre><p>Pour les nombres très grands ou très petits, il est possible d’utiliser la
+notation «&nbsp;scientifique&nbsp;», en ajoutant un <code>e</code> suivi de l’exposant du nombre :</p><pre class="code expression"><span class="atom">2.998e8</span></pre><p>Ce qui donne 2.998 * 10<sup>8</sup> = 299800000.</p><p>Les opérations avec des nombres sans virgule (aussi appelés nombres entiers)
+tenant en 52 bits ont une précision garantie. Malheureusement, les opérations
+avec des nombres fractionnels ne sont pas dans le même cas. Tout comme π (pi)
+qui ne peut être exprimé de manière précise par un nombre fini de chiffres à
+décimales, beaucoup de nombres perdent en précision lorsqu’on ne dispose que de
+64 bits pour les stocker. C’est dommage, mais cela ne crée de problèmes
+pratiques que dans des situations très spécifiques. Le plus important est d’en
+être conscient et de considérer les nombres fractionnels décimaux comme des
+approximations et non des valeurs précises.</p></div><hr/><div class="block"><p>On utilise les nombres principalement en arithmétique. Les opérations
+arithmétiques, comme l’addition ou la multiplication, prennent deux valeurs de
+type nombre pour créer un nouveau nombre. Voici ce que cela donne en
+JavaScript :</p><pre class="code expression"><span class="atom">100</span> + <span class="atom">4</span> * <span class="atom">11</span></pre><p>Les symboles <a name="key3"></a><code>+</code> et <a name="key4"></a><code>*</code> sont appelés des opérateurs. Le premier correspond
+à l’addition et le second à la multiplication. Placer un opérateur entre deux
+valeurs le fera s’appliquer <a name="key5"></a> à ces deux valeurs et produire une
+nouvelle valeur.</p><p>L’exemple veut-il dire «&nbsp;ajouter 4 et 100 puis multiplier le résultat par 11&nbsp;»,
+ou la multiplication est-elle effectuée avant l’addition&nbsp;? Comme vous l’avez
+probablement deviné, la multiplication a lieu en premier. Mais comme en
+mathématiques, cela peut être modifié en entourant l’addition de
+parenthèses<a name="key6"></a> :</p><pre class="code expression">(<span class="atom">100</span> + <span class="atom">4</span>) * <span class="atom">11</span></pre><p>Pour la soustraction, il y a l’opérateur <a name="key7"></a><code>-</code>, et la division peut être
+effectuée avec <a name="key8"></a><code>/</code>. Lorsque des opérateurs apparaissent ensemble sans
+parenthèses, l’ordre dans lequel ils sont appliqués est déterminé par la
+<a name="key9"></a>priorité des opérateurs. Le premier exemple montre que la multiplication a
+une priorité plus forte que l’addition. La division et la multiplication
+viennent toujours avant la soustraction et l’addition. Lorsque plusieurs
+opérateurs ayant la même priorité se suivent (<code>1 - 1 + 1</code>) ils sont appliqués
+de gauche à droite.</p><p>Essayez de trouver la valeur que produit cette opération, puis exécutez-la en
+console pour voir si vous aviez raison…</p><pre class="code expression"><span class="atom">115</span> * <span class="atom">4</span> - <span class="atom">4</span> + <span class="atom">88</span> / <span class="atom">2</span></pre><p>Vous ne devriez pas avoir à vous inquiéter de ces règles de priorité. En cas de
+doute, ajoutez simplement des parenthèses.</p><p>Il y a encore un opérateur arithmétique qui vous est sûrement moins familier.
+Le symbole <a name="key10"></a><code>%</code> est utilisé pour représenter l’opération <a name="key11"></a>modulo. <code>X</code> modulo
+<code>Y</code> est le reste de la division de <code>X</code> par <code>Y</code>. Par exemple <code>314 % 100</code> vaut
+<code>14</code>, <code>10 % 3</code> vaut <code>1</code> et <code>144 % 12</code> vaut <code>0</code>. Modulo a le même ordre de
+priorité que la multiplication et la division.</p></div><hr/><div class="block"><p>Le type de données suivant est la <a name="key12"></a>chaîne de caractères. Son utilisation n’est
+pas aussi évidente à deviner d’après son nom que pour le type de données
+nombre, mais elle remplit également un rôle très basique. Les chaînes de
+caractères sont utilisées pour représenter du texte, le nom est censé venir du
+fait qu’il enchaîne un groupe de caractères ensemble. Les chaînes de caractères
+sont écrites en insérant leur contenu entre des guillemets :</p><pre class="code expression"><span class="string">&quot;Colmater mon bateau avec du chewing-gum.&quot;</span></pre><p>On peut mettre pratiquement tout ce qu’on veut entre des guillemets et le
+JavaScript fera la conversion en une valeur de type <code>string</code>. Mais pour
+certains caractères c’est un peu tordu. Vous pouvez imaginer à quel point il
+est délicat de mettre des guillemets entre guillemets. Les <a name="key13"></a>
+sauts de lignes, comme vous en faites en appuyant sur Entrée, ne peuvent pas
+non plus être mis entre guillemets, la chaîne doit tenir sur une seule ligne.</p><p>Pour mettre de tels caractères dans une chaîne, on emploie l’astuce suivante :
+à chaque fois qu’on trouve un antislash («&nbsp;<code>\</code>&nbsp;») dans un texte entre
+guillemets, cela signifie que le caractère qui le suit a une signification
+particulière. Un guillemet qui est précédé d’un antislash n’achèvera pas la
+chaîne mais en fera partie. Quand le caractère «&nbsp;<code>n</code>&nbsp;» se trouve derrière
+l’antislash, il est interprété comme un saut de ligne. De même, un «&nbsp;<code>t</code>&nbsp;»
+derrière un antislash signifie un caractère de tabulation<a class="footref" href="#footnote4">4</a>.</p><pre class="code expression"><span class="string">&quot;Voici une première ligne\nEt maintenant la seconde&quot;</span></pre><p>Remarquez que si vous entrez cette chaîne dans la console, elle s’affiche sous
+forme «&nbsp;source&nbsp;», avec des guillemets et des anti-slashes. Pour ne voir que du
+texte, vous pouvez entrer <code>print(&quot;a\nb&quot;)</code>. Ce que cela fait précisément sera
+bientôt expliqué.</p><p>Il existe bien entendu des cas où vous voudriez que l’antislash dans une chaîne
+soit juste un antislash et pas un caractère d’échappement. Si deux anti-slashes
+se succèdent, ils vont se combiner et seul l’un d’eux sera conservé dans la
+chaîne résultante :</p><pre class="code expression"><span class="string">&quot;Un caractère de saut de ligne est écrit ainsi \&quot;\\n\&quot;.&quot;</span></pre></div><hr/><div class="block"><p>Les chaînes ne peuvent être divisées, multipliées ou soustraites. L’opérateur
+<a name="key14"></a><code>+</code> <em>peut</em> être utilisé avec des chaînes. Il n’ajoute rien au sens
+mathématique mais concatène les chaînes, il les colle ensemble.</p><pre class="code expression"><span class="string">&quot;con&quot;</span> + <span class="string">&quot;cat&quot;</span> + <span class="string">&quot;é&quot;</span> + <span class="string">&quot;ner&quot;</span></pre><p>Il existe bien d’autres outils pour manipuler des chaînes de caractères, nous
+les exposerons par la suite.</p></div><hr/><div class="block"><p>Tous les opérateurs ne sont pas des symboles. Certains sont écrits sous forme
+de mots. Par exemple l’opérateur <a name="key15"></a><code>typeof</code> qui renvoie une chaîne de
+caractères spécifiant le type d’une valeur.</p><pre class="code expression">typeof <span class="atom">4.5</span></pre><p>Les autres opérateurs que nous avons vus opèrent toujours sur deux valeurs,
+<code>typeof</code> sur une seule. Les opérateurs qui utilisent deux valeurs sont appelés
+des <a name="key16"></a>opérateurs binaires alors que ceux qui n’en n’utilisent
+qu’une sont des <a name="key17"></a>opérateurs unaires. Le <a name="key18"></a>signe moins
+peut être utilisé aussi bien comme un opérateur binaire que comme un unaire :</p><pre class="code expression">- (<span class="atom">10</span> - <span class="atom">2</span>)</pre></div><hr/><div class="block"><p>Il existe enfin des valeurs de type <a name="key19"></a>booléen. Il n’en existe que deux :
+<a name="key20"></a><code>true</code> pour vrai et <a name="key21"></a><code>false</code> pour faux. Voici un moyen de produire une
+valeur <code>true</code> :</p><pre class="code expression"><span class="atom">3</span> &gt; <span class="atom">2</span></pre><p>Et on peut produire <code>false</code> comme ceci :</p><pre class="code expression"><span class="atom">3</span> &lt; <span class="atom">2</span></pre><p>J’espère que vous connaissiez déjà les signes <a name="key22"></a><code>&gt;</code> et <a name="key23"></a><code>&lt;</code>. Ils signifient,
+respectivement, «&nbsp;plus grand que&nbsp;» et «&nbsp;plus petit que&nbsp;». Ce sont des
+opérateurs binaires et le résultat de leur application est une valeur booléenne
+qui indique dans ce cas si l’expression est vérifiée ou non.</p><p>On peut comparer des chaînes de la même façon :</p><pre class="code expression"><span class="string">&quot;Aardvark&quot;</span> &lt; <span class="string">&quot;Zoroaster&quot;</span></pre><p>Le classement des chaînes suit plus ou moins l’ordre alphabétique. Plus ou
+moins parce que… les lettres majuscules sont toujours «&nbsp;plus petites que&nbsp;» les
+minuscules, donc <code>&quot;Z&quot; &lt; &quot;a&quot;</code> («&nbsp;Z&nbsp;» en majuscule, «&nbsp;a&nbsp;» en minuscule) vaut
+<code>true</code> et les caractères non alphabétiques («&nbsp;<code>!</code>&nbsp;», «&nbsp;<code>@</code>&nbsp;», etc.) sont
+également inclus dans ce classement. Le véritable principe sur lequel repose la
+comparaison est le standard <a name="key24"></a>Unicode. Ce dernier assigne un nombre à
+potentiellement tout caractère dont on peut avoir besoin, y compris les
+caractères de langues comme le grec, l’arabe, le japonais, le tamoul, et ainsi
+de suite. Disposer de tels nombres est bien pratique pour stocker des chaînes
+de caractères dans un ordinateur ― vous pouvez les représenter comme une série
+de nombres. En comparant les chaînes, le JavaScript se contente de comparer les
+nombres associés aux caractères dans la chaîne, de gauche à droite.</p><p>Voici d’autres opérateurs du même genre : <a name="key25"></a><code>&gt;=</code> («&nbsp;supérieur ou égal à&nbsp;»),
+<a name="key26"></a><code>&lt;=</code> («&nbsp;inférieur ou égal à&nbsp;»), <a name="key27"></a><code>==</code> («&nbsp;égal à&nbsp;»), et <a name="key28"></a><code>!=</code> («&nbsp;n’est pas
+égal à&nbsp;»).</p><pre class="code expression"><span class="string">&quot;Itchy&quot;</span> != <span class="string">&quot;Scratchy&quot;</span></pre><pre class="code expression"><span class="atom">5e2</span> == <span class="atom">500</span></pre></div><hr/><div class="block"><p>Il existe également des opérations très utiles qui peuvent être appliquées aux
+valeurs booléennes elles-mêmes. JavaScript prend en charge trois opérateurs
+logiques : <em>et</em>, <em>ou</em> et <em>non</em>, que l’on peut utiliser pour des opérations
+logiques sur les booléens.</p><p>L’opérateur <a name="key29"></a><code>&amp;&amp;</code> représente le <em>et</em> logique. C’est un opérateur binaire dont
+le résultat est <code>true</code> seulement si les deux valeurs qu’on lui donne sont
+<code>true</code>.</p><pre class="code expression"><span class="atom">true</span> &amp;&amp; <span class="atom">false</span></pre><p><a name="key30"></a><code>||</code> est le <em>ou</em> logique, qui vaut <code>true</code> si l’une ou l’autre des valeurs
+qu’on lui attribue est <code>true</code> :</p><pre class="code expression"><span class="atom">true</span> || <span class="atom">false</span></pre><p><em>Non</em> s’écrit avec un point d’exclamation : <a name="key31"></a><code>!</code>, c’est un opérateur unaire
+qui inverse la valeur qu’on lui attribue, <code>!true</code> devient <code>false</code> et <code>!false</code>
+signifie <code>true</code>.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 2.1</div><div class="exercise"><pre class="code expression">((<span class="atom">4</span> &gt;= <span class="atom">6</span>) || (<span class="string">&quot;herbe&quot;</span> != <span class="string">&quot;verte&quot;</span>)) &amp;&amp;
+   !(((<span class="atom">12</span> * <span class="atom">2</span>) == <span class="atom">144</span>) &amp;&amp; <span class="atom">true</span>)</pre><p>Est-ce vrai (<code>true</code>)&nbsp;? Pour une meilleure lisibilité, on peut se séparer d’un
+grand nombre de parenthèses inutiles ici. Cette version, plus simple, signifie
+la même chose :</p><pre class="code expression">(<span class="atom">4</span> &gt;= <span class="atom">6</span> || <span class="string">&quot;herbe&quot;</span> != <span class="string">&quot;verte&quot;</span>) &amp;&amp;
+   !(<span class="atom">12</span> * <span class="atom">2</span> == <span class="atom">144</span> &amp;&amp; <span class="atom">true</span>)</pre></div><div class="solution"><p>Oui, l’expression vaut bien <code>true</code>. Vous pouvez la décomposer étape par étape
+comme ceci :</p><pre class="code expression">(<span class="atom">false</span> || <span class="atom">true</span>) &amp;&amp; !(<span class="atom">false</span> &amp;&amp; <span class="atom">true</span>)</pre><pre class="code expression"><span class="atom">true</span> &amp;&amp; !<span class="atom">false</span></pre><pre class="code expression"><span class="atom">true</span></pre><p>J’espère que vous avez remarqué que <code>&quot;herbe&quot; != &quot;verte&quot;</code> est <code>true</code>. L’herbe
+est peut-être verte, mais elle n’est pas égale à &quot;verte&quot;.</p></div></div><hr/><div class="block"><p>Il n’est pas toujours évident de savoir si des parenthèses sont nécessaires. En
+pratique, on peut généralement s’en sortir en sachant que parmi tous les
+opérateurs rencontrés, <code>||</code> a la priorité la plus basse, viennent ensuite, dans
+l’ordre, <code>&amp;&amp;</code> puis les opérateurs de comparaisons (<code>&gt;</code>, <code>==</code>, etc.) et enfin
+tout le reste. Ceci a été déterminé de telle sorte que, dans les cas simples,
+on ne doive utiliser les parenthèses que si elles sont strictement nécessaires.</p></div><hr/><div class="block"><p>Les exemples rencontrés jusqu’à présent utilisent le langage JavaScript de la
+même façon que l’on se sert d’une calculatrice de poche : utiliser des valeurs
+et leur appliquer des opérateurs pour obtenir d’autres valeurs. Créer de telles
+valeurs est une partie essentielle de chaque programme JavaScript, mais ce n’en
+est qu’une partie. Un bout de code qui produit une valeur s’appelle une
+<a name="key32"></a>expression. Chaque valeur écrite directement (telle que <code>22</code> ou
+<code>&quot;psychanalyse&quot;</code>) est une expression. Une expression entre parenthèses est
+également une expression. Un opérateur binaire appliqué à deux expressions, ou
+un opérateur unaire appliqué à une seule expression est également une expression.</p><p>Il existe quelques autres moyens de construire des expressions, qui seront
+dévoilés lorsque le moment sera venu.</p><p>Il existe une unité plus grande que l’expression. On l’appelle <a name="key33"></a>instruction.
+Un programme est une suite d’instructions. La plupart des instructions se
+terminent par un <a name="key34"></a>point-virgule (<code>;</code>). La forme la plus simple d’une
+instruction est une expression avec un point-virgule après. Voici un
+programme :</p><pre class="code"><span class="atom">1</span>;
+!<span class="atom">false</span>;</pre><p>Ce programme est inutile. Une expression peut se contenter de produire une
+valeur, mais une instruction ne vaudra quelque chose que si elle change un peu
+le monde. Elle peut imprimer quelque chose à l’écran ―&nbsp;ce qui compte comme un
+changement du monde&nbsp;― ou elle peut modifier l’état interne du programme de
+telle sorte que cela affecte les instructions qui suivent. Ces modifications
+sont appelées «&nbsp;<a name="key35"></a>effets de bord&nbsp;». Les instructions de l’exemple
+ci-dessus ne renvoient que les valeurs <code>1</code> et <code>true</code> puis les jettent au
+récupérateur de bits<a class="footref" href="#footnote5">5</a>. Ceci ne laisse aucune trace dans ce monde et ça n’a
+aucun effet de bord.</p></div><hr/><div class="block"><p>Comment un programme conserve-t-il un état interne&nbsp;? Comment se rappelle-t-il
+les choses&nbsp;? Nous avons vu de quelle façon créer de nouvelles valeurs à partir
+de vieilles valeurs, mais cela ne modifie pas les valeurs de celles-ci, et la
+nouvelle valeur doit être utilisée immédiatement ou elle disparaîtra. Pour «
+attraper&nbsp;» et conserver des valeurs, JavaScript fournit un mécanisme appelé la
+<a name="key36"></a>variable.</p><pre class="code"><span class="keyword">var</span> <span class="variable">attrape</span> = <span class="atom">5</span> * <span class="atom">5</span>;</pre><p>Une variable possède toujours un nom et elle peut pointer vers une valeur et la
+conserver. L’instruction ci-dessus crée une variable appelée <code>attrape</code> et
+l’utilise pour conserver le nombre produit par la multiplication de <code>5</code> par
+<code>5</code>.</p><p>Après avoir exécuté le programme ci-dessus, vous pouvez entrer le mot <code>attrape</code>
+dans la console et cela ressortira la valeur <code>25</code> à votre place. Le nom d’une
+variable est utilisé pour récupérer sa valeur. <code>attrape + 1</code> fonctionne
+également. Un nom de variable peut être utilisé comme expression et ainsi faire
+partie de plus grandes expressions.</p><p>Le mot-clé <a name="key37"></a><code>var</code> est utilisé pour créer des variables. Le nom de la variable
+suit <code>var</code>. Les noms de variable peuvent être à peu près n’importe quel mot,
+mais ils ne peuvent pas contenir d’espaces. Les chiffres peuvent faire partie
+du nom de variable, <code>attrape22</code> est un nom valide, mais le nom ne doit pas
+commencer par un chiffre. Les caractères «&nbsp;<code>$</code>&nbsp;» et «&nbsp;<code>_</code>&nbsp;» peuvent être
+utilisés dans les noms comme s’ils étaient des lettres, ainsi <code>$_$</code> est un nom
+de variable correct.</p><p>Si vous souhaitez que la nouvelle variable contienne tout de suite une valeur,
+comme c’est souvent le cas, vous pouvez utiliser l’opérateur <a name="key38"></a><code>=</code> pour lui
+affecter la valeur d’une expression.</p><p>Si une variable pointe vers une valeur, cela ne veut pas dire qu’elles soient
+liées pour toujours. Vous pouvez utiliser l’opérateur <code>=</code> à tout moment sur une
+variable existante pour lui enlever sa valeur actuelle et la faire pointer sur
+une nouvelle valeur.</p><pre class="code"><span class="variable">attrape</span> = <span class="atom">4</span> * <span class="atom">4</span>;</pre></div><hr/><div class="block"><p>Il est préférable d’imaginer les variables comme des tentacules plutôt que
+comme des boîtes. Elles ne <em>contiennent</em> pas de valeurs, elles s’en
+<em>saisissent</em> (et deux variables peuvent se référer à la même valeur). Seules
+les valeurs qui sont encore retenues par le programme lui sont accessibles.
+Quand vous avez besoin de vous souvenir de quelque chose, vous dressez un
+tentacule pour l’accrocher fermement ou enserrez une nouvelle valeur dans un
+tentacule existant : pour vous souvenir de la somme en dollars que Luigi vous
+doit encore, vous pouvez faire :</p><pre class="code"><span class="keyword">var</span> <span class="variable">detteLuigi</span> = <span class="atom">140</span>;</pre><p>Puis, à chaque fois que Luigi vous rembourse quelque chose, ce montant peut
+être décrémenté en allouant un nouveau nombre à la variable :</p><pre class="code"><span class="variable">detteLuigi</span> = <span class="variable">detteLuigi</span> - <span class="atom">35</span>;</pre><p>L’ensemble des variables et de leurs valeurs à un moment donné s’appelle
+l’<a name="key39"></a>environnement. Quand le programme se lance, cet environnement n’est pas
+vide. Il contient toujours un certain nombre de variables standards. Quand
+votre navigateur charge une nouvelle page, il crée un nouvel environnement et
+lui affecte les valeurs standards. Les variables créées et modifiées par les
+programmes d’une page sont conservées jusqu’à ce que le navigateur aille sur
+une nouvelle page.</p></div><hr/><div class="block"><p>Beaucoup de valeurs fournies par l’environnement standard sont de type «
+<code>function</code>&nbsp;» (fonction)<a name="key40"></a>. Une fonction est une partie de programme
+contenue dans une valeur. Généralement, cette portion de programme fait quelque
+chose d’utile qui peut être invoquée en utilisant le nom défini pour la
+fonction. Dans un navigateur, la variable <a name="key41"></a><code>alert</code> contient une fonction qui
+ouvre une petite fenêtre avec un message. Elle s’utilise comme ceci :</p><pre class="code"><span class="variable">alert</span>(<span class="string">&quot;Au feu&nbsp;!&quot;</span>);</pre><p><a name="key42"></a>Quand on exécute le code d’une fonction, on dit qu’on
+l’<a name="key43"></a>invoque, qu’on l’<a name="key44"></a>appelle ou qu’on l’applique. La notation pour
+faire ça utilise des parenthèses. Chaque expression qui produit une valeur de
+type fonction peut être invoquée en plaçant des parenthèses à sa suite. Dans
+cet exemple, la valeur <code>&quot;Au feu&nbsp;!&quot;</code> est donnée à la fonction <code>alert</code> qui
+l’utilise comme un texte à afficher dans une fenêtre de dialogue. Les valeurs
+données aux fonctions sont appelées <a name="key45"></a>paramètres ou <a name="key46"></a>arguments. <code>alert</code> n’en a
+besoin que d’un seul, mais d’autres fonctions peuvent en vouloir plus.</p></div><hr/><div class="block"><p>Afficher une fenêtre de dialogue est un effet de bord. Beaucoup de fonctions
+sont utiles par leurs effets de bord. Une fonction peut aussi produire une
+valeur et dans ce cas elle n’a pas besoin de produire un effet de bord pour
+être utile. Par exemple, il existe une fonction <a name="key47"></a><code>Math.max</code>, qui prend un
+nombre quelconque d’arguments numériques et retourne le plus grand d’entre
+eux :</p><pre class="code"><span class="variable">alert</span>(<span class="variable">Math</span>.<span class="property">max</span>(<span class="atom">2</span>, <span class="atom">4</span>));</pre><p><a name="key48"></a>Quand une fonction produit une valeur, on dit qu’elle la
+<a name="key49"></a>retourne. En JavaScript, les choses qui produisent des valeurs sont toujours
+des expressions, c’est pourquoi les appels de fonctions peuvent être utilisés
+comme une partie d’une expression plus longue :</p><pre class="code"><span class="variable">alert</span>(<span class="variable">Math</span>.<span class="property">min</span>(<span class="atom">2</span>, <span class="atom">4</span>) + <span class="atom">100</span>);</pre><p>Nous examinerons dans le <a href="chapter3.html">chapitre 3</a> la façon de créer vos propres fonctions.</p></div><hr/><div class="block"><p>Comme l’a montré l’exemple précédent, <code>alert</code> peut être utile pour montrer le
+résultat de certaines expressions. Mais cliquer pour fermer toutes ces petites
+fenêtres peut devenir très vite énervant, donc à partir de maintenant nous
+allons plutôt utiliser une fonction similaire appelée <a name="key50"></a><code>print</code> qui ne fait pas
+apparaître de fenêtre, mais écrit seulement une valeur dans la zone de sortie
+de la console. <code>print</code> n’est pas une fonction standard du JavaScript, les
+navigateurs ne la fournissent pas, mais il est possible de l’utiliser dans ce
+livre, donc vous pouvez l’utiliser sur ces pages.</p><pre class="code"><span class="variable">print</span>(<span class="string">&quot;N&quot;</span>);</pre><p>Une fonction similaire également disponible sur ces pages est <code>show</code>. Alors que
+<code>print</code> affichera son argument en texte brut, <a name="key51"></a><code>show</code> essayera de l’afficher à
+la manière dont un programme le ferait. Ce qui signifie qu’il donnera plus
+d’informations sur le type de la valeur. Par exemple, les chaînes de caractères
+garderont leurs guillemets, en utilisant <code>show</code> :</p><pre class="code"><span class="variable">show</span>(<span class="string">&quot;N&quot;</span>);</pre><p>L’environnement standard fourni par les navigateurs contient quelques fonctions
+supplémentaires pour faire apparaître des fenêtres. Vous pouvez poser une
+question à l’utilisateur en lui demandant de répondre par «&nbsp;Oui&nbsp;» ou «&nbsp;Non&nbsp;»,
+en utilisant la fonction prédéfinie <a name="key52"></a><code>confirm</code>. Elle retourne un booléen,
+<code>true</code> si l’utilisateur choisit «&nbsp;Oui&nbsp;» et <code>false</code> si l’utilisateur choisit
+«&nbsp;Non&nbsp;».</p><pre class="code"><span class="variable">show</span>(<span class="variable">confirm</span>(<span class="string">&quot;Continuons-nous&nbsp;?&quot;</span>));</pre><p><a name="key53"></a><code>prompt</code> peut être utilisé pour poser une question «&nbsp;ouverte&nbsp;». Le premier
+argument est la question, le deuxième est le texte par défaut, proposé comme la
+réponse de l’utilisateur. Une ligne de texte peut alors être tapée dans la case
+de texte de la fenêtre et la fonction la retournera comme une chaîne de
+caractères.</p><pre class="code"><span class="variable">show</span>(<span class="variable">prompt</span>(<span class="string">&quot;Dites-nous tout ce que vous savez.&quot;</span>, <span class="string">&quot;…&quot;</span>));</pre></div><hr/><div class="block"><p>Dans l’environnement, il est possible de donner une nouvelle valeur à presque
+toutes les variables. Ça peut être utile mais aussi dangereux. Si vous donnez
+la valeur <code>8</code> à <code>print</code>, vous ne pourrez plus jamais rien afficher.
+Heureusement, il y a un bouton «&nbsp;Réinitialiser&nbsp;» sur la console, qui rétablit
+totalement l’environnement d’origine.</p></div><hr/><div class="block"><p>Des programmes d’une ligne ne sont pas très intéressant. Quand vous mettez plus
+d’une instruction dans un programme ces dernières sont, comme on peut s’en
+douter, exécutées une à la fois de haut en bas.</p><pre class="code"><span class="keyword">var</span> <span class="variable">leNombre</span> = <span class="variable">Number</span>(<span class="variable">prompt</span>(<span class="string">&quot;Choisissez un nombre&quot;</span>, <span class="string">&quot;&quot;</span>));
+<span class="variable">print</span>(<span class="string">&quot;Votre nombre est la racine carrée de &quot;</span> +
+      (<span class="variable">leNombre</span> * <span class="variable">leNombre</span>));</pre><p>La fonction <a name="key54"></a><code>Number</code> convertit une valeur en nombre, ce qui est nécessaire
+dans notre cas parce que le résultat de <code>prompt</code> est une chaîne de caractères.
+Il existe des fonctions similaires appelées <a name="key55"></a><code>String</code> et <a name="key56"></a><code>Boolean</code> qui
+convertissent des valeurs dans ces types.</p></div><hr/><div class="block"><p>Considérons un programme qui affiche tous les nombres pairs de 0 à 12. Une
+façon de le faire est d’écrire :</p><pre class="code"><span class="variable">print</span>(<span class="atom">0</span>);
+<span class="variable">print</span>(<span class="atom">2</span>);
+<span class="variable">print</span>(<span class="atom">4</span>);
+<span class="variable">print</span>(<span class="atom">6</span>);
+<span class="variable">print</span>(<span class="atom">8</span>);
+<span class="variable">print</span>(<span class="atom">10</span>);
+<span class="variable">print</span>(<span class="atom">12</span>);</pre><p>Ça marche, mais lorsque nous écrivons un programme l’idée est de nous épargner
+du travail et non pas de nous en donner plus. Si nous avions besoin des nombres
+pairs jusqu’à 100 cette méthode deviendrait tout simplement inexploitable. Nous
+avons besoin d’une manière de répéter une portion de code automatiquement.</p><pre class="code"><span class="keyword">var</span> <span class="variable">nombreCourant</span> = <span class="atom">0</span>;
+<span class="keyword">while</span> (<span class="variable">nombreCourant</span> &lt;= <span class="atom">12</span>) {
+  <span class="variable">print</span>(<span class="variable">nombreCourant</span>);
+  <span class="variable">nombreCourant</span> = <span class="variable">nombreCourant</span> + <span class="atom">2</span>;
+}</pre><p>Vous avez sûrement vu dans l’introduction le mot <a name="key57"></a><code>while</code>. Une instruction
+démarrant par <code>while</code> crée une <a name="key58"></a>boucle. Une boucle est une perturbation dans
+la séquence des instructions ―&nbsp;il fera répéter plusieurs fois au programme une
+séquence de code. Dans notre cas le mot <code>while</code> est suivi par une expression
+entre parenthèses (les parenthèses étant obligatoires) qui détermine si la
+boucle continue à s’exécuter ou si elle doit s’arrêter. Aussi longtemps que la
+valeur booléenne produite par cette expression est <code>true</code>, le code à
+l’intérieur de la boucle est répété. Dès qu’elle devient <code>false</code> le programme
+se place à la fin de la boucle et reprend à la normale.</p><p>La variable <code>nombreCourant</code> montre la façon dont une variable peut suivre la
+progression d’un programme. À chaque fois que la boucle est répétée la variable
+est incrémentée de <code>2</code> et à chaque début elle est comparée au nombre <code>12</code> pour
+décider si la boucle continue ou non.</p><p>La troisième partie d’une instruction <code>while</code> est une autre instruction. C’est
+le <a name="key59"></a>corps de la boucle qui contient les actions qui doivent se reproduire
+plusieurs fois. Si nous ne devions pas afficher les nombres le programme aurait
+pu être :</p><pre class="code"><span class="keyword">var</span> <span class="variable">nombreCourant</span> = <span class="atom">0</span>;
+<span class="keyword">while</span> (<span class="variable">nombreCourant</span> &lt;= <span class="atom">12</span>)
+  <span class="variable">nombreCourant</span> = <span class="variable">nombreCourant</span> + <span class="atom">2</span>;</pre><p>Ici <code>nombreCourant = nombreCourant + 2;</code> est l’instruction qui forme le corps
+de la boucle. Mais nous devons aussi afficher le nombre, donc la boucle sera
+constituée d’une instruction supplémentaire. Les<a name="key60"></a>accolades (<code>{</code> et <code>}</code>)
+sont utilisées pour grouper des instructions dans des <a name="key61"></a>blocs. Pour le reste du
+code un bloc compte comme une seule et même instruction. Dans l’exemple
+précédent ceci est utilisé pour inclure dans la boucle à la fois l’appel à la
+fonction <code>print</code> et l’instruction qui actualise la variable <code>nombreCourant</code>.</p></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 2.2</div><div class="exercise"><p>Utilisez cette technique pour écrire un programme qui calcule et affiche la
+valeur de 2<sup>10</sup> (2 à la puissance 10). Vous n’êtes bien sûr pas autorisé à
+tricher en écrivant juste <code>2 * 2 * …</code>.</p><p>Si vous avez des problèmes avec ça, essayez de comparer avec l’exemple des
+nombres pairs. Le programme doit exécuter une action un certain nombre de fois.
+Pour cela, on peut utiliser une variable compteur avec une boucle <code>while</code>. À la
+place d’afficher le compteur, le programme doit multiplier quelque chose par
+deux. Ce quelque chose doit être une variable dans laquelle le résultat sera
+construit.</p><p>Ne vous inquiétez pas si vous ne voyez pas tout de suite comment cela peut
+fonctionner. Même si vous comprenez parfaitement tous les concepts de ce
+chapitre, il peut être difficile de les appliquer à des problèmes concrets.
+Lire et écrire du code vous aidera à développer votre sensibilité pour ça.
+Donc, étudiez la solution, et essayez le prochain exercice.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">resultat</span> = <span class="atom">1</span>;
+<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>;
+<span class="keyword">while</span> (<span class="variable">compteur</span> &lt; <span class="atom">10</span>) {
+  <span class="variable">resultat</span> = <span class="variable">resultat</span> * <span class="atom">2</span>;
+  <span class="variable">compteur</span> = <span class="variable">compteur</span> + <span class="atom">1</span>;
+}
+<span class="variable">show</span>(<span class="variable">resultat</span>);</pre><p>Le compteur peut aussi commencer à <code>1</code> et être vérifié pour <code>&lt;= 10</code>, mais pour
+des raisons que nous vous exposerons après il est préférable de commencer à
+compter depuis 0.</p><p>Évidemment vos solutions n’ont pas à être exactement identiques aux miennes.
+Elles doivent fonctionner. Et dans le cas où elles seraient très différentes,
+assurez-vous d’avoir compris la mienne.</p></div></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 2.3</div><div class="exercise"><p>Avec quelques petites modifications, la solution à l’exercice précédent peut
+être utilisée pour tracer un triangle. Et quand je dis «&nbsp;tracer un triangle&nbsp;»,
+je veux dire «&nbsp;afficher du texte qui ressemble presque à un triangle quand on
+louche&nbsp;».</p><p>Affichez dix lignes. Sur la première, mettez un «&nbsp;#&nbsp;». Sur la deuxième
+mettez-en deux, et ainsi de suite.</p><p>Comment avoir une chaîne composée de X «&nbsp;#&nbsp;»&nbsp;? Une solution est de la
+construire avec une «&nbsp;boucle imbriquée&nbsp;», c’est-à-dire une boucle dans une
+boucle. Une méthode plus simple est de réutiliser la chaîne de la précédente
+itération, et d’y ajouter un caractère.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">ligne</span> = <span class="string">&quot;&quot;</span>;
+<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>;
+<span class="keyword">while</span> (<span class="variable">compteur</span> &lt; <span class="atom">10</span>) {
+  <span class="variable">ligne</span> = <span class="variable">ligne</span> + <span class="string">&quot;#&quot;</span>;
+  <span class="variable">print</span>(<span class="variable">ligne</span>);
+  <span class="variable">compteur</span> = <span class="variable">compteur</span> + <span class="atom">1</span>;
+}</pre></div></div><hr/><div class="block"><p>Vous remarquerez les espaces que j’ai mis devant certaines instructions. Ils ne
+sont pas nécessaires : l’ordinateur accepte très bien un programme sans ces
+espaces. En fait, même les retours à la ligne sont facultatifs.</p><p>Vous pouvez les écrire sur une seule longue ligne si cela vous fait plaisir. Le
+rôle de l’<a name="key62"></a>indentation dans les blocs est de construire la structure du code
+de manière plus claire et lisible pour les humains. Parce qu’on peut créer un
+nouveau bloc dans un autre et il peut alors devenir difficile de voir où un
+bloc finit et où un autre commence dans des parties complexes de code. Quand
+les lignes sont indentées, la forme visuelle du code correspond à la forme des
+blocs. Je préfère utiliser deux espaces pour chaque nouveau bloc, mais les
+goûts varient.</p><p>La zone de la console où vous pouvez taper des programmes ajoutera
+automatiquement ces espaces. Ça peut sembler pénible au début, mais quand vous
+écrirez beaucoup de code, vous verrez que c’est un gain de temps important.
+Appuyer sur la touche «&nbsp;tab&nbsp;» réindentera la ligne sur laquelle est le curseur.</p><p>Dans quelques cas, le JavaScript vous autorise à omettre le point-virgule en
+fin d’instruction. Dans d’autres cas, il faut le mettre sans quoi des choses
+étranges se produiront. Les règles définissant quand on peut les oublier sont
+complexes et particulières. Dans ce livre, je ne les enlèverai jamais et je
+vous conseille vivement de faire de même pour vos propres programmes.</p></div><hr/><div class="block"><p>L’utilisation de <code>while</code> que nous avons vu plus haut suit toujours le même
+modèle. Premièrement une variable «&nbsp;compteur&nbsp;» est créée. Elle tracera la
+progression dans la boucle. L’instruction <code>while</code> contient une vérification,
+généralement pour voir si le compteur a atteint sa limite. Ensuite, à la fin du
+corps de la boucle, le compteur est mis à jour.</p><p>Beaucoup de boucles obéissent à ce schéma. C’est pour cette raison que le
+JavaScript, comme d’autres langages, s’affiche sous une forme plus ramassée et
+plus complète :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">nombre</span> = <span class="atom">0</span>; <span class="variable">nombre</span> &lt;= <span class="atom">12</span>; <span class="variable">nombre</span> = <span class="variable">nombre</span> + <span class="atom">2</span>)
+  <span class="variable">show</span>(<span class="variable">nombre</span>);</pre><p>Ce code est strictement équivalent à l’exemple précédent qui affichait les
+nombres pairs. La seule différence est que toutes les instructions liées à
+l’état de la boucle sont maintenant sur une seule ligne. La parenthèse après le
+<a name="key63"></a><code>for</code> doit contenir deux points-virgules. La première partie <em>initialise</em> la
+boucle, généralement en définissant une variable. La deuxième est l’instruction
+qui <em>vérifie</em> l’état de la boucle. Et la dernière partie <em>modifie</em> l’état de la
+boucle. Dans beaucoup de cas, cette forme est plus claire et concise qu’une
+construction avec <code>while</code>.</p></div><hr/><div class="block"><p>J’ai utilisé une <a name="key64"></a>casse plutôt bizarre dans certains noms de variables. Comme
+vous ne pouvez pas utiliser d’espace dans ces noms ― l’ordinateur les lirait
+comme deux variables distinctes ―&nbsp;vos choix pour un nom composé de plusieurs
+mots sont plus ou moins limités aux solutions suivantes : <code>petitpandaroux</code>,
+<code>petit_panda_roux</code>, <code>PetitPandaRoux</code> ou <code>petitPandaRoux</code>. Le premier est
+difficile à lire. Personnellement, j’aime celui avec les tirets bas, bien que
+ce soit un peu pénible à taper. Toutefois, les fonctions JavaScript standards
+et la plupart des programmeurs JavaScript suivent la dernière syntaxe. Il n’est
+pas compliqué de s’habituer à ce genre de petites choses, alors je vais
+simplement suivre la majorité et mettre une majuscule à la première lettre de
+chaque mot excepté le premier.</p><p>Dans quelques cas, comme dans la fonction <code>Number</code>, la première lettre d’une
+variable est également en majuscule. Cela a été défini pour marquer cette
+fonction comme étant un constructeur. Ce qu’est un constructeur deviendra clair
+dans le <a href="chapter8.html">chapitre 8</a>. Pour l’instant, l’important est de ne pas se soucier de cet
+apparent manque de cohérence.</p><p>Notez que les noms ayant une signification spéciale tels que <code>var</code>, <code>while</code> et
+<code>for</code> ne peuvent pas être utilisés en tant que noms de variables. Ils sont
+appelés <a name="key65"></a>mots-clés. Il y a également un certain nombre de <a name="key66"></a>mots qui sont «&nbsp;réservés pour l’utilisation&nbsp;» dans de futures versions
+de JavaScript. Ceux-ci ne sont également officiellement pas autorisés à être
+utilisés comme noms de variables, bien que certains navigateurs les autorisent.
+La liste complète est assez longue :</p><pre class="preformatted">abstract boolean break byte case catch char class const continue debugger
+default delete do double else enum export extends false final finally float
+for function goto if implements import in instanceof int interface long
+native new null package private protected public return short static super
+switch synchronized this throw throws transient true try typeof var void
+volatile while with</pre><p>Ne vous souciez pas de les mémoriser pour le moment, mais souvenez-vous qu’ils
+peuvent être la cause d’un problème lorsque quelque chose ne fonctionne pas
+comme prévu. D’après mon expérience, <code>char</code> (pour stocker une chaîne d’un seul
+caractère) et <a name="key67"></a><code>class</code> sont les noms d’utilisation incorrecte les plus
+communs.</p></div><hr/><div class="block"><a name="exercise4"></a><div class="exercisenum">Ex. 2.4</div><div class="exercise"><p>Réécrivez les solutions des deux exercices précédents en utilisant <code>for</code> à la
+place de <code>while</code>.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">resultat</span> = <span class="atom">1</span>;
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">10</span>; <span class="variable">compteur</span> = <span class="variable">compteur</span> + <span class="atom">1</span>)
+  <span class="variable">resultat</span> = <span class="variable">resultat</span> * <span class="atom">2</span>;
+<span class="variable">show</span>(<span class="variable">compteur</span>);</pre><p>Notez que même s’il n’y a pas de bloc ouvert avec une «&nbsp;<code>{</code>&nbsp;», l’instruction
+dans la boucle est toujours indentée avec deux espaces pour bien spécifier son
+«&nbsp;appartenance&nbsp;» à la ligne du dessus.</p><pre class="code"><span class="keyword">var</span> <span class="variable">ligne</span> = <span class="string">&quot;&quot;</span>;
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">10</span>; <span class="variable">compteur</span> = <span class="variable">compteur</span> + <span class="atom">1</span>) {
+  <span class="variable">ligne</span> = <span class="variable">ligne</span> + <span class="string">&quot;#&quot;</span>;
+  <span class="variable">print</span>(<span class="variable">ligne</span>);
+}</pre></div></div><hr/><div class="block"><p><a name="key68"></a><a name="key69"></a><a name="key70"></a><a name="key71"></a>Un programme a souvent besoin «&nbsp;d’actualiser&nbsp;» une
+variable avec une valeur basée sur sa valeur précédente. Par exemple <code>compteur
+= compteur + 1</code>. JavaScript fournit un raccourci pour cela : <code>compteur += 1</code>.
+Ça fonctionne également pour beaucoup d’autres opérateurs, par exemple
+<code>resultat *= 2</code> pour doubler la valeur de <code>resultat</code>, ou <code>compteur -= 1</code> pour
+compter à rebours.</p><p><a name="key72"></a><a name="key73"></a>Pour <code>compteur += 1</code> et <code>compteur -= 1</code>, il existe même des
+versions abrégées : <code>compteur++</code> et <code>compteur--</code>.</p></div><hr/><div class="block"><p>On dit que les boucles affectent le <a name="key74"></a>flux d’exécution d’un programme. Elles
+changent l’ordre dans lequel les instructions sont exécutées. Dans de nombreux
+cas, un autre type de flux est utile : les instructions de sauts.</p><p>Nous voulons afficher tous les nombres en dessous de 20 qui sont divisibles à
+la fois par 3 et par 4.</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">20</span>; <span class="variable">compteur</span>++) {
+  <span class="keyword">if</span> (<span class="variable">compteur</span> % <span class="atom">3</span> == <span class="atom">0</span> &amp;&amp; <span class="variable">compteur</span> % <span class="atom">4</span> == <span class="atom">0</span>)
+    <span class="variable">show</span>(<span class="variable">compteur</span>);
+}</pre><p>Le mot-clé <a name="key75"></a><code>if</code> n’est pas très différent du mot-clé <code>while</code> : il vérifie la
+condition qu’on lui donne (entre parenthèses) et exécute l’instruction suivante
+en fonction de cette condition. Mais il ne fait cela qu’une seule fois, donc
+l’instruction est exécutée zéro ou une fois.</p><p>L’astuce avec l’opérateur modulo (<a name="key76"></a><code>%</code>) est une manière simple de tester si un
+nombre est divisible par un autre nombre. S’il l’est, le reste de leur
+division, qui est ce que modulo produit, est zéro.</p><p>Si nous avions voulu afficher tous les nombres en dessous de 20, mais en
+affichant entre parenthèses ceux n’étant pas divisibles par 4, nous aurions pu
+le faire de cette façon :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">20</span>; <span class="variable">compteur</span>++) {
+  <span class="keyword">if</span> (<span class="variable">compteur</span> % <span class="atom">4</span> == <span class="atom">0</span>)
+    <span class="variable">print</span>(<span class="variable">compteur</span>);
+  <span class="keyword">if</span> (<span class="variable">compteur</span> % <span class="atom">4</span> != <span class="atom">0</span>)
+    <span class="variable">print</span>(<span class="string">&quot;(&quot;</span> + <span class="variable">compteur</span> + <span class="string">&quot;)&quot;</span>);
+}</pre><p>Mais maintenant le programme doit déterminer si <code>compteur</code> est divisible par
+<code>4</code> deux fois. Le même effet peut être obtenu en ajoutant une partie <code>else</code> («
+sinon&nbsp;») après l’instruction <code>if</code>. L’instruction <a name="key77"></a><code>else</code> est exécutée
+seulement lorsque la condition <code>if</code> est fausse.</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">20</span>; <span class="variable">compteur</span>++) {
+  <span class="keyword">if</span> (<span class="variable">compteur</span> % <span class="atom">4</span> == <span class="atom">0</span>)
+    <span class="variable">print</span>(<span class="variable">compteur</span>);
+  <span class="keyword">else</span>
+    <span class="variable">print</span>(<span class="string">&quot;(&quot;</span> + <span class="variable">compteur</span> + <span class="string">&quot;)&quot;</span>);
+}</pre><p>Pour aller plus loin avec cet exemple trivial, nous voulons maintenant afficher
+ces mêmes nombres tout en leur ajoutant deux étoiles lorsqu’ils sont plus
+grands que 15, une étoile lorsqu’ils sont plus grands que 10 (mais pas plus
+grands que 15), et aucune étoile dans les autres cas.</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>; <span class="variable">compteur</span> &lt; <span class="atom">20</span>; <span class="variable">compteur</span>++) {
+  <span class="keyword">if</span> (<span class="variable">compteur</span> &gt; <span class="atom">15</span>)
+    <span class="variable">print</span>(<span class="variable">compteur</span> + <span class="string">&quot;**&quot;</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">compteur</span> &gt; <span class="atom">10</span>)
+    <span class="variable">print</span>(<span class="variable">compteur</span> + <span class="string">&quot;*&quot;</span>);
+  <span class="keyword">else</span>
+    <span class="variable">print</span>(<span class="variable">compteur</span>);
+}</pre><p>Cela montre que vous pouvez enchaîner des instructions <code>if</code>. Dans ce cas, le
+programme regarde d’abord si <code>compteur</code> est plus grand que <code>15</code>. Si c’est le
+cas, les deux étoiles sont affichées et les autres tests sont ignorés. Si ce
+n’est pas le cas, on continue à vérifier si la valeur est supérieure à <code>10</code>. Et
+on n’arrive à la dernière instruction <code>print</code> que si <code>compteur</code> n’est pas
+supérieur à <code>10</code>.</p></div><hr/><div class="block"><a name="exercise5"></a><div class="exercisenum">Ex. 2.5</div><div class="exercise"><p>Écrivez un programme qui vous demandera, en utilisant <code>prompt</code>, quelle est la
+valeur de 2 + 2. Si la réponse est «&nbsp;4&nbsp;», utilisez <code>alert</code> pour afficher un
+message sympa. Si c’est «&nbsp;3&nbsp;» ou «&nbsp;5&nbsp;», affichez «&nbsp;Ça y était presque&nbsp;!&nbsp;». Dans
+les autres cas, n’hésitez pas à dire quelque chose de méchant.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">reponse</span> = <span class="variable">prompt</span>(<span class="string">&quot;Hé vous&nbsp;! Quelle est la valeur de 2 + 2&nbsp;?&quot;</span>, <span class="string">&quot;&quot;</span>);
+<span class="keyword">if</span> (<span class="variable">reponse</span> == <span class="string">&quot;4&quot;</span>)
+  <span class="variable">alert</span>(<span class="string">&quot;Vous êtes un vrai génie&nbsp;!&quot;</span>);
+<span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">reponse</span> == <span class="string">&quot;3&quot;</span> || <span class="variable">reponse</span> == <span class="string">&quot;5&quot;</span>)
+  <span class="variable">alert</span>(<span class="string">&quot;Ça y était presque&nbsp;!&quot;</span>);
+<span class="keyword">else</span>
+  <span class="variable">alert</span>(<span class="string">&quot;Vous êtes nul&nbsp;!&quot;</span>);</pre></div></div><hr/><div class="block"><p>Lorsqu’une boucle n’a pas systématiquement besoin d’aller jusqu’au bout de ses
+instructions, le mot-clé <a name="key78"></a><code>break</code> peut être utile. Il permet de sortir de la
+boucle et d’exécuter les instructions suivantes. Ce programme trouve le premier
+nombre supérieur à 20 et divisible par 7 :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">courant</span> = <span class="atom">20</span>; ; <span class="variable">courant</span>++) {
+  <span class="keyword">if</span> (<span class="variable">courant</span> % <span class="atom">7</span> == <span class="atom">0</span>)
+    <span class="keyword">break</span>;
+}
+<span class="variable">print</span>(<span class="variable">courant</span>);</pre><p>La structure <code>for</code> présentée ci-dessus n’a pas de mécanisme qui vérifie quand
+terminer la boucle. Cela signifie qu’elle est dépendante de l’instruction
+<code>break</code> qui est à l’intérieur pour pouvoir s’arrêter. Le même programme aurait
+pu s’écrire aussi simplement…</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">courant</span> = <span class="atom">20</span>; <span class="variable">courant</span> % <span class="atom">7</span> != <span class="atom">0</span>; <span class="variable">courant</span>++)
+  ;
+<span class="variable">print</span>(<span class="variable">courant</span>);</pre><p>Dans ce cas, le corps de la boucle est vide. Un point-virgule isolé peut être
+utilisé pour produire une instruction vide. Ici, le seul effet de la boucle est
+d’incrémenter la variable <code>courant</code> à la valeur voulue. Mais j’avais besoin
+d’un exemple utilisant <code>break</code>, donc prêtez également attention à la première
+version.</p></div><hr/><div class="block"><a name="exercise6"></a><div class="exercisenum">Ex. 2.6</div><div class="exercise"><p>Ajoutez un <code>while</code>, et optionnellement un <code>break</code>, à votre solution du
+précédent exercice, afin que le programme continue à répéter la question
+jusqu’à ce qu’une réponse correcte soit donnée.</p><p>Notez que <code>while (true) …</code> peut être utilisé pour créer une boucle qui ne
+s’arrêtera pas d’elle-même. C’est un peu ridicule, vous demandez au programme
+de boucler tant que <code>true</code> est <code>true</code>, mais c’est une astuce utile.</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">reponse</span>;
+<span class="keyword">while</span> (<span class="atom">true</span>) {
+  <span class="variable">reponse</span> = <span class="variable">prompt</span>(<span class="string">&quot;Hé vous&nbsp;! Quelle est la valeur de 2 + 2&nbsp;?&quot;</span>, <span class="string">&quot;&quot;</span>);
+  <span class="keyword">if</span> (<span class="variable">reponse</span> == <span class="string">&quot;4&quot;</span>) {
+    <span class="variable">alert</span>(<span class="string">&quot;Vous êtes un vrai génie&nbsp;!&quot;</span>);
+    <span class="keyword">break</span>;
+  }
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">reponse</span> == <span class="string">&quot;3&quot;</span> || <span class="variable">reponse</span> == <span class="string">&quot;5&quot;</span>) {
+    <span class="variable">alert</span>(<span class="string">&quot;Ça y était presque&nbsp;!&quot;</span>);
+  }
+  <span class="keyword">else</span> {
+    <span class="variable">alert</span>(<span class="string">&quot;Vous êtes nul&nbsp;!&quot;</span>);
+  }
+}</pre><p>Puisque le corps du premier <code>if</code> comporte deux instructions, j’ai ajouté des
+accolades autour de tous les corps de <code>if</code>. C’est une question de goût. Avoir
+une chaîne <code>if</code>/<code>else</code> où certains corps sont des blocs et d’autres des
+instructions simples me semble un peu bancal. Mais je vous laisse vous faire
+votre propre opinion à ce propos.</p><p>Une autre solution, probablement meilleure mais sans <code>break</code>, est la suivante :</p><pre class="code"><span class="keyword">var</span> <span class="variable">valeur</span> = <span class="atom">null</span>;
+<span class="keyword">while</span> (<span class="variable">valeur</span> != <span class="string">&quot;4&quot;</span>) {
+  <span class="variable">valeur</span> = <span class="variable">prompt</span>(<span class="string">&quot;Hé vous&nbsp;! Quelle est la valeur de 2 + 2&nbsp;?&quot;</span>, <span class="string">&quot;&quot;</span>);
+  <span class="keyword">if</span> (<span class="variable">valeur</span> == <span class="string">&quot;4&quot;</span>)
+    <span class="variable">alert</span>(<span class="string">&quot;Vous êtes un vrai génie&nbsp;!&quot;</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">valeur</span> == <span class="string">&quot;3&quot;</span> || <span class="variable">valeur</span> == <span class="string">&quot;5&quot;</span>)
+    <span class="variable">alert</span>(<span class="string">&quot;Ça y était presque&nbsp;!&quot;</span>);
+  <span class="keyword">else</span>
+    <span class="variable">alert</span>(<span class="string">&quot;Vous êtes nul&nbsp;!&quot;</span>);
+}</pre></div></div><hr/><div class="block"><p>Dans la solution de l’exercice précédent se trouve une instruction <code>var
+reponse;</code>. Elle crée une variable appelée <code>reponse</code>, mais ne lui donne pas de
+valeur. Que se passe-t-il alors lorsqu’on prend la valeur de cette variable&nbsp;?</p><pre class="code"><span class="keyword">var</span> <span class="variable">variableMystere</span>;
+<span class="variable">show</span>(<span class="variable">variableMystere</span>);</pre><p>En termes de tentacules, cette variable se termine dans les airs, elle ne
+s’accroche à rien. Quand vous demandez la valeur d’une variable vide, vous
+obtenez une valeur spéciale appelée <a name="key79"></a><code>undefined</code>. Les fonctions qui ne
+retournent pas de valeur convenable, comme <code>print</code> et <code>alert</code>, retournent la
+valeur <code>undefined</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">alert</span>(<span class="string">&quot;Je suis un effet de bord.&quot;</span>));</pre><p>Il y a aussi une valeur similaire, <a name="key80"></a><code>null</code>, qui signifie que «&nbsp;cette variable
+est définie mais qu’elle n’a pas de valeur&nbsp;». La différence entre <code>undefined</code>
+et <code>null</code> est principalement académique, et la plupart du temps sans intérêt.
+Dans la pratique, il est souvent nécessaire de vérifier si quelque chose
+possède une valeur. Dans ce cas, l’expression <code>quelqueChose == undefined</code> peut
+être utilisée, parce que même si ces deux valeurs ne sont pas strictement
+équivalentes, <code>null == undefined</code> retournera <code>true</code>.  </p></div><hr/><div class="block"><p>Ceci nous amène à aborder un autre sujet un peu plus délicat…</p><pre class="code"><span class="variable">show</span>(<span class="atom">false</span> == <span class="atom">0</span>);
+<span class="variable">show</span>(<span class="string">&quot;&quot;</span> == <span class="atom">0</span>);
+<span class="variable">show</span>(<span class="string">&quot;5&quot;</span> == <span class="atom">5</span>);</pre><p><a name="key81"></a>Toutes ces expressions retournent <code>true</code>. Quand on compare
+des valeurs de différents types, JavaScript utilise un ensemble de règles
+complexes et déroutantes. Je ne vais pas essayer de les expliquer précisément.
+Dans beaucoup de cas, il essayera juste de convertir une des variables dans le
+type de l’autre variable. Cependant, quand <code>null</code> ou <code>undefined</code> apparaît, il
+produira <code>true</code> seulement si les deux sont <code>null</code> ou <code>undefined</code>.</p><p>Que faire quand vous voulez tester si une variable se réfère à la valeur
+<code>false</code>&nbsp;? La règle pour convertir des chaînes et des nombres en valeurs
+booléennes est que <code>0</code> et la chaîne vide sont considérés comme <code>false</code>, alors
+que toutes les autres valeurs comptent pour <code>true</code>. À cause de ça, l’expression
+<code>variable == false</code> est également <code>true</code> quand <code>variable</code> se réfère à <code>0</code> ou à
+<code>&quot;&quot;</code>. Pour des cas comme celui-ci, où vous ne voulez <em>aucune</em> conversion
+automatique de types, il existe deux nouveaux opérateurs : <a name="key82"></a><code>===</code> et <a name="key83"></a><code>!==</code>.
+Le premier teste si une valeur est précisément égale à l’autre. Le deuxième
+teste si elles ne sont pas précisément égales.</p><pre class="code"><span class="variable">show</span>(<span class="atom">null</span> === <span class="atom">undefined</span>);
+<span class="variable">show</span>(<span class="atom">false</span> === <span class="atom">0</span>);
+<span class="variable">show</span>(<span class="string">&quot;&quot;</span> === <span class="atom">0</span>);
+<span class="variable">show</span>(<span class="string">&quot;5&quot;</span> === <span class="atom">5</span>);</pre><p>Toutes ces instructions retournent <code>false</code>.</p></div><hr/><div class="block"><p>Les valeurs passées comme conditions à une instruction <code>if</code>, <code>while</code>, ou <code>for</code>
+ne sont pas obligatoirement booléennes. Elles sont automatiquement converties
+en booléen avant d’être vérifiées. Cela signifie que le nombre <code>0</code>, la chaîne
+vide <code>&quot;&quot;</code>, <code>null</code>, <code>undefined</code>, et bien sûr <code>false</code>, seront tous considérés
+comme <code>false</code>.</p><p>Le fait que toutes les autres valeurs soient converties en <code>true</code> permet
+d’omettre des comparaisons explicites dans beaucoup de situations. Si on sait
+qu’une variable contient une chaîne de caractères ou <code>null</code>, elle peut être
+utilisée dans une vérification de façon très simple…</p><pre class="code"><span class="keyword">var</span> <span class="variable">peutEtreNull</span> = <span class="atom">null</span>;
+<span class="comment">// …code mystérieux qui pourrait affecter une chaîne à peutEtreNull…</span>
+<span class="keyword">if</span> (<span class="variable">peutEtreNull</span>)
+  <span class="variable">print</span>(<span class="string">&quot;peutEtreNull possède une valeur&quot;</span>);</pre><p>…à l’exception du cas où ce code mystérieux affecte la valeur <code>&quot;&quot;</code> à
+<code>peutEtreNull</code>. Une chaîne vide étant dans ce cas équivalente à <code>false</code>, rien
+ne sera affiché. Suivant ce que vous essayez de faire, cette méthode peut donc
+se révéler <em>mauvaise</em>. C’est donc souvent une bonne idée d’ajouter un <code>===
+null</code> ou un <code>=== false</code> explicite dans des cas comme celui-ci, pour éviter des
+erreurs subtiles. Cette remarque est aussi valable pour les valeurs numériques
+qui peuvent être égales à <code>0</code>.</p></div><hr/><div class="block"><p>La ligne qui parle du «&nbsp;code mystérieux&nbsp;» dans l’exemple précédent peut vous
+sembler un peu étrange. C’est souvent utile pour inclure du texte
+supplémentaire dans un programme. On l’utilise le plus souvent pour ajouter à
+un programme des explications en langage humain.</p><pre class="code"><span class="comment">// La variable compteur, qui va être définie, commencera</span>
+<span class="comment">// par la valeur 0, c’est-à-dire par zéro.</span>
+<span class="keyword">var</span> <span class="variable">compteur</span> = <span class="atom">0</span>;
+<span class="comment">// Maintenant, nous allons créer une boucle.</span>
+<span class="keyword">while</span> (<span class="variable">compteur</span> &lt; <span class="atom">100</span> <span class="comment">/* compteur est inférieur à 100 */</span>)
+<span class="comment">/* À chaque fois que l’on boucle, on incrémente la valeur du compteur,
+   mais oui, on ajoute seulement un. */</span>
+  <span class="variable">compteur</span>++;
+<span class="comment">// Puis c’est fini.</span></pre><p>Ce type de texte est appelé un <a name="key84"></a>commentaire. Les règles sont les suivantes :
+&quot;<code>/*</code>&quot; commence un commentaire qui se termine au prochain &quot;<code>*/</code>&quot;. &quot;<code>//</code>&quot; débute
+un autre type de commentaire qui finit à la fin de la ligne.</p><p>Comme vous pouvez le voir, même les programmes les plus simples peuvent être
+faits pour avoir l’air gros, laid et compliqué, simplement en ajoutant beaucoup
+de commentaires.</p></div><hr/><div class="block"><p>Il existe d’autres situations qui provoquent automatiquement une <a name="key85"></a>conversion de
+type. Si vous ajoutez une valeur non-chaîne à une chaîne, cette valeur est
+automatiquement convertie en chaîne avant d’être concaténée. Si vous multipliez
+un nombre et une chaîne, JavaScript essaie de créer un nombre avec la chaîne.</p><pre class="code"><span class="variable">show</span>(<span class="string">&quot;Apollo&quot;</span> + <span class="atom">5</span>);
+<span class="variable">show</span>(<span class="atom">null</span> + <span class="string">&quot;ifier&quot;</span>);
+<span class="variable">show</span>(<span class="string">&quot;5&quot;</span> * <span class="atom">5</span>);
+<span class="variable">show</span>(<span class="string">&quot;fraises&quot;</span> * <span class="atom">5</span>);</pre><p>La dernière instruction donne pour résultat <a name="key86"></a><code>NaN</code>, qui est une valeur
+particulière. Elle signifie «&nbsp;Pas un nombre&nbsp;» («&nbsp;Not a Number&nbsp;») et elle est de
+type nombre (ce qui peut sembler légèrement paradoxal). Dans ce cas, cela
+signifie qu’une fraise n’est pas un nombre. Toutes les opérations arithmétiques
+sur la valeur <code>NaN</code> ont pour résultat <code>NaN</code>, c’est pourquoi en le multipliant
+par <code>5</code> comme dans cet exemple, cela donne toujours <code>NaN</code>. De plus, et c’est
+parfois assez perturbant, <code>NaN == NaN</code> est égal à <code>false</code>, vérifier si une
+valeur est <code>NaN</code> peut être fait avec la fonction <a name="key87"></a><code>isNaN</code>. <code>NaN</code> est encore
+(c’est la dernière) une de ces valeurs qui renvoient <code>false</code> quand elles sont
+converties en booléens.</p><p>Ces conversions automatiques peuvent être très pratiques, mais elles sont aussi
+plutôt bizarres et sujettes à erreur. Même si <code>+</code> et <code>*</code> sont tous deux des
+opérateurs arithmétiques, ils se comportent de façon complètement différente
+dans cet exemple. Dans mon propre code, j’utilise beaucoup <code>+</code> pour combiner
+les chaînes et les non-chaînes, mais notez bien qu’il ne faut pas utiliser <code>*</code>
+ni les autres opérateurs numériques sur des valeurs de chaînes. Convertir un
+nombre en chaîne est toujours possible et simple, mais convertir une chaîne en
+nombre peut très bien ne pas marcher du tout (voir la dernière ligne de
+l’exemple). Mais nous pouvons utiliser <code>Number</code> pour convertir explicitement la
+chaîne en nombre, ce qui rend plus visible le risque de nous retrouver devant
+une valeur <code>NaN</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">Number</span>(<span class="string">&quot;5&quot;</span>) * <span class="atom">5</span>);</pre></div><hr/><div class="block"><p>Quand nous parlions des opérateurs booléens <code>&amp;&amp;</code> et <code>||</code>, je vous avais dit
+qu’ils produisent des valeurs booléennes. C’est en fait un peu trop simplifié.
+Si vous les appliquez sur des valeurs booléennes, ils retournent des booléens.
+Mais ils peuvent aussi s’appliquer à d’autres types de valeurs, et dans ces cas
+ils retournent un de leurs arguments.</p><p>En fait, ce que <a name="key88"></a><code>||</code> fait réellement est ceci : il regarde la valeur de
+gauche en premier. Si la conversion en booléen produit <code>true</code>, il retourne
+cette valeur, sinon il retourne le membre de droite. Vérifiez par vous-même que
+cela fonctionne correctement avec des arguments booléens. Pourquoi agit-il
+comme cela&nbsp;? Cela s’avère très pratique. Considérons l’exemple suivant :</p><pre class="code"><span class="keyword">var</span> <span class="variable">input</span> = <span class="variable">prompt</span>(<span class="string">&quot;Quel est votre nom&nbsp;?&quot;</span>, <span class="string">&quot;Kilgore Trout&quot;</span>);
+<span class="variable">print</span>(<span class="string">&quot;Bien le bonjour &quot;</span> + (<span class="variable">input</span> || <span class="string">&quot;cher ami&quot;</span>));</pre><p>Si l’utilisateur presse «&nbsp;Annuler&nbsp;» ou ferme la fenêtre de dialogue sans donner
+de nom, la variable <code>input</code> prendra la valeur <code>null</code> ou <code>&quot;&quot;</code>. Ces deux valeurs
+donneront <code>false</code> après conversion en booléen. L’expression <code>input || &quot;cher
+ami&quot;</code> peut être lue dans ce cas comme «&nbsp;la valeur de la variable <code>input</code>, sinon
+la chaîne <code>&quot;cher ami&quot;</code>&nbsp;». C’est une manière simple de fournir une valeur de secours.</p><p>L’opérateur <a name="key89"></a><code>&amp;&amp;</code> fonctionne sur le même principe mais dans l’autre sens.
+Quand la valeur à sa gauche est quelque chose qui donnera <code>false</code> en étant
+converti en booléen, il retournera cette valeur. Dans l’autre cas, il
+retournera la valeur à sa droite.</p><p>Une autre propriété de ces deux opérateurs est que l’expression de droite n’est
+évaluée que quand c’est nécessaire. Dans le cas <code>true ||X</code>, peu importe ce
+qu’est <code>X</code>, le résultat sera toujours <code>true</code>, donc <code>X</code> n’est jamais évalué, et
+s’il a des effets de bord, ils ne se produiront jamais. C’est la même chose
+pour <code>false &amp;&amp; X</code>.</p><pre class="code"><span class="atom">false</span> || <span class="variable">alert</span>(<span class="string">&quot;Je suis en train d’apparaître&nbsp;!&quot;</span>);
+<span class="atom">true</span> || <span class="variable">alert</span>(<span class="string">&quot;Pas moi.&quot;</span>);</pre></div><ol class="footnotes"><li><a name="footnote1"></a>Les bits sont toutes les choses à deux valeurs possibles, ils sont
+habituellement décrits comme des <code>0</code> et des <code>1</code>. Dans l’ordinateur, ils se
+concrétisent par une charge électrique élevée ou basse, un signal fort ou
+faible, ou encore un point brillant ou terne sur la surface d’un CD.</li><li><a name="footnote2"></a>Si vous attendiez quelque chose comme <code>10010000</code> c’est bien vu, mais
+continuez à lire. Les nombres JavaScript ne sont pas stockés comme des entiers.</li><li><a name="footnote3"></a>En fait 53, à cause d’une astuce utilisable pour obtenir un bit librement.
+Consultez le format «&nbsp;IEEE 754&nbsp;» si vous êtes intéressé par les détails.</li><li><a name="footnote4"></a>Lorsque vous entrez des chaînes de caractères dans la console, vous pouvez
+remarquer qu’elles reviennent avec des guillemets et des anti-slashes de la
+même manière que vous les aviez saisies. Pour obtenir un affichage convenable
+des caractères spéciaux, vous pouvez faire <code>print(&quot;a\nb&quot;)</code> ―&nbsp;nous verrons
+pourquoi cela fonctionne dans quelques instants.</li><li><a name="footnote5"></a>Le récupérateur de bits est l’endroit où sont supposés être stockés les
+vieux bits. Sur certains systèmes, les programmeurs doivent le vider
+manuellement de temps en temps. Heureusement, JavaScript est fourni avec un
+système automatique de recyclage des bits.</li></ol><div class="navigation"><a href="chapter1.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter3.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

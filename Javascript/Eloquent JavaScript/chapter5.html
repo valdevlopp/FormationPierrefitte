@@ -1,0 +1,227 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Gestion des erreurs -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'error';</script><div class="navigation"><a href="chapter4.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter6.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 5: </span>Gestion des erreurs</h1><div class="block"><p>Écrire des programmes qui fonctionnent quand tout se passe comme prévu, c’est
+un bon point de départ. Mais vous arranger pour que vos programmes se
+comportent de façon acceptable dans des circonstances inattendues, cela devient
+un véritable défi.</p><p>Les situations problématiques qu’un programme peut rencontrer se classent en
+deux catégories : les erreurs du développeur et les réels problèmes. Si
+quelqu’un oublie de passer un argument requis à une fonction, c’est un exemple
+de la première catégorie. En revanche, si un programme demande à l’utilisateur
+de saisir un nom et qu’il obtient en retour une chaîne vide, il s’agit d’un
+problème que le développeur ne peut pas empêcher.</p><p>En général, on traite les erreurs du développeur en les cherchant et en les
+corrigeant, et pour les erreurs réelles, en faisant en sorte que le code les
+vérifie et effectue l’action appropriée pour y remédier (par exemple en
+redemandant le nom de l’utilisateur), ou au moins en échouant de façon bien
+définie et propre.</p></div><hr/><div class="block"><p>Il est important de décider de quelle catégorie un certain problème peut
+relever. Par exemple, reprenons notre ancienne fonction <code>puissance</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">puissance</span>(<span class="variabledef">base</span>, <span class="variabledef">exposant</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = <span class="atom">1</span>;
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">compteur</span> = <span class="atom">0</span>; <span class="localvariable">compteur</span> &lt; <span class="localvariable">exposant</span>; <span class="localvariable">compteur</span>++)
+    <span class="localvariable">resultat</span> *= <span class="localvariable">base</span>;
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}</pre><p>Quand un geek essaie d’appeler <code>puissance(&quot;Lapin&quot;, 4)</code>, c’est de toute évidence
+une erreur du développeur, mais qu’en est-il de <code>power(9, 0.5)</code>&nbsp;? La fonction
+ne sait pas manipuler des exposants sous forme de fraction, mais
+mathématiquement parlant, élever un nombre à la puissance 1/2 est parfaitement
+raisonnable (<a name="key1"></a><code>Math.pow</code> sait le faire). Dans des situations où le type de
+saisie que peut accepter une fonction n’est pas totalement clair, il est
+préférable de préciser explicitement le type d’arguments acceptables dans un
+commentaire.</p></div><hr/><div class="block"><p>Si une fonction rencontre un problème qu’elle ne peut résoudre par elle-même,
+que doit-elle faire&nbsp;? Dans le <a href="chapter4.html">chapitre 4</a>, nous avons écrit la fonction
+<code>extraireChaineEntre</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">extraireChaineEntre</span>(<span class="variabledef">chaine</span>, <span class="variabledef">debut</span>, <span class="variabledef">fin</span>) {
+  <span class="keyword">var</span> <span class="variabledef">indexDebut</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">debut</span>) + <span class="localvariable">debut</span>.<span class="property">length</span>;
+  <span class="keyword">var</span> <span class="variabledef">indexFin</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">fin</span>, <span class="localvariable">indexDebut</span>);
+  <span class="keyword">return</span> <span class="localvariable">chaine</span>.<span class="property">slice</span>(<span class="localvariable">indexDebut</span>, <span class="localvariable">indexFin</span>);
+}</pre><p>Si <code>debut</code> et <code>fin</code> donnés en argument n’apparaissent pas dans la chaîne,
+<code>indexOf</code> renverra <code>-1</code> et cette version de <code>extraireChaineEntre</code> retournera
+des absurdités : <code>extraireChaineEntre(&quot;Île déserte&quot;, &quot;{-&quot;, &quot;-}&quot;)</code> renvoie <code>&quot;le
+désert&quot;</code>.</p><p>Quand le programme s’exécute et que la fonction est appelée ainsi, le code qui
+l’a appelé obtiendra une chaîne, comme prévu, et continuera joyeusement à la
+manipuler. Mais la valeur est erronée, donc quel que soit le résultat obtenu,
+il sera faux. Et si vous êtes malchanceux, cette erreur ne provoquera de
+problème qu’après avoir été passée à une vingtaine d’autres fonctions. Dans des
+cas comme celui-ci, il est extrêmement difficile de trouver où le problème a
+débuté.</p><p>Dans certains cas, vous ne serez absolument pas concerné par ce genre de
+problème et vous n’aurez que faire du mauvais comportement de la fonction
+lorsqu’elle reçoit un mauvais type d’argument. Par exemple, si vous êtes sûr
+qu’une fonction ne sera appelée qu’à quelques endroits et que vous pouvez
+prouver que ces endroits ne fournissent que le bon type d’argument, ça ne vaut
+alors généralement pas le coup de faire grossir la fonction et de la rendre
+plus moche pour qu’elle puisse traiter des cas problématiques.</p><p>Mais la plupart du temps, les fonctions qui échouent «&nbsp;silencieusement&nbsp;» sont
+difficiles à utiliser, et même dangereuses. Que se passe-t-il si le code
+appelant <code>extraireChaineEntre</code> veut savoir si tout s’est bien passé&nbsp;? Sur le
+moment, il ne peut le dire, sauf à refaire tout le travail qu’a effectué
+<code>extraireChaineEntre</code> et à vérifier le résultat de <code>extraireChaineEntre</code> par
+rapport au sien. Ce qui n’est pas terrible. Une solution serait de faire
+renvoyer par <code>extraireChaineEntre</code> une valeur spéciale telle que <code>false</code> ou
+<code>undefined</code> quand elle échoue.</p><pre class="code"><span class="keyword">function</span> <span class="variable">extraireChaineEntre</span>(<span class="variabledef">chaine</span>, <span class="variabledef">debut</span>, <span class="variabledef">fin</span>) {
+  <span class="keyword">var</span> <span class="variabledef">indexDebut</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">debut</span>);
+  <span class="keyword">if</span> (<span class="localvariable">indexDebut</span> == -<span class="atom">1</span>)
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+  <span class="localvariable">indexDebut</span> += <span class="localvariable">debut</span>.<span class="property">length</span>;
+  <span class="keyword">var</span> <span class="variabledef">indexFin</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">fin</span>, <span class="localvariable">indexDebut</span>);
+  <span class="keyword">if</span> (<span class="localvariable">indexFin</span> == -<span class="atom">1</span>)
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+
+  <span class="keyword">return</span> <span class="localvariable">chaine</span>.<span class="property">slice</span>(<span class="localvariable">indexDebut</span>, <span class="localvariable">indexFin</span>);
+}</pre><p>Vous pouvez voir que les vérifications d’erreurs ne rendent généralement pas
+les fonctions plus jolies. Mais maintenant, le code qui appelle
+<code>extraireChaineEntre</code> peut faire quelque chose comme :</p><pre class="code"><span class="keyword">var</span> <span class="variable">saisie</span> = <span class="variable">prompt</span>(<span class="string">&quot;Dites-moi quelque chose&quot;</span>, <span class="string">&quot;&quot;</span>);
+<span class="keyword">var</span> <span class="variable">entreParentheses</span> = <span class="variable">extraireChaineEntre</span>(<span class="variable">saisie</span>, <span class="string">&quot;(&quot;</span>, <span class="string">&quot;)&quot;</span>);
+<span class="keyword">if</span> (<span class="variable">entreParentheses</span> != <span class="atom">undefined</span>)
+  <span class="variable">print</span>(<span class="string">&quot;Vous avez mis entre parenthèses '&quot;</span>, <span class="variable">entreParentheses</span>, <span class="string">&quot;'.&quot;</span>);</pre></div><hr/><div class="block"><p>Dans beaucoup de cas, renvoyer une valeur spéciale est une façon tout à fait
+appropriée pour indiquer une erreur. Il y a malheureusement un revers à la
+médaille. D’abord, que se passe-t-il si la fonction peut déjà renvoyer toutes
+sortes de valeurs possibles&nbsp;? Par exemple, prenons cette fonction qui récupère
+le dernier élément d’un tableau :</p><pre class="code"><span class="keyword">function</span> <span class="variable">dernierElement</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">tableau</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> <span class="localvariable">tableau</span>[<span class="localvariable">tableau</span>.<span class="property">length</span> - <span class="atom">1</span>];
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="atom">undefined</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">dernierElement</span>([<span class="atom">1</span>, <span class="atom">2</span>, <span class="atom">undefined</span>]));</pre><p>Le tableau avait-il un dernier élément&nbsp;? En regardant la valeur que renvoie
+<code>dernierElement</code>, c’est impossible à dire. Le second problème quand on renvoie
+des valeurs spéciales, c’est que cela peut conduire à créer pas mal de bazar.
+Si une partie de code appelle <code>extraireChaineEntre</code> dix fois, elle doit
+vérifier dix fois si <code>undefined</code> a été retourné. De même, si une fonction
+appelle <code>extraireChaineEntre</code>, mais n’a pas de stratégie pour gérer un éventuel
+échec, elle devra vérifier la valeur renvoyée par <code>extraireChaineEntre</code>, et si
+c’est <code>undefined</code>, cette fonction peut alors renvoyer <code>undefined</code> ou une autre
+valeur spéciale à sa fonction appelante, qui à son tour vérifiera cette valeur.</p><p>Parfois, quand quelque chose de bizarre se passe, il serait pratique d’arrêter
+ce que l’on est en train de faire, et de revenir immédiatement à un endroit où
+le problème peut être réglé.</p><p>Nous avons de la chance. Beaucoup de langages de programmation fournissent de
+tels mécanismes. C’est ce qu’on appelle généralement la <a name="key2"></a>gestion des
+exceptions.</p></div><hr/><div class="block"><p>La théorie derrière la gestion des exceptions fonctionne ainsi : il est
+possible pour le code de <a name="key3"></a>lever (ou <a name="key4"></a>lancer) une <a name="key5"></a>exception, qui est une
+valeur. Quand on lève une exception, cela ressemble parfois à un retour de
+fonction boosté aux stéroïdes : on ne sort pas simplement de la fonction en
+cours, mais aussi des fonctions appelantes, en retournant jusqu’au niveau qui a
+démarré l’exécution actuelle. Cela s’appelle <a name="key6"></a>dépiler. Vous vous rappelez
+peut-être la <a name="key7"></a>pile des appels de fonction qui avait été abordée au
+<a href="chapter3.html">chapitre 3</a>. Une exception descend dans cette pile, en renvoyant tous les
+contextes des appels qu’elle rencontre.</p><p>Si elles descendaient sans s’arrêter jusqu’au bas de la pile, les exceptions ne
+seraient pas d’un grand intérêt, elles fourniraient juste un moyen original de
+détruire le programme. Heureusement, il est possible de dresser des obstacles
+aux exceptions le long de la pile. Ceux-ci «&nbsp;<a name="key8"></a>interceptent&nbsp;»
+l’exception quand elle descend, et ils peuvent la prendre en charge, après quoi
+le programme continue de fonctionner normalement à partir du point où
+l’exception a été attrapée.</p><p>Un exemple :</p><pre class="code"><span class="keyword">function</span> <span class="variable">dernierElement</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">tableau</span>.<span class="property">length</span> &gt; <span class="atom">0</span>)
+    <span class="keyword">return</span> <span class="localvariable">tableau</span>[<span class="localvariable">tableau</span>.<span class="property">length</span> - <span class="atom">1</span>];
+  <span class="keyword">else</span>
+    <span class="keyword">throw</span> <span class="string">&quot;Impossible de prendre le dernier élément d’un tableau vide.&quot;</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">dernierElementPlusDix</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">return</span> <span class="variable">dernierElement</span>(<span class="localvariable">tableau</span>) + <span class="atom">10</span>;
+}
+
+<span class="keyword">try</span> {
+  <span class="variable">print</span>(<span class="variable">dernierElementPlusDix</span>([]));
+}
+<span class="keyword">catch</span> (<span class="variabledef">erreur</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Une erreur est survenue : &quot;</span>, <span class="localvariable">erreur</span>);
+}</pre><p><a name="key9"></a><code>throw</code> est le mot-clé qui est utilisé pour lever l’exception. Le mot-clé
+<a name="key10"></a><code>try</code> pose un obstacle pour les exceptions : quand une exception est levée
+dans le code du bloc suivant ce <a name="key11"></a><code>try</code>, le bloc <a name="key12"></a><code>catch</code> sera exécuté. La
+variable nommée entre parenthèses après le mot <code>catch</code> est le nom donné à la
+valeur d’exception à l’intérieur du bloc.</p><p>On remarque que la fonction <code>dernierElementPlusDix</code> ignore complètement la
+possibilité que <code>dernierElement</code> ne fonctionne pas. C’est là le grand avantage
+des exceptions, un code pour s’occuper de l’erreur n’est nécessaire qu’au
+moment où l’erreur survient, et à l’endroit où on s’en occupe. Les fonctions
+sur le chemin peuvent tout ignorer à ce sujet.</p><p>Enfin, presque.</p></div><hr/><div class="block"><p>Réfléchissez un instant à ceci : une fonction <code>faireDesTrucs</code> veut déclarer une
+variable globale <code>trucEnCours</code> pour pointer vers quelque chose de spécifique
+pendant que son corps exécute, de manière à ce que d’autres fonctions puissent
+également y avoir accès. Normalement, vous passeriez simplement cette chose
+comme un argument, mais imaginons l’espace d’un instant que ce n’est pas
+possible en pratique. Quand la fonction se termine, <code>trucEnCours</code> devrait être
+redéfinie avec une valeur <code>null</code>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">trucEnCours</span> = <span class="atom">null</span>;
+
+<span class="keyword">function</span> <span class="variable">faireDesTrucs</span>(<span class="variabledef">unTruc</span>) {
+  <span class="keyword">if</span> (<span class="variable">trucEnCours</span> != <span class="atom">null</span>)
+    <span class="keyword">throw</span> <span class="string">&quot;Oh non&nbsp;! Nous sommes déjà en train d’exécuter quelque chose&nbsp;!&quot;</span>;
+
+  <span class="variable">trucEnCours</span> = <span class="localvariable">unTruc</span>;
+  <span class="comment">/* faire des choses compliqués… */</span>
+  <span class="variable">trucEnCours</span> = <span class="atom">null</span>;
+}</pre><p>Mais que ce se passerait-il si cette opération compliquée lève une exception&nbsp;?
+Dans ce cas, l’appel à <code>faireDesTrucs</code> sera rejeté en dehors de la pile par
+l’exception, et <code>trucEnCours</code> n’aura pas de valeur redéfinie comme <code>null</code>.</p><p>Les instructions <code>try</code> peuvent aussi être suivies par un mot-clé <a name="key13"></a><code>finally</code>,
+ce qui veut dire «&nbsp;quoi qu’il arrive, exécutez ce code après avoir essayé
+d’exécuter ce code dans un bloc <code>try</code>&nbsp;». Si une fonction doit nettoyer quelque
+chose, le code qui effectue ce nettoyage doit en général être inséré dans un
+bloc <code>finally</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">faireDesTrucs</span>(<span class="variabledef">unTruc</span>) {
+  <span class="keyword">if</span> (<span class="variable">trucEnCours</span> != <span class="atom">null</span>)
+    <span class="keyword">throw</span> <span class="string">&quot;Oh non&nbsp;! Nous sommes déjà en train d’exécuter quelque chose&nbsp;!&quot;</span>;
+
+  <span class="variable">trucEnCours</span> = <span class="localvariable">unTruc</span>;
+  <span class="keyword">try</span> {
+    <span class="comment">/* faire des choses compliqués… */</span>
+  }
+  <span class="keyword">finally</span> {
+    <span class="variable">trucEnCours</span> = <span class="atom">null</span>;
+  }
+}</pre></div><hr/><div class="block"><p>Beaucoup d’erreurs de programmation obligent l’environnement JavaScript à lever
+des exceptions. Par exemple :</p><pre class="code"><span class="keyword">try</span> {
+  <span class="variable">print</span>(<span class="variable">Yeti</span>);
+}
+<span class="keyword">catch</span> (<span class="variabledef">erreur</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Intercepté : &quot;</span> + <span class="localvariable">erreur</span>.<span class="property">message</span>);
+}</pre><p>Dans des cas comme celui-là, des objets spéciaux de type erreur sont levés. Ils
+ont toujours une propriété <code>message</code> contenant une description du problème.
+Vous pouvez lever des objets similaires en utilisant le mot-clé <code>new</code> et le
+constructeur <a name="key14"></a><code>error</code> :</p><pre class="code"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Au feu&nbsp;!&quot;</span>);</pre></div><hr/><div class="block"><p>Quand une exception descend tout en bas de la pile sans être traitée, elle est
+prise en charge par l’environnement. Ce que cela signifie diffère selon les
+différents navigateurs, quelquefois une description de l’erreur est écrite sous
+la forme d’une entrée de journal, d’autres fois une fenêtre décrivant l’erreur
+apparaît.</p><p>Les erreurs générées par le code entré dans la console sur cette page sont
+toujours attrapées par la console, et sont affichées avec les autres sorties de
+la console.</p></div><hr/><div class="block"><p>La plupart des programmeurs considèrent les exceptions uniquement comme un
+mécanisme de gestion des erreurs. Par essence, pourtant, elles représentent
+seulement une autre manière d’influer sur le contrôle du flux d’un programme.
+Par exemple, elles peuvent être utilisées comme une sorte d’instruction <code>break</code>
+dans une fonction récursive. Voici une fonction un peu bizarre qui détermine si
+un objet, ainsi que les autres objets stockés à l’intérieur, contiennent au
+moins sept valeurs <code>true</code> :</p><pre class="code"><span class="keyword">var</span> <span class="variable">SeptValeursTrue</span> = {};
+
+<span class="keyword">function</span> <span class="variable">contientSeptValeursTrue</span>(<span class="variabledef">objet</span>) {
+  <span class="keyword">var</span> <span class="variabledef">compte</span> = <span class="atom">0</span>;
+
+  <span class="keyword">function</span> <span class="variabledef">compter</span>(<span class="variabledef">objet</span>) {
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">nom</span> <span class="keyword">in</span> <span class="localvariable">objet</span>) {
+      <span class="keyword">if</span> (<span class="localvariable">objet</span>[<span class="localvariable">nom</span>] === <span class="atom">true</span>) {
+        <span class="localvariable">compte</span>++;
+        <span class="keyword">if</span> (<span class="localvariable">compte</span> == <span class="atom">7</span>)
+          <span class="keyword">throw</span> <span class="variable">SeptValeursTrue</span>;
+      }
+      <span class="keyword">else</span> <span class="keyword">if</span> (typeof <span class="localvariable">objet</span>[<span class="localvariable">nom</span>] == <span class="string">&quot;object&quot;</span>) {
+        <span class="localvariable">compter</span>(<span class="localvariable">objet</span>[<span class="localvariable">nom</span>]);
+      }
+    }
+  }
+
+  <span class="keyword">try</span> {
+    <span class="localvariable">compter</span>(<span class="localvariable">objet</span>);
+    <span class="keyword">return</span> <span class="atom">false</span>;
+  }
+  <span class="keyword">catch</span> (<span class="variabledef">exception</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">exception</span> != <span class="variable">SeptValeursTrue</span>)
+      <span class="keyword">throw</span> <span class="localvariable">exception</span>;
+    <span class="keyword">return</span> <span class="atom">true</span>;
+  }
+}</pre><p>La fonction interne <code>compter</code> est appelée récursivement pour chaque objet qui
+fait partie d’un argument. Quand la variable <code>compte</code> atteint sept, il n’y a
+aucun intérêt à continuer de compter, mais se contenter de remonter de l’appel
+courant à <code>compter</code> ne va pas nécessairement arrêter l’énumération, car il
+pourrait y avoir plusieurs appels derrière. Donc ce que l’on fait c’est juste
+lever une exception, ce qui obligera le contrôleur à rejeter tout appel, et à
+se rendre au bloc <code>catch</code>.</p><p>Mais se contenter de retourner <code>true</code> dans le cas d’une exception n’est pas
+correct. Quelque chose peut mal se passer, donc on vérifie d’abord si
+l’exception est l’objet <code>SeptValeursTrue</code>, créé spécifiquement dans ce but. Si
+ce n’est pas le cas, ce bloc <code>catch</code> ne sait pas comment s’en occuper, donc il
+la lève encore.</p><p>On a ici un modèle qui est également habituel lorsqu’on s’occupe de conditions
+d’erreur : vous devez vous assurez que votre bloc <code>catch</code> s’occupe seulement
+des exceptions qu’il sait traiter. Lever des exceptions de type chaîne de
+caractères, comme certains exemples de ce chapitre le font, est rarement une
+bonne idée, car cela rend difficile de reconnaître le type de l’exception. Une
+meilleure idée consiste à utiliser des valeurs uniques, comme l’objet
+<code>SeptValeursTrue</code>, ou d’introduire un nouveau type d’objets, comme décrit dans
+le <a href="chapter8.html">chapitre 8</a>.</p></div><div class="navigation"><a href="chapter4.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter6.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

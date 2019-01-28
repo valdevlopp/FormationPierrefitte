@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <script type="text/javascript" src="js/params.js"> </script>
+  <script type="text/javascript">
+    // Wow ! Quel hack !
+    (function() {
+      var html = opener.htmlTable[getParams().id];
+      if (html != undefined)
+        document.write(html);
+      else
+        document.write("Aucun HTML trouvé.");
+    })();
+  </script>
+</html>

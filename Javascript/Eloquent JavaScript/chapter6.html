@@ -1,0 +1,810 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Programmation fonctionnelle -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'fp';</script><div class="navigation"><a href="chapter5.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter7.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 6: </span>Programmation fonctionnelle</h1><div class="block"><p>Au fur et à mesure que les programmes prennent de l’ampleur, ils deviennent
+plus complexes et plus durs à comprendre. Nous nous considérons tous comme
+étant plutôt intelligents, bien sûr, mais nous ne sommes que des êtres humains
+et même une petite dose de chaos peut nous laisser perplexes. Et ensuite cela
+devient infernal. Travailler sur quelque chose que vous ne maîtrisez pas
+vraiment, c’est un peu comme couper des fils au hasard sur une de ces bombes à
+retardement que vous voyez dans les films. Si vous avez de la chance, vous
+couperez le bon, particulièrement si vous êtes le héros du film et que vous
+prenez une attitude héroïque, mais il y a toujours une possibilité de tout
+faire sauter.</p><p>Je vous le concède, la plupart du temps, casser un programme ne va pas causer
+une grosse explosion. Mais quand un programme qui a été trifouillé par
+quelqu’un d’ignorant dégénère en un ramassis d’erreurs, remettre de l’ordre
+dans le code est un travail de longue haleine, parfois il est aussi simple de
+recommencer depuis le début.</p><p><a name="key1"></a>Ainsi, le développeur recherche toujours les moyens de faire un
+code aussi simple que possible. Une manière importante d’y arriver c’est de
+rendre le code plus abstrait. Quand on fait du code pour un programme, on se
+perd très facilement dans des petits détails. Vous butez sur un petit problème,
+vous vous penchez dessus et puis vous vous occupez du problème d’après et ainsi
+de suite. Au final, on lit le code à la façon d’une recette de grand-mère.</p><blockquote>Oui, mon cher, pour faire de la soupe aux pois, vous aurez besoin de petits
+pois, de type sec. Et vous devez les laisser tremper pour au moins une nuit,
+ou vous devrez les faire cuire pendant des heures. Je me souviens une fois
+quand mon idiot de fils a essayé de faire de la soupe de pois. Me
+croirez-vous si je vous dis qu’il n’a pas fait tremper ses pois&nbsp;? Nous nous y
+sommes tous presque cassé les dents. Bref, quand vous aurez trempé les pois,
+il vous en faut à peu près une tasse par personne, faites attention car ils
+prendront un peu de volume quand ils seront trempés, donc si vous ne prenez
+pas garde, ils déborderont du contenant que vous avez choisi pour ce faire,
+faites attention également d’utiliser beaucoup d’eau. Mais comme je vous l’ai
+dit, il en faut à peu près une tasse et quand ils sont trempés, vous les
+faites cuire avec 4 tasses d’eau pour une tasse de pois. Laissez-les mijoter
+pendant deux heures, ce qui sous-entend que vous mettiez un couvercle et que
+vous chauffiez à peine, et ensuite ajoutez des oignons coupés en dés, des
+tiges de céleri, peut-être une ou deux carottes et un peu de jambon. Laissez
+encore cuire pendant quelques minutes et après c’est prêt à être servi.</blockquote><p>Une autre façon de décrire la recette :</p><blockquote>Ingrédients par personne : une tasse de petits pois, un oignon coupé en
+morceaux, une demi carotte, une tige de céleri et éventuellement du jambon.<br/><br/>Faites tremper les pois une nuit, faites-les mijoter pendant deux heures dans
+4 tasses d’eau (par personne), ajoutez les légumes et le jambon, faites cuire
+pendant dix minutes supplémentaires.</blockquote><p>C’est plus court, mais si vous ne savez pas comment faire tremper les pois,
+vous raterez sûrement et les ferez tremper dans trop peu d’eau. Mais on peut
+rechercher comment tremper les pois, et c’est ça la clé. Si vous partez du
+principe que vos lecteurs ont des connaissances de base, vous pouvez recourir à
+un langage pour mentionner des concepts plus larges et vous exprimer d’une
+manière plus concise et plus claire. C’est plus ou moins ce que l’on veut dire
+quand on parle d’abstraction.</p><p>En quoi est-ce que cette recette tirée par les cheveux a un lien avec la
+programmation&nbsp;? Eh bien, évidemment, la recette est un programme. De surcroît,
+la connaissance minimale que le cuisinier est supposé avoir correspond aux
+fonctions et autres concepts qui sont accessibles aux codeurs. Si vous vous
+rappelez de l’introduction à ce livre, des choses telles que <code>while</code> rendent la
+construction de boucles plus faciles. Dans le <a href="chapter4.html">chapitre 4</a>, nous avons écrit des
+fonctions simples afin de pouvoir écrire d’autres fonctions plus courtes et
+plus directes. De tels outils, dont certains sont fournis par le langage
+lui-même et d’autres conçus par le programmeur, sont utilisés de manière à
+réduire le nombre de détails inutiles dans le reste du programme. Ce qui rend
+le programme plus abordable pour travailler dessus.  </p></div><hr/><div class="block"><p>La <a name="key2"></a>programmation fonctionnelle, qui est le sujet qui nous intéresse dans ce
+chapitre, produit des abstractions en combinant des fonctions de manière
+astucieuse. Un codeur équipé d’un répertoire de fonctions fondamentales et,
+plus important, maîtrisant les manières de les utiliser, est bien plus efficace
+que quelqu’un qui commence à partir de zéro. Malheureusement, un environnement
+JavaScript de base ne fournit que peu de fonctions essentielles, donc nous
+devons les écrire nous-mêmes, ou, ce qui est souvent préférable, utiliser le
+code de quelqu’un d’autre (plus de détails dans le <a href="chapter9.html">chapitre 9</a>).</p><p>Il y a d’autres approches plus populaires de l’abstraction, particulièrement la
+programmation orientée objet, qui est le sujet du <a href="chapter8.html">chapitre 8</a>.</p><p>Il y a un détail fâcheux, si vous avez un peu de goût, qui doit commencer à
+vous embêter, c’est la répétition incessante de boucles <code>for</code> dans certaines
+matrices : <code>for (var i = 0; i &lt; quelqueChose.length; i++) …</code>. Est-ce qu’on peut
+en faire une abstraction&nbsp;?</p><p>Le problème, c’est que si beaucoup de fonctions prennent seulement des valeurs,
+les combinent et donnent un résultat, une telle boucle contient un bout de code
+qu’elle doit exécuter. Il est facile d’écrire une fonction qui s’occupe d’une
+matrice et affiche chaque élément :</p><pre class="code"><span class="keyword">function</span> <span class="variable">printArray</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">tableau</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="variable">print</span>(<span class="localvariable">tableau</span>[<span class="localvariable">i</span>]);
+}</pre><p>Mais qu’est-ce qu’on fait si on veut faire autre chose qu’afficher&nbsp;? Puisque «
+faire quelque chose&nbsp;» peut être représenté par une fonction, et que les
+fonctions sont aussi des valeurs, on peut fournir notre action comme une valeur
+de type fonction :</p><pre class="code"><span class="keyword">function</span> <span class="variable">forEach</span>(<span class="variabledef">tableau</span>, <span class="variabledef">action</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">tableau</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">action</span>(<span class="localvariable">tableau</span>[<span class="localvariable">i</span>]);
+}
+
+<span class="variable">forEach</span>([<span class="string">&quot;Wampeter&quot;</span>, <span class="string">&quot;Foma&quot;</span>, <span class="string">&quot;Granfalloon&quot;</span>], <span class="variable">print</span>);</pre><p>Et en utilisant une fonction anonyme, quelque chose comme une boucle <code>for</code> peut
+être écrite avec moins de détails inutiles.</p><pre class="code"><span class="keyword">function</span> <span class="variable">somme</span>(<span class="variabledef">nombres</span>) {
+  <span class="keyword">var</span> <span class="variabledef">total</span> = <span class="atom">0</span>;
+  <span class="variable">forEach</span>(<span class="localvariable">nombres</span>, <span class="keyword">function</span> (<span class="variabledef">nombre</span>) {
+     <span class="localvariable">total</span> += <span class="localvariable">nombre</span>;
+  });
+  <span class="keyword">return</span> <span class="localvariable">total</span>;
+}
+<span class="variable">show</span>(<span class="variable">somme</span>([<span class="atom">1</span>, <span class="atom">10</span>, <span class="atom">100</span>]));</pre><p>Remarquez que la variable <code>total</code> est visible à l’intérieur de la fonction
+anonyme, à cause des règles de portée des variables. Remarquez également que
+cette version n’est pas vraiment plus courte que celle avec une boucle <code>for</code> et
+nécessite l’écriture peu commode <code>});</code> à sa fin : l’accolade ferme le corps de
+la fonction anonyme, la parenthèse ferme l’appel à la fonction <a name="key3"></a><code>forEach</code> et
+le point virgule est nécessaire car cet appel est une instruction.</p><p>Vous obtenez une variable liée à l’élément en cours dans le tableau, <code>nombre</code>,
+aussi vous n’avez plus besoin d’utiliser <code>nombres[i]</code>. Et quand ce tableau est
+créé par l’évaluation d’une expression quelconque, il n’y a pas besoin de le
+stocker dans une variable car cette expression peut être passée à <code>forEach</code>
+directement.  </p><p>Le programme sur les chats dans le <a href="chapter4.html">chapitre 4</a> contient le morceau de code suivant:</p><pre class="preformatted">var paragraphes = archiveDeMessages[message].split(&quot;\n&quot;);
+for (var i = 0; i &lt; paragraphes.length; i++)
+  traiterParagraphe(paragraphes[i]);</pre><p>Il peut maintenant être écrit de la façon suivante :</p><pre class="preformatted">forEach(archiveDeMessages[message].split(&quot;\n&quot;), traiterParagraphe);</pre><p>Au final, une construction plus abstraite (ou «&nbsp;de plus haut niveau&nbsp;»)
+correspond à plus d’informations et à moins de bruits parasites : Le code dans
+la fonction <code>somme</code> se lit «&nbsp;<em>pour chaque nombre dans la liste des nombres,
+ajouter ce nombre au total</em>&nbsp;», plutôt que : «&nbsp;<em>il y a une variable qui commence
+à 0, et elle compte un par un jusqu’à atteindre le nombre d’élément d’un
+tableau de nombres et à chaque valeur de cette variable, nous examinons
+l’élément correspondant dans ce tableau et l’ajoutons au total</em>&nbsp;».</p></div><hr/><div class="block"><p><code>forEach</code> prend un algorithme, ici «&nbsp;parcourir un tableau&nbsp;» et de rendre
+celui-ci abstrait. Les «&nbsp;trous&nbsp;» dans cet algorithme (ici : que faire pour
+chacun des éléments du tableau), sont comblés par des fonctions passées à la
+fonction algorithme.</p><p>Les fonctions qui opèrent sur d’autres fonctions sont appelées <a name="key4"></a>fonctions d’ordre supérieur. En opérant sur d’autres
+fonctions, elles peuvent décrire des actions à un niveau supérieur. La fonction
+<code>creerFonctionAjouter</code> dans le <a href="chapter3.html">chapitre 3</a> est aussi une fonction d’ordre
+supérieur. Au lieu de prendre une valeur de fonction comme argument, elle
+construit une nouvelle fonction.</p><p>Les fonctions d’ordre supérieur peuvent être utilisées pour généraliser de
+nombreux algorithmes que des fonctions classiques ne peuvent pas facilement
+décrire. Quand vous avez à votre disposition de telles fonctions, elles peuvent
+vous aider à concevoir votre code avec une plus grande clarté : au lieu d’une
+combinaison complexe de variables et de boucles, vous pouvez décomposer les
+algorithmes en algorithmes plus fondamentaux, qui sont appelés par leur nom et
+ne doivent pas être réécrits sans cesse.</p><p>Être en mesure d’écrire <em>ce que</em> nous voulons faire au lieu de <em>comment</em> nous
+le faisons, c’est travailler à un niveau d’abstraction supérieur. En pratique,
+cela implique un code plus concis, plus clair et plus agréable à lire.</p></div><hr/><div class="block"><p>Une autre catégorie utile de fonctions d’ordre supérieur <em>modifie</em> la fonction
+qui lui est fournie :</p><pre class="code"><span class="keyword">function</span> <span class="variable">negate</span>(<span class="variabledef">func</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="variabledef">x</span>) {
+    <span class="keyword">return</span> !<span class="localvariable">func</span>(<span class="localvariable">x</span>);
+  };
+}
+<span class="keyword">var</span> <span class="variable">isNotNaN</span> = <span class="variable">negate</span>(<span class="variable">isNaN</span>);
+<span class="variable">show</span>(<span class="variable">isNotNaN</span>(<span class="atom">NaN</span>));</pre><p>La fonction renvoyée par la fonction <code>negate</code> reçoit un argument qu’elle
+fournit à la fonction initiale <code>func</code> et inverse son résultat. Mais si la
+fonction que vous voulez inverser reçoit plus d’un argument&nbsp;? Vous pouvez
+accéder à n’importe quels arguments passés à une fonction à l’aide du tableau
+<code>arguments</code>, mais comment appeler une fonction quand vous ne savez pas combien
+d’arguments vous avez&nbsp;?</p><p>Les fonctions ont une méthode nommée <a name="key5"></a><code>apply</code>, utilisée dans les situations de
+ce type. Elle prend deux arguments. Le rôle du premier argument sera détaillé
+dans le <a href="chapter8.html">chapitre 8</a>, pour le moment nous utiliserons <code>null</code> pour cet argument. Le
+second argument est un tableau qui contient tous les arguments devant
+s’appliquer à la fonction.</p><pre class="code"><span class="variable">show</span>(<span class="variable">Math</span>.<span class="property">min</span>.<span class="property">apply</span>(<span class="atom">null</span>, [<span class="atom">5</span>, <span class="atom">6</span>]));
+
+<span class="keyword">function</span> <span class="variable">negate</span>(<span class="variabledef">func</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>() {
+    <span class="keyword">return</span> !<span class="localvariable">func</span>.<span class="property">apply</span>(<span class="atom">null</span>, <span class="localvariable">arguments</span>);
+  };
+}</pre><p>Malheureusement, dans le navigateur Internet Explorer, différentes fonctions
+prédéfinies comme <code>alert</code>, ne sont pas <em>vraiment</em> des fonctions… ni quoi que ce
+soit. Elles indiquent un type <code>&quot;object&quot;</code> quand s’applique sur elles l’opérateur
+<code>typeof</code> et n’ont pas de méthode <code>apply</code>. Vos propres fonctions n’ont pas cet
+inconvénient, ce sont toujours de vraies fonctions.  </p></div><hr/><div class="block"><p>Jetons un œil maintenant à quelques algorithmes plus simples qui sont reliés
+aux tableaux. La fonction <code>somme</code> est en fait une variante d’un algorithme qui
+est habituellement appelé <a name="key6"></a><code>reduce</code> ou <code>fold</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">reduce</span>(<span class="variabledef">combiner</span>, <span class="variabledef">base</span>, <span class="variabledef">tableau</span>) {
+  <span class="variable">forEach</span>(<span class="localvariable">tableau</span>, <span class="keyword">function</span> (<span class="variabledef">element</span>) {
+    <span class="localvariable">base</span> = <span class="localvariable">combiner</span>(<span class="localvariable">base</span>, <span class="localvariable">element</span>);
+  });
+  <span class="keyword">return</span> <span class="localvariable">base</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">ajouter</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>) {
+  <span class="keyword">return</span> <span class="localvariable">a</span> + <span class="localvariable">b</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">somme</span>(<span class="variabledef">nombres</span>) {
+  <span class="keyword">return</span> <span class="variable">reduce</span>(<span class="variable">ajouter</span>, <span class="atom">0</span>, <span class="localvariable">nombres</span>);
+}</pre><p><code>reduce</code> convertit un tableau en une seule valeur en ayant recours de manière
+répétée à une fonction qui combine un élément du tableau avec une valeur de
+base. C’est exactement ce que fait la fonction <code>somme</code>, donc elle peut être
+raccourcie par l’utilisation de <code>reduce</code>… sauf que l’addition est un opérateur
+et non une fonction dans JavaScript, donc on doit d’abord la mettre dans une
+fonction.</p><p>Il y a plusieurs raisons pour lesquelles <code>reduce</code> accepte cette fonction comme
+premier argument et non comme dernier (contrairement à <code>forEach</code>). C'est d’une
+part par tradition (d’autres langages ont ce fonctionnement) et d’autre part
+pour permettre une astuce particulière, dont nous discuterons à la fin de ce
+chapitre. Cela veut dire que lorsque l’on appelle <code>reduce</code>, écrire la fonction
+de réduction comme une fonction anonyme semble un peu bizarre. Car maintenant
+les arguments viennent après la fonction et on perd totalement la ressemblance
+avec un bloc <code>for</code> normal.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 6.1</div><div class="exercise"><p>Écrivez une fonction <code>compterLesZeros</code> qui prend un tableau de nombres en
+argument et qui renvoie le nombre de zéros qui sont rencontrés. Utilisez
+<code>reduce</code>.</p><p>Puis, écrivez une fonction <code>count</code> de plus haut niveau qui accepte un tableau
+et une fonction de test en tant qu’arguments, et qui donne en retour le nombre
+d’éléments dans le tableau pour lesquels la fonction de test a renvoyé <code>true</code>. 
+Écrivez de nouveau <code>compterLesZeros</code> en utilisant cette fonction.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">compterLesZeros</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">function</span> <span class="variabledef">compteur</span>(<span class="variabledef">total</span>, <span class="variabledef">element</span>) {
+    <span class="keyword">return</span> <span class="localvariable">total</span> + (<span class="localvariable">element</span> === <span class="atom">0</span> ? <span class="atom">1</span> : <span class="atom">0</span>);
+  }
+  <span class="keyword">return</span> <span class="variable">reduce</span>(<span class="localvariable">compteur</span>, <span class="atom">0</span>, <span class="localvariable">tableau</span>);
+}</pre><p><a name="key7"></a> La partie bizarre, celle avec le point d’interrogation et les deux
+points, utilise un nouvel opérateur. Dans le <a href="chapter2.html">chapitre 2</a>, nous avons vu les
+opérateurs unaires et binaires. Celui-ci est ternaire : il agit sur trois
+valeurs. Son fonctionnement ressemble à celui de <code>if</code>/<code>else</code>, sauf que là où
+<code>if</code> exécute de manière conditionnelle des instructions, celui-ci choisit ses
+expressions en fonction d’une condition. La première partie avant le point
+d’interrogation est la condition. Si cette condition est <code>true</code>, l’expression
+après le point d’interrogation est choisie, ici <code>1</code>. Si c’est <code>false</code>, la
+partie après la virgule, ici <code>0</code>, est choisie.</p><p>L’utilisation de cet opérateur peut raccourcir efficacement des portions de
+code. Quand les expressions à l’intérieur deviennent vraiment énormes, ou que
+vous devez prendre plus de décisions à l’intérieur des portions pour les
+conditions, la simple utilisation de <code>if</code> et <code>else</code> est habituellement plus
+lisible.</p><p>Voici la solution qui utilise une fonction <code>count</code>, avec une fonction qui
+inclut des tests d’égalité afin d’avoir au final une fonction <code>compterLesZeros</code>
+encore plus courte.</p><pre class="code"><span class="keyword">function</span> <span class="variable">count</span>(<span class="variabledef">test</span>, <span class="variabledef">tableau</span>) {
+  <span class="keyword">return</span> <span class="variable">reduce</span>(<span class="keyword">function</span>(<span class="variabledef">total</span>, <span class="variabledef">element</span>) {
+    <span class="keyword">return</span> <span class="localvariable">total</span> + (<span class="localvariable">test</span>(<span class="localvariable">element</span>) ? <span class="atom">1</span> : <span class="atom">0</span>);
+  }, <span class="atom">0</span>, <span class="localvariable">tableau</span>);
+}
+
+<span class="keyword">function</span> <span class="variable">equals</span>(<span class="variabledef">x</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="variabledef">element</span>) {<span class="keyword">return</span> <span class="localvariable">x</span> === <span class="localvariable">element</span>;};
+}
+
+<span class="keyword">function</span> <span class="variable">compterLesZeros</span>(<span class="variabledef">tableau</span>) {
+  <span class="keyword">return</span> <span class="variable">count</span>(<span class="variable">equals</span>(<span class="atom">0</span>), <span class="localvariable">tableau</span>);
+}</pre></div></div><hr/><div class="block"><p>Un autre «&nbsp;algorithme fondamental&nbsp;» généralement utile en lien avec les
+tableaux porte le nom de <a name="key8"></a><code>map</code>. Il balaye un tableau, en exécutant une
+fonction sur chaque élément, tout comme <code>forEach</code>. Mais au lieu d’ignorer les
+valeurs de retour de la fonction, il construit un nouveau tableau contenant
+chacune de ces valeurs.</p><pre class="code"><span class="keyword">function</span> <span class="variable">map</span>(<span class="variabledef">func</span>, <span class="variabledef">tableau</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="variable">forEach</span>(<span class="localvariable">tableau</span>, <span class="keyword">function</span> (<span class="variabledef">element</span>) {
+    <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="localvariable">func</span>(<span class="localvariable">element</span>));
+  });
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">map</span>(<span class="variable">Math</span>.<span class="property">round</span>, [<span class="atom">0.01</span>, <span class="atom">2</span>, <span class="atom">9.89</span>, <span class="variable">Math</span>.<span class="property">PI</span>]));</pre><p>On remarque que le premier argument est appelé <code>func</code>, pas <code>function</code>. En
+effet, <code>function</code> est un mot-clé et n’est par conséquent pas un nom de variable
+recevable.</p></div><hr/><div class="block"><p>Il était une fois un ermite vivant dans les forêts reculées des montagnes de
+Transylvanie. La plupart du temps, il ne faisait que se promener autour de sa
+montagne pour parler aux arbres et rigoler avec les oiseaux. Mais de temps en
+temps, quand la pluie torrentielle s’abattait sur sa petite hutte et que le
+vent rugissant le faisait se sentir intolérablement trop petit, l’ermite
+ressentait le besoin pressant d’écrire quelque chose, il voulait coucher ses
+pensées sur du papier, là où elles pourraient peut-être devenir beaucoup plus
+grandes que lui.</p><p>Après avoir échoué misérablement dans ses tentatives d’écrire de la poésie, de
+la fiction, de la philosophie, l’ermite décida finalement d’écrire un livre
+technique. Dans sa jeunesse, il avait fait de la programmation et il pensa que
+s’il pouvait juste écrire un bon livre sur ce sujet, la célébrité et la
+reconnaissance arriveraient sans doute après.</p><p>Donc il écrivit. D’abord il utilisa des morceaux d’écorce d’arbre, mais il
+s’avéra que ce n’était pas pratique. Il descendit au village le plus proche, et
+s’acheta un ordinateur portable. Après quelques chapitres, il réalisa qu’il
+voulait convertir son livre au format HTML, afin de le télécharger vers sa page
+personnelle en ligne…</p></div><hr/><div class="block"><p>Est-ce que vous connaissez le HTML&nbsp;? C’est la méthode utilisée pour ajouter du
+formatage sur les pages des sites web et on l’utilisera de temps en temps dans
+ce livre, donc ce serait bien si vous saviez comment cela fonctionne, au moins
+de manière générale. Si vous êtes un bon étudiant, vous pourriez rechercher sur
+Internet une introduction au HTML maintenant et revenir quand vous l’aurez lue.
+La plupart d’entre vous sont sans doute des étudiants médiocres, donc je vais
+juste donner une petite explication et j’espère que ce sera suffisant.</p><p><a name="key9"></a>HTML veut dire «&nbsp;HyperText Markup Language&nbsp;» (Langage à Balise Hyper Texte).
+Un document HTML est entièrement en texte. Quelques caractères ont un sens
+spécial pour pouvoir exprimer la structure de ce texte et spécifier quelle
+donnée du texte est un titre, quelle partie du texte est en violet et ainsi de
+suite, un peu comme les antislash (\) dans les chaînes JavaScript. Les signes «
+inférieur&nbsp;» et «&nbsp;supérieur&nbsp;» sont utilisés pour créer des «&nbsp;<a name="key10"></a>balises&nbsp;». Une
+balise apporte de l’information supplémentaire sur le document. Elle peut
+fonctionner de manière autonome par exemple pour indiquer où doit apparaître
+une image sur la page, ou elle peut contenir du texte et d’autres balises, par
+exemple pour marquer le début et la fin des paragraphes.</p><p>Certaines balises sont obligatoires, un document HTML intégral doit toujours
+tenir entre deux balises <code>html</code>. Voici un exemple d’un document HTML :</p><pre class="preformatted">&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Une citation&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Une citation&lt;/h1&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;La connexion entre le langage dans lequel nous
+pensons/programmons et les problèmes et solutions que nous pouvons
+imaginer est très proche. Pour cette raison, restreindre les
+capacités du langage dans l’intention d’éliminer les erreurs des
+programmeurs est au mieux dangereuse.&lt;/p&gt;
+      &lt;p&gt;-- Bjarne Stroustrup&lt;/p&gt;
+    &lt;/blockquote&gt;
+    &lt;p&gt;M. Stroustrup est l’inventeur du langage de programmation
+C++, mais il est malgré tout une personne des plus perspicaces.&lt;/p&gt;
+    &lt;p&gt;Aussi, voici une photo d’une autruche :&lt;/p&gt;
+    &lt;img src=&quot;img/autruche.png&quot;/&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</pre><p>Des éléments qui contiennent du texte ou d’autres balises sont d’abord ouverts
+avec <code>&lt;nomdebalise&gt;</code>, puis fermés par <code>&lt;/nomdebalise&gt;</code>. L’élément <code>html</code>
+contient toujours deux enfants : <code>head</code> et <code>body</code>. Le premier contient des
+informations <em>sur</em> le document, le second contient le document en lui-même.</p><p>La plupart des noms de balise sont des abréviations cryptiques. <code>h1</code> veut dire
+«&nbsp;heading 1&nbsp;» (titre 1), le plus gros titre qu’il y ait. Il y a aussi <code>h2</code>
+jusqu’à <code>h6</code> pour des titres de plus en plus petits. <code>p</code> veut dire «&nbsp;paragraphe
+», et <code>img</code> veut dire «&nbsp;image&nbsp;». L’élément <code>img</code> ne contient pas de texte ou de
+balise, mais il contient une information supplémentaire
+(<code>src=&quot;img/autruche.png&quot;</code>) qui est appelée un «&nbsp;<a name="key11"></a>attribut&nbsp;». Dans ce cas, il
+contient une information sur le fichier de l’image qui devrait être affichée ici.</p><p>Parce que <code>&lt;</code> et <code>&gt;</code> ont un sens spécial dans les documents HTML, ils ne
+peuvent être écrits directement dans le texte du document. Si vous voulez dire
+«&nbsp;5 &lt; 10&nbsp;» dans un document HTML, vous devez écrire «&nbsp;<code>5 &amp;lt;&nbsp;10</code>&nbsp;», où «&nbsp;<code>&amp;lt</code>
+» veut dire «&nbsp;moins que&nbsp;». «&nbsp;<code>&amp;gt;</code>&nbsp;» est utilisé pour «&nbsp;<code>&gt;</code>&nbsp;» et parce que ces
+codes donnent aussi à l’esperluette un sens spécial, un simple «&nbsp;<code>&amp;</code>&nbsp;» est
+écrit «&nbsp;<code>&amp;amp;</code>&nbsp;».</p><p>Maintenant, ce ne sont que les bases de l’HTML, mais elles devraient être
+suffisantes pour pouvoir suivre les explications dans ce chapitre, ainsi que
+les chapitres suivants qui traitent des documents HTML, sans trop se perdre en
+chemin.</p></div><hr/><div class="block"><p>La console JavaScript a une fonction <code>viewHTML</code> qui peut être utilisée pour
+voir des documents HTML. J’ai stocké le document de l’exemple ci-dessus dans
+<code>citationDeBjarneStroustrup</code>, on peut donc le voir en exécutant ce code :</p><pre class="code"><span class="variable">viewHTML</span>(<span class="variable">citationDeBjarneStroustrup</span>);</pre><p>Si vous avez un genre de bloqueur de fenêtres pop-up installé ou intégré dans
+votre navigateur, il interférera probablement avec <code>viewHTML</code>, qui essayera de
+montrer le document HTML dans une nouvelle fenêtre ou un nouvel onglet. Essayez
+de configurer votre bloqueur pour autoriser les pop-ups de ce site.</p></div><hr/><div class="block"><p>Donc, pour en revenir à notre histoire, l’ermite voulait avoir son livre au
+format HTML. D’abord il a juste écrit toutes les balises directement dans le
+manuscrit, mais taper tous ces signes inférieur et supérieur lui a donné mal
+aux doigts à la fin et il oubliait sans arrêt d’écrire <code>&amp;amp;</code> quand il avait
+besoin d’un <code>&amp;</code>. Celui lui donna mal à la tête. Ensuite il essaya d’écrire son
+livre dans Microsoft Word et de le sauver en HTML. Mais le HTML qui était
+produit était quinze fois plus gros et plus compliqué que ce qu’il devait être.
+Et en plus Microsoft Word lui donnait mal au crâne.</p><p>La solution sur laquelle il s’arrêta était finalement celle-ci : il écrirait ce
+livre en texte simple, en suivant quelques règles simples pour la façon dont
+les paragraphes devraient être séparés et l’aspect que devraient avoir les
+titres. Puis il écrirait un programme pour convertir le texte en HTML
+précisément comme il le souhaitait.</p><p>Les règles sont celles-ci :</p><ol><li>Les paragraphes sont séparés par des lignes vides.</li><li>Un paragraphe qui commence par le symbole «&nbsp;%&nbsp;» est un titre. Plus il y a de symboles «&nbsp;%&nbsp;», plus le titre est petit.</li><li>À l’intérieur des paragraphes, des morceaux de texte peuvent être mis en emphase en les encadrant par des astérisques.</li><li>Les notes de bas de page sont entre accolades.</li></ol></div><hr/><div class="block"><p>Après qu’il eut lutté durement avec son livre pendant six mois, l’ermite
+n’avait fini que quelques paragraphes. À ce moment-là, sa cabane fut frappée
+par un éclair, le tuant et mettant fin à jamais à ses ambitions d’écrivain.
+Dans les débris carbonisés de son ordinateur portable, j’ai pu récupérer le
+fichier suivant :</p><pre class="preformatted">% Le livre de la programmation
+
+%% Les deux points de vue
+
+Sous la surface de la machine, le programme évolue. Sans effort, il prend de
+l’ampleur et se contracte. Avec beaucoup d’harmonie, les électrons se
+dispersent et se regroupent. Les formes sur le moniteur ne sont que l’écume
+de la vague.
+
+Quand les créateurs ont construit la machine, ils y ont mis un processeur et
+de la mémoire. À partir de là surgissent les deux points de vue sur le
+programme.
+
+Du côté du processeur, l’élément actif est appelé Contrôle. Du côté de la
+mémoire, l’élément passif est appelé Données.
+
+Les données sont faites de simples bits, et pourtant elles prennent des
+formes complexes. Le contrôle consiste en de simples instructions et pourtant
+il exécute des tâches difficiles, de la plus petite et la plus triviale, à la
+plus grande et la plus compliquée.
+
+Le programme source est la donnée. Le Contrôle y naît. Le Contrôle va ensuite
+s’employer à créer de nouvelles données. L’un naît de l’autre, l’un ne sert à
+rien sans l’existence de l’autre. C’est le cycle harmonieux des Données et du
+Contrôle.
+
+Par nature, les Données et le Contrôle sont sans structure. Les programmeurs
+de la vieille école mijotaient leurs programmes à partir de cette soupe
+primitive. Le temps passant, les Données amorphes se sont cristallisées en de
+nouveaux types de données et le Contrôle chaotique a été restreint aux
+structures de contrôle et aux fonctions.
+
+%% Petits proverbes
+
+Quand un étudiant a questionné Fu-Tzu sur la nature du cycle des Données et
+du Contrôle, Fu-Tzu répondit «&nbsp;Pensez à un compilateur en train d’essayer de
+se compiler.&nbsp;»
+
+Un étudiant demanda : «&nbsp;Les programmeurs de la vieille école utilisaient des
+machines simples et pas de langages de programmation et pourtant ils
+concevaient de beaux programmes. Pourquoi utilisons-nous des machines
+compliquées et des langages de programmation&nbsp;?&nbsp;» Fu-Tzu répondit : «&nbsp;Les
+bâtisseurs d’autrefois utilisaient seulement des bâtons et de l’argile et
+pourtant ils faisaient des cabanes magnifiques.&nbsp;»
+
+Un ermite passa dix ans à écrire un programme. «&nbsp;Mon programme peut calculer
+le mouvement des étoiles sur un ordinateur 286 qui fait tourner MS-DOS&nbsp;»
+annonça-t-il fièrement. «&nbsp;Personne ne possède un ordinateur 286 ou ne
+l’utilise aujourd’hui&nbsp;» répondit-il.
+
+Fu-Tzu avait écrit un petit programme qui était plein de variables globales
+et de raccourcis douteux. En le lisant, un étudiant demanda «&nbsp;Vous nous avez
+mis en garde contre ces techniques, et pourtant je les ai trouvées dans ce
+programme. Comment cela se fait-il&nbsp;?&nbsp;» Fu-Tzu répondit : «&nbsp;Il n’y a pas
+besoin d’aller chercher un tuyau d’arrosage quand la maison n’est pas en
+feu.&nbsp;» {Cela ne doit pas se lire comme un encouragement à faire du code de
+mauvaise qualité, mais comme un avertissement contre une adhésion servile à
+la règle d’or.}
+
+%% Sagesse
+
+Un étudiant se plaignait des valeurs numériques. «&nbsp;Quand je prends la racine
+de deux et que je veux de nouveau son carré, le résultat est inexact&nbsp;!&nbsp;».] En
+entendant cela, Fu-Tzu rit. «&nbsp;Voici une feuille de papier.] Écrivez-moi la
+valeur précise de la racine de deux.&nbsp;»
+
+Fu-Tzu dit : «&nbsp;Quand vous sciez du bois contre le fil, beaucoup d’huile de
+coude est nécessaire. Quand vous programmez contre le sens, beaucoup de code
+est nécessaire.&nbsp;»
+
+Tzu-li et Tzu-ssu se vantaient de la taille de leurs programmes.] «&nbsp;Deux cent
+mille lignes&nbsp;», dit Tzu-li, «&nbsp;sans compter les commentaires&nbsp;!&nbsp;». «&nbsp;Psah&nbsp;»,
+dit Tzu-ssu, «&nbsp;le mien fait presque un *million* de lignes déjà.&nbsp;» Fu-tzu dit
+«&nbsp;Mon meilleur programme fait cinq cents lignes.&nbsp;» En entendant cela, Tzu-li
+et Tzu-ssu furent éclairés.
+
+Un étudiant était resté assis immobile derrière son ordinateur pendant des
+heures, en ruminant furieusement. Il était en train d’essayer de concevoir
+une solution élégante en réponse à un problème difficile, mais il ne pouvait
+pas trouver le bon moyen de le faire. Fu-tzu le frappa sur l’arrière de la
+tête, et cria «&nbsp;tape quelque chose&nbsp;!&nbsp;» L’étudiant se mit à écrire un code
+dégueulasse. Quand il eut terminé, il comprit tout à coup quelle était la
+solution simple.
+
+%% Progression
+
+Un programmeur débutant écrit un programme à la manière d’une fourmi qui
+construit sa fourmilière, sans même penser à la structure finale. Ses
+programmes seront comme des grains de sable fin. Ils peuvent tenir un moment,
+mais en devenant plus gros ils tombent {en référence aux dangers d’une
+incompatibilité interne et aux structures dupliquées dans un code en
+désordre.}.
+
+En prenant conscience de ce problème, le codeur commencera à passer plus de
+temps à réfléchir à la structure. Ses programmes seront structurés
+rigidement, à la manière de sculptures de pierre. Ils sont solides, mais
+quand ils doivent changer, on doit leur faire violence {en référence au fait
+que la structure a tendance à brider l’évolution du programme}.
+
+Le programmeur expérimenté sait quand la structure est importante, et quand
+il doit laisser les choses telles quelles.] Ses programmes sont comme de
+l’argile, à la fois solide et malléable.
+
+%% Langage
+
+Quand un langage de programmation est créé, on lui donne une syntaxe et des
+règles sémantiques. La syntaxe décrit la forme du programme, la sémantique
+décrit la fonction. Si la syntaxe est belle et que les règles sont claires,
+le programme sera un arbre majestueux. Si la syntaxe est maladroite et que
+les règles sont confuses, le programme sera comme un tas de ronces.
+
+On demanda à Tzu-ssu d’écrire un programme dans un langage appelé Java qui
+adopte une approche vraiment primitive avec les fonctions. Tous les matins,
+au moment où il s’asseyait en face de son ordinateur, il commençait à se
+plaindre. Toute la journée il jurait, accusant le langage pour tout ce qui se
+passait mal. Fu-tzu écouta pendant un moment, puis lui fit des reproches en
+lui disant «&nbsp;Chaque langage a sa philosophie. Suis son dessein, n’essaye pas
+de coder comme si tu utilisais un autre langage de programmation.»</pre></div><hr/><div class="block"><p>Afin d’honorer la mémoire de notre vénérable ermite, j’aimerais finir son
+programme de génération HTML pour lui. Une bonne approche à ce problème
+ressemble à ce qui suit :</p><ol><li>Découper le fichier en créant un nouveau paragraphe à chaque fin de ligne.</li><li>Supprimer les caractères «&nbsp;%&nbsp;» des paragraphes d’en-tête et marquer ceux-ci comme en-têtes.</li><li>Traiter le texte des paragraphes proprement dits, les découper en corps de texte, textes en emphase et notes de bas de page.</li><li>Déplacer les notes de bas de page en fin de document, mettre des numéros<a class="footref" href="#footnote1">1</a> à leur place.</li><li>Entourer chaque élément d’une balise HTML adéquate.</li><li>Regrouper le tout en un unique document HTML.</li></ol><p>Cette approche ne permet pas les notes de bas de page à l’intérieur des textes
+en emphase et inversement. C’est un choix arbitraire mais il permet de rester
+sur un exemple assez simple. Si, à la fin du chapitre, vous voulez vous lancer
+un défi, essayez de modifier le programme pour qu’il prenne en charge les
+marquages «&nbsp;imbriqués&nbsp;».</p><p>Le manuscrit complet, sous forme de chaîne, est disponible sur cette page en
+appelant la fonction <code>fichierDeErmite</code>.</p></div><hr/><div class="block"><p>La première étape de cet algorithme est triviale. Une ligne blanche est le
+résultat de deux retours-chariots consécutifs et, si vous vous rappelez que les
+chaînes disposent d’une méthode <code>split</code>, comme vu dans <a href="chapter4.html">chapitre 4</a>, vous
+comprendrez que cela fera l’affaire :</p><pre class="code"><span class="keyword">var</span> <span class="variable">paragraphes</span> = <span class="variable">fichierDeErmite</span>().<span class="property">split</span>(<span class="string">&quot;\n\n&quot;</span>);
+<span class="variable">print</span>(<span class="string">&quot;Trouvé &quot;</span>, <span class="variable">paragraphes</span>.<span class="property">length</span>, <span class="string">&quot; paragraphes.&quot;</span>);</pre></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 6.2</div><div class="exercise"><p>Écrire une fonction <code>transformeParagraphe</code> qui, recevant un paragraphe sous
+forme de chaîne en argument, détermine si ce paragraphe est un en-tête. S’il
+l’est, enlever les caractères «&nbsp;%&nbsp;» et les compter. Cette fonction renvoie un
+objet doté de 2 propriétés, <code>contenu</code> contenant le texte du paragraphe, et
+<code>type</code>, qui contient la balise qui devra entourer le paragraphe, <code>&quot;p&quot;</code> pour des
+paragraphes proprement dit, <code>&quot;h1&quot;</code> pour les en-têtes avec un seul «&nbsp;% », et
+<code>&quot;hX&quot;</code> pour les en-têtes avec <code>X</code> caractères «&nbsp;%&nbsp;».</p><p>Rappelez-vous que les chaînes possèdent une méthode <code>charAt</code> permettant de
+rechercher un caractère précis dans les caractères qui la composent.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">transformeParagraphe</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">var</span> <span class="variabledef">entete</span> = <span class="atom">0</span>;
+  <span class="keyword">while</span> (<span class="localvariable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">0</span>) == <span class="string">&quot;%&quot;</span>) {
+    <span class="localvariable">paragraphe</span> = <span class="localvariable">paragraphe</span>.<span class="property">slice</span>(<span class="atom">1</span>);
+    <span class="localvariable">entete</span>++;
+  }
+
+  <span class="keyword">return</span> {<span class="property">type</span>: (<span class="localvariable">entete</span> == <span class="atom">0</span> ? <span class="string">&quot;p&quot;</span> : <span class="string">&quot;h&quot;</span> + <span class="localvariable">entete</span>),
+          <span class="property">contenu</span>: <span class="localvariable">paragraphe</span>};
+}
+
+<span class="variable">show</span>(<span class="variable">transformeParagraphe</span>(<span class="variable">paragraphes</span>[<span class="atom">0</span>]));</pre></div></div><hr/><div class="block"><p>C’est là que nous pouvons essayer la fonction <code>map</code> citée précédemment.</p><pre class="code"><span class="keyword">var</span> <span class="variable">paragraphes</span> = <span class="variable">map</span>(<span class="variable">transformeParagraphe</span>,
+                     <span class="variable">fichierDeErmite</span>().<span class="property">split</span>(<span class="string">&quot;\n\n&quot;</span>));</pre><p>Et <em>boum</em>, nous avons un tableau de paragraphes proprement triés. Nous sommes
+allés un peu vite, nous avons oublié l’étape 3 de l’algorithme :</p><blockquote>Traiter le texte des paragraphes proprement dit, séparer en texte normal,
+texte en emphase, notes de bas de page.</blockquote><p>Ce qui se décompose en :</p><ol><li>Si le paragraphe commence par un astérisque, retirer la partie mise en emphase et la stocker.</li><li>Si le paragraphe commence par une accolade ouvrante, retirer la note de page et la stocker.</li><li>Dans les autres cas, retirer le morceau de texte jusqu’à la première mise en emphase, mise en bas de page, sinon jusqu’à la fin de la chaîne, et l’enregistrer comme texte normal.</li><li>S’il reste encore quelque chose dans le paragraphe, reprendre à nouveau en 1.</li></ol></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 6.3</div><div class="exercise"><p>Écrire une fonction <code>decoupeParagraphe</code> qui, recevant une chaîne de caractères
+représentant un paragraphe, renvoie un tableau de morceaux du texte. Réfléchir
+à la façon de bien représenter les morceaux du texte.</p><p>La méthode <code>indexOf</code>, qui recherche un caractère ou une sous-chaîne de
+caractères dans une chaîne de caractères et renvoie sa position, ou <code>-1</code> si
+elle ne trouve pas, sera utile ici.</p><p>C’est un algorithme astucieux, et il y a différentes façons approximatives ou
+trop longues pour l’expliquer. En cas de difficulté, n’y passer qu’une minute.
+Essayer d’écrire des sous-fonctions qui effectuent une partie des actions qui
+composent l’algorithme.</p></div><div class="solution"><p>Voici une solution possible :</p><pre class="code"><span class="keyword">function</span> <span class="variable">decoupeParagraphe</span>(<span class="variabledef">texte</span>) {
+  <span class="keyword">function</span> <span class="variabledef">indexOuFin</span>(<span class="variabledef">caractere</span>) {
+    <span class="keyword">var</span> <span class="variabledef">index</span> = <span class="localvariable">texte</span>.<span class="property">indexOf</span>(<span class="localvariable">caractere</span>);
+    <span class="keyword">return</span> <span class="localvariable">index</span> == -<span class="atom">1</span> ? <span class="localvariable">texte</span>.<span class="property">length</span> : <span class="localvariable">index</span>;
+  }
+
+  <span class="keyword">function</span> <span class="variabledef">extraitTexteNormal</span>() {
+    <span class="keyword">var</span> <span class="variabledef">fin</span> = <span class="variable">reduce</span>(<span class="variable">Math</span>.<span class="property">min</span>, <span class="localvariable">texte</span>.<span class="property">length</span>,
+                     <span class="variable">map</span>(<span class="localvariable">indexOuFin</span>, [<span class="string">&quot;*&quot;</span>, <span class="string">&quot;{&quot;</span>]));
+    <span class="keyword">var</span> <span class="variabledef">extraction</span> = <span class="localvariable">texte</span>.<span class="property">slice</span>(<span class="atom">0</span>, <span class="localvariable">fin</span>);
+    <span class="localvariable">texte</span> = <span class="localvariable">texte</span>.<span class="property">slice</span>(<span class="localvariable">fin</span>);
+    <span class="keyword">return</span> <span class="localvariable">extraction</span>;
+  }
+
+  <span class="keyword">function</span> <span class="variabledef">extraitJusquA</span>(<span class="variabledef">caractere</span>) {
+    <span class="keyword">var</span> <span class="variabledef">fin</span> = <span class="localvariable">texte</span>.<span class="property">indexOf</span>(<span class="localvariable">caractere</span>, <span class="atom">1</span>);
+    <span class="keyword">if</span> (<span class="localvariable">fin</span> == -<span class="atom">1</span>)
+      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;Manque '&quot;</span> + <span class="localvariable">caractere</span> + <span class="string">&quot;' fermant&quot;</span>);
+    <span class="keyword">var</span> <span class="variabledef">extraction</span> = <span class="localvariable">texte</span>.<span class="property">slice</span>(<span class="atom">1</span>, <span class="localvariable">fin</span>);
+    <span class="localvariable">texte</span> = <span class="localvariable">texte</span>.<span class="property">slice</span>(<span class="localvariable">fin</span> + <span class="atom">1</span>);
+    <span class="keyword">return</span> <span class="localvariable">extraction</span>;
+  }
+
+  <span class="keyword">var</span> <span class="variabledef">fragments</span> = [];
+
+  <span class="keyword">while</span> (<span class="localvariable">texte</span> != <span class="string">&quot;&quot;</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">texte</span>.<span class="property">charAt</span>(<span class="atom">0</span>) == <span class="string">&quot;*&quot;</span>)
+      <span class="localvariable">fragments</span>.<span class="property">push</span>({<span class="property">type</span>: <span class="string">&quot;enEmphase&quot;</span>,
+                      <span class="property">contenu</span>: <span class="localvariable">extraitJusquA</span>(<span class="string">&quot;*&quot;</span>)});
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">texte</span>.<span class="property">charAt</span>(<span class="atom">0</span>) == <span class="string">&quot;{&quot;</span>)
+      <span class="localvariable">fragments</span>.<span class="property">push</span>({<span class="property">type</span>: <span class="string">&quot;noteBasDePage&quot;</span>,
+                      <span class="property">contenu</span>: <span class="localvariable">extraitJusquA</span>(<span class="string">&quot;}&quot;</span>)});
+    <span class="keyword">else</span>
+      <span class="localvariable">fragments</span>.<span class="property">push</span>({<span class="property">type</span>: <span class="string">&quot;normal&quot;</span>,
+                      <span class="property">contenu</span>: <span class="localvariable">extraitTexteNormal</span>()});
+  }
+  <span class="keyword">return</span> <span class="localvariable">fragments</span>;
+}</pre><p>Remarquez l’utilisation abrupte de <code>map</code> et <code>reduce</code> dans la fonction
+<code>extraitTexteNormal</code>. Ceci est un chapitre sur la programmation fonctionnelle,
+donc c’est de la programmation fonctionnelle que nous ferons&nbsp;!  Voyez-vous
+comment cela fonctionne&nbsp;? La fonction <code>map</code> renvoie un tableau des positions où
+les caractères indiqués ont été trouvés, ou bien renvoie la fin de la chaîne si
+aucun n’a été trouvé, et la fonction <code>reduce</code> prend le minimum de ces
+positions, qui est la prochaine position dans la chaîne où nous allons
+regarder.</p><p>Si vous voulez écrire cela sans <code>map</code> et <code>reduce</code>, vous obtiendrez à peu près
+ceci :</p><pre class="preformatted">var prochainAsterisque = texte.indexOf(&quot;*&quot;);
+var prochaineAccolade = texte.indexOf(&quot;{&quot;);
+var fin = texte.length;
+if (prochainAsterisque != -1)
+  fin = prochainAsterisque;
+if (prochaineAccolade != -1 &amp;&amp; prochaineAccolade &lt; fin)
+  fin = prochaineAccolade;</pre><p>Ce qui est encore plus moche. La plupart du temps, quand il faut prendre une
+décision basée sur plusieurs critères, ne serait-ce que deux, l’écrire sous
+forme d’une opération dans un tableau est plus lisible que de décrire chaque
+critère dans une instruction <code>if</code>. (Heureusement, dans le <a href="chapter10.html">chapitre 10</a>, il y a une
+description simple de la façon de déterminer la première occurrence de &quot;ceci ou
+cela&quot; dans une chaîne).</p><p>Si vous avez écrit une fonction <code>decoupeParagraphe</code> qui enregistre les morceaux
+de texte d’une façon différente de la solution ci-dessus, vous devriez la
+modifier, car les fonctions du reste de ce chapitre supposent que les morceaux
+de texte sont des objets ayant des propriétés <code>type</code> et <code>contenu</code>.</p></div></div><hr/><div class="block"><p>Nous pouvons maintenant faire le lien avec <code>transformeParagraphe</code> pour découper
+également le texte à l’intérieur des paragraphes, ma version peut être modifiée
+de la façon suivante :</p><pre class="code"><span class="keyword">function</span> <span class="variable">transformeParagraphe</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">var</span> <span class="variabledef">entete</span> = <span class="atom">0</span>;
+  <span class="keyword">while</span> (<span class="localvariable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">0</span>) == <span class="string">&quot;%&quot;</span>) {
+    <span class="localvariable">paragraphe</span> = <span class="localvariable">paragraphe</span>.<span class="property">slice</span>(<span class="atom">1</span>);
+    <span class="localvariable">entete</span>++;
+  }
+
+  <span class="keyword">return</span> {<span class="property">type</span>: (<span class="localvariable">entete</span> == <span class="atom">0</span> ? <span class="string">&quot;p&quot;</span> : <span class="string">&quot;h&quot;</span> + <span class="localvariable">entete</span>),
+          <span class="property">contenu</span>: <span class="variable">decoupeParagraphe</span>(<span class="localvariable">paragraphe</span>)};
+}</pre><p>L’exécution de cette fonction sur le tableau des objets paragraphe nous renvoie
+un nouveau tableau d’objets paragraphe, qui contiennent des tableaux d’objets.
+Chacun de ces objets contient une fraction de paragraphe.  La chose à faire
+ensuite est d’extraire les notes de bas de page, et mettre des références vers
+celles-ci à leur place. Comme ceci : </p><pre class="code"><span class="keyword">function</span> <span class="variable">extraitNotesBasDePage</span>(<span class="variabledef">paragraphes</span>) {
+  <span class="keyword">var</span> <span class="variabledef">notesBasDePage</span> = [];
+  <span class="keyword">var</span> <span class="variabledef">noteEnCours</span> = <span class="atom">0</span>;
+
+  <span class="keyword">function</span> <span class="variabledef">remplaceNoteBasDePage</span>(<span class="variabledef">fragment</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">fragment</span>.<span class="property">type</span> == <span class="string">&quot;noteBasDePage&quot;</span>) {
+      <span class="localvariable">noteEnCours</span>++;
+      <span class="localvariable">notesBasDePage</span>.<span class="property">push</span>(<span class="localvariable">fragment</span>);
+      <span class="localvariable">fragment</span>.<span class="property">numero</span> = <span class="localvariable">noteEnCours</span>;
+      <span class="keyword">return</span> {<span class="property">type</span>: <span class="string">&quot;reference&quot;</span>, <span class="property">numero</span>: <span class="localvariable">noteEnCours</span>};
+    }
+    <span class="keyword">else</span> {
+      <span class="keyword">return</span> <span class="localvariable">fragment</span>;
+    }
+  }
+
+  <span class="variable">forEach</span>(<span class="localvariable">paragraphes</span>, <span class="keyword">function</span>(<span class="variabledef">paragraphe</span>) {
+    <span class="localvariable">paragraphe</span>.<span class="property">contenu</span> = <span class="variable">map</span>(<span class="localvariable">remplaceNoteBasDePage</span>,
+                            <span class="localvariable">paragraphe</span>.<span class="property">contenu</span>);
+  });
+
+  <span class="keyword">return</span> <span class="localvariable">notesBasDePage</span>;
+}</pre><p>La fonction <code>remplaceNoteBasDePage</code> est appelée sur chaque morceau. Quand elle
+reçoit un morceau qui doit rester où il est, elle ne fait que renvoyer ce
+morceau, mais si elle reçoit une note de bas de page, elle stocke celui-ci dans
+le tableau <code>notesBasDePage</code>, et renvoie une référence vers celui-ci à la place.
+Dans le même temps, chaque note de bas de page et sa référence sont numérotées.</p></div><hr/><div class="block"><p>Nous avons suffisamment d’outils pour extraire les informations du fichier. Il
+nous reste à générer un fichier HTML correct.</p><p>De nombreuses personnes pensent que la concaténation de chaînes de caractère
+est un bon moyen de construire du HTML. Quand elles veulent, par exemple, un
+lien vers un site où l’on peut jouer au jeu de Go, elles font ceci :</p><pre class="code"><span class="keyword">var</span> <span class="variable">url</span> = <span class="string">&quot;http://www.gokgs.com/&quot;</span>;
+<span class="keyword">var</span> <span class="variable">texte</span> = <span class="string">&quot;Jouez au Go&nbsp;!&quot;</span>;
+<span class="keyword">var</span> <span class="variable">texteLien</span> = <span class="string">&quot;&lt;a href=\&quot;&quot;</span> + <span class="variable">url</span> + <span class="string">&quot;\&quot;&gt;&quot;</span> + <span class="variable">texte</span> + <span class="string">&quot;&lt;/a&gt;&quot;</span>;
+<span class="variable">print</span>(<span class="variable">texteLien</span>);</pre><p>(Où <code>a</code> est la balise utilisée pour créer des liens dans les documents HTML…)
+Ceci est non seulement maladroit, mais, quand la chaîne <code>texte</code> se trouve
+contenir un chevron (caractère &quot;&lt;&quot; ou &quot;&gt;&quot;) ou une esperluette (caractère &quot;&amp;&quot;),
+cela provoque une erreur. Des choses bizarres vont se passer sur votre site
+web, et vous passerez pour un amateur. Nous ne voulons pas que cela se
+produise. Il est facile d’écrire quelques fonctions simples de génération de
+HTML. Alors, écrivons-les.</p></div><hr/><div class="block"><p>Le secret d’une génération HTML réussie est de traiter votre document comme une
+structure de données plutôt qu’un simple texte plat.  Les objets en JavaScript
+permettent de modéliser cela facilement :</p><pre class="code"><span class="keyword">var</span> <span class="variable">objetLien</span>= {<span class="property">nom</span>: <span class="string">&quot;a&quot;</span>,
+                  <span class="property">attributs</span>: {<span class="property">href</span>: <span class="string">&quot;http://www.gokgs.com/&quot;</span>},
+                  <span class="property">contenu</span>: [<span class="string">&quot;Jouez au Go&nbsp;!&quot;</span>]};</pre><p>Chaque élément HTML possède une propriété <code>nom</code>, contenant le nom de la balise
+qu’il représente. Quand il a des attributs, il possède également une propriété
+<code>attributs</code>, qui est un objet contenant ces attributs. Quand il a un contenu,
+il possède une propriété <code>contenu</code> contenant un tableau des autres éléments
+qu’il englobe. Des chaînes de caractères contiennent les portions de texte de
+notre document HTML, ainsi, le tableau <code>[&quot;Jouer au Go!&quot;]</code> signifie que ce lien
+n’a qu’un élément englobé, cet élément étant un simple morceau de texte.</p><p>Saisir tous ces objets à la main serait pénible, mais nous n’allons pas faire
+comme ça. Une fonction utilitaire fera cela pour nous :</p><pre class="code"><span class="keyword">function</span> <span class="variable">balise</span>(<span class="variabledef">nom</span>, <span class="variabledef">contenu</span>, <span class="variabledef">attributs</span>) {
+  <span class="keyword">return</span> {<span class="property">nom</span>: <span class="localvariable">nom</span>, <span class="property">attributs</span>: <span class="localvariable">attributs</span>, <span class="property">contenu</span>: <span class="localvariable">contenu</span>};
+}</pre><p>Remarquez que du fait que nous autorisons que les propriétés <code>attributs</code> et
+<code>contenu</code> d’un élément soient indéfinies s’ils ne s’appliquent pas, le second
+et troisième élément de cette fonction peuvent être ignorés s’ils ne sont pas
+nécessaires.</p><p>La fonction <code>balise</code> est cependant assez simpliste, c’est pourquoi nous
+écrivons quelques fonctions utilitaires pour des éléments fréquemment utilisés,
+comme les liens, ou la structure générale d’un document simple :</p><pre class="code"><span class="keyword">function</span> <span class="variable">lien</span>(<span class="variabledef">cible</span>, <span class="variabledef">texte</span>) {
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;a&quot;</span>, [<span class="localvariable">texte</span>], {<span class="property">href</span>: <span class="localvariable">cible</span>});
+}
+
+<span class="keyword">function</span> <span class="variable">documentHtml</span>(<span class="variabledef">titre</span>, <span class="variabledef">contenu</span>) {
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;html&quot;</span>, [<span class="variable">balise</span>(<span class="string">&quot;head&quot;</span>, [<span class="variable">balise</span>(<span class="string">&quot;title&quot;</span>, [<span class="localvariable">titre</span>])]),
+                      <span class="variable">balise</span>(<span class="string">&quot;body&quot;</span>, <span class="localvariable">contenu</span>)]);
+}</pre></div><hr/><div class="block"><a name="exercise4"></a><div class="exercisenum">Ex. 6.4</div><div class="exercise"><p>En reprenant, si nécessaire, l’exemple de document HTML donné précédemment,
+écrire une fonction <code>image</code> qui, recevant un fichier d’image, crée un élément
+HTML <code>img</code>.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">image</span>(<span class="variabledef">src</span>) {
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;img&quot;</span>, [], {<span class="property">src</span>: <span class="localvariable">src</span>});
+}</pre></div></div><hr/><div class="block"><p>Quand nous aurons créé un document, il devra être mis à plat sous forme de
+chaîne. Mais construire cette chaîne à partir des structures de données que
+nous aurons construites sera facile. L’aspect important dont il faut se
+souvenir est de transformer les caractères spéciaux de notre document…</p><pre class="code"><span class="keyword">function</span> <span class="variable">escapeHTML</span>(<span class="variabledef">texte</span>) {
+  <span class="keyword">var</span> <span class="variabledef">remplacements</span> = [[<span class="string">/&amp;/g</span>, <span class="string">&quot;&amp;amp;&quot;</span>], [<span class="string">/&quot;/g</span>, <span class="string">&quot;&amp;quot;&quot;</span>],
+                      [<span class="string">/&lt;/g</span>, <span class="string">&quot;&amp;lt;&quot;</span>], [<span class="string">/&gt;/g</span>, <span class="string">&quot;&amp;gt;&quot;</span>]];
+  <span class="variable">forEach</span>(<span class="localvariable">remplacements</span>, <span class="keyword">function</span>(<span class="variabledef">remplacement</span>) {
+    <span class="localvariable">texte</span> = <span class="localvariable">texte</span>.<span class="property">replace</span>(<span class="localvariable">remplacement</span>[<span class="atom">0</span>], <span class="localvariable">remplacement</span>[<span class="atom">1</span>]);
+  });
+  <span class="keyword">return</span> <span class="localvariable">texte</span>;
+}</pre><p>La méthode <code>replace</code> des objets chaînes crée une nouvelle chaîne dans laquelle
+toutes les occurrences du motif passé en premier argument sont remplacées par
+le second argument, ainsi <code>&quot;Borobudur&quot;.replace(/r/g, &quot;k&quot;)</code> donne <code>&quot;Bokobuduk&quot;</code>.
+Ne vous souciez pas ici de la syntaxe des motifs, cela sera vu au <a href="chapter10.html">chapitre 10</a>. La
+fonction <code>escapeHTML</code> stocke les différents motifs à remplacer dans un tableau,
+aussi, il suffit d’énumérer à l’aide d’une boucle chacun de ces motifs pour les
+appliquer un par un.</p><p>Les guillemets sont également remplacés, car nous utiliserons cette fonction
+pour le texte à l’intérieur des attributs des balises HTML. Ces attributs
+seront encadrés par des guillemets, et par conséquent ne pourront en contenir
+eux-mêmes.</p><p>Appeler quatre fois la méthode replace signifie que l’ordinateur devra balayer
+quatre fois la totalité de la chaîne à convertir. Ce n’est pas très efficace.
+Avec plus de soin, nous pourrions écrire une version plus complexe de cette
+fonction, qui ressemblerait à la fonction <code>decoupeParagraphe</code> vue précédemment,
+pour ne parcourir cette chaîne qu’une seule fois. Pour le moment, nous sommes
+trop paresseux pour cela. De toute façon, nous verrons au <a href="chapter10.html">chapitre 10</a> une bien
+meilleure façon de faire tout cela.</p></div><hr/><div class="block"><p>Pour transformer un élément HTML en une chaîne, nous pouvons utiliser une
+fonction récursive comme celle-ci :</p><pre class="code"><span class="keyword">function</span> <span class="variable">renduHTML</span>(<span class="variabledef">element</span>) {
+  <span class="keyword">var</span> <span class="variabledef">pieces</span> = [];
+
+  <span class="keyword">function</span> <span class="variabledef">renduAttributs</span>(<span class="variabledef">attributs</span>) {
+    <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+    <span class="keyword">if</span> (<span class="localvariable">attributs</span>) {
+      <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">nom</span> <span class="keyword">in</span> <span class="localvariable">attributs</span>)
+        <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="string">&quot; &quot;</span> + <span class="localvariable">nom</span> + <span class="string">&quot;=\&quot;&quot;</span> +
+                    <span class="variable">escapeHTML</span>(<span class="localvariable">attributs</span>[<span class="localvariable">nom</span>]) + <span class="string">&quot;\&quot;&quot;</span>);
+    }
+    <span class="keyword">return</span> <span class="localvariable">resultat</span>.<span class="property">join</span>(<span class="string">&quot;&quot;</span>);
+  }
+
+  <span class="keyword">function</span> <span class="variabledef">rendu</span>(<span class="variabledef">element</span>) {
+    <span class="comment">// Element texte</span>
+    <span class="keyword">if</span> (typeof <span class="localvariable">element</span> == <span class="string">&quot;string&quot;</span>) {
+      <span class="localvariable">pieces</span>.<span class="property">push</span>(<span class="variable">escapeHTML</span>(<span class="localvariable">element</span>));
+    }
+    <span class="comment">// Balise vide</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> (!<span class="localvariable">element</span>.<span class="property">contenu</span> || <span class="localvariable">element</span>.<span class="property">contenu</span>.<span class="property">length</span> == <span class="atom">0</span>) {
+      <span class="localvariable">pieces</span>.<span class="property">push</span>(<span class="string">&quot;&lt;&quot;</span> + <span class="localvariable">element</span>.<span class="property">nom</span> +
+                  <span class="localvariable">renduAttributs</span>(<span class="localvariable">element</span>.<span class="property">attributs</span>) + <span class="string">&quot;/&gt;&quot;</span>);
+    }
+    <span class="comment">// Balise avec du contenu</span>
+    <span class="keyword">else</span> {
+      <span class="localvariable">pieces</span>.<span class="property">push</span>(<span class="string">&quot;&lt;&quot;</span> + <span class="localvariable">element</span>.<span class="property">nom</span> +
+                  <span class="localvariable">renduAttributs</span>(<span class="localvariable">element</span>.<span class="property">attributs</span>) + <span class="string">&quot;&gt;&quot;</span>);
+      <span class="variable">forEach</span>(<span class="localvariable">element</span>.<span class="property">contenu</span>, <span class="localvariable">rendu</span>);
+      <span class="localvariable">pieces</span>.<span class="property">push</span>(<span class="string">&quot;&lt;/&quot;</span> + <span class="localvariable">element</span>.<span class="property">nom</span> + <span class="string">&quot;&gt;&quot;</span>);
+    }
+  }
+
+  <span class="localvariable">rendu</span>(<span class="localvariable">element</span>);
+  <span class="keyword">return</span> <span class="localvariable">pieces</span>.<span class="property">join</span>(<span class="string">&quot;&quot;</span>);
+}</pre><p>Remarquez la boucle avec <code>in</code> qui extrait les propriétés d’un objet JavaScript
+dans le but de créer les attributs d’une balise HTML en se basant sur ces
+propriétés. Remarquez également qu’à deux reprises, des tableaux sont utilisés
+pour stocker des chaînes, qui sont finalement regroupées pour ne former qu’une
+seule chaîne. Pourquoi n’avons-nous pas simplement commencé avec une chaîne
+vide à laquelle nous aurions ajouté d’autres chaînes, à l’aide de l’opérateur
+<code>+=</code>&nbsp;?</p><p>Il se trouve que la création des chaînes, en particulier quand elles sont de
+grande taille, représente un certain travail. Rappelez-vous que le contenu des
+chaînes JavaScript est immuable. Si vous concaténez une chaîne à une autre, une
+nouvelle chaîne est créée, les deux premières ne changeant pas. Si nous
+construisons une très grande chaîne en concaténant de nombreuses chaînes, une
+nouvelle chaîne doit être créée à chacun des ajouts, et sera supprimée après
+l’ajout suivant.  Si, d’un autre côté, nous stockons toutes les chaînes dans un
+tableau pour les rassembler à la fin, une seule grande chaîne sera créée.</p></div><hr/><div class="block"><p>Ainsi, essayons notre outil de génération de HTML…</p><pre class="code"><span class="variable">print</span>(<span class="variable">renduHTML</span>(<span class="variable">lien</span>(<span class="string">&quot;http://www.nedroid.com&quot;</span>, <span class="string">&quot;Des dessins&nbsp;!&quot;</span>)));</pre><p>Cela semble fonctionner.</p><pre class="code"><span class="keyword">var</span> <span class="variable">corps</span> = [<span class="variable">balise</span>(<span class="string">&quot;h1&quot;</span>, [<span class="string">&quot;Le Test&quot;</span>]),
+            <span class="variable">balise</span>(<span class="string">&quot;p&quot;</span>, [<span class="string">&quot;Voici un paragraphe, et une image…&quot;</span>]),
+            <span class="variable">image</span>(<span class="string">&quot;img/sheep.png&quot;</span>)];
+<span class="keyword">var</span> <span class="variable">doc</span> = <span class="variable">documentHtml</span>(<span class="string">&quot;Le Test&quot;</span>, <span class="variable">corps</span>);
+<span class="variable">viewHTML</span>(<span class="variable">renduHTML</span>(<span class="variable">doc</span>));</pre><p>Je devrais maintenant vous prévenir que cette approche n’est pas parfaite. Ce
+qu’elle génère est en fait du <a name="key12"></a>XML, qui est proche du HTML, mais plus
+structuré. Dans les cas les plus simples, cela n’engendre pas de problème.
+Cependant, il existe des séquences correctes en XML, qui ne sont pas correctes
+en HTML, et peuvent embrouiller un navigateur lorsqu’il va vouloir afficher
+notre document. Si par exemple vous avez un jeu de balises <code>script</code> vides (on
+les utilise pour insérer du JavaScript dans une page) dans votre document, les
+navigateurs ne vont pas s’en apercevoir et penser que tout ce qui suit est du
+JavaScript (dans ce cas, le problème peut être réglé en mettant une espace
+unique entre les balises ouvrante et fermante pour que la balise ne soit pas
+vide, et ainsi avoir une balise fermante).</p></div><hr/><div class="block"><a name="exercise5"></a><div class="exercisenum">Ex. 6.5</div><div class="exercise"><p>Écrivez une fonction <code>renduFragment</code>, et utilisez-la pour implémenter une autre
+fonction, <code>renduParagraphe</code>, qui prend un objet paragraphe (en ne tenant pas
+compte des notes de bas de page) et produit l’élément HTML correct (qui peut
+être un paragraphe ou un en-tête, en fonction du <code>type</code> de l’objet paragraphe).</p><p>Cette fonction pourrait s’avérer utile pour produire les liens vers les
+références de bas de page :</p><pre class="code"><span class="keyword">function</span> <span class="variable">basDePage</span>(<span class="variabledef">numero</span>) {
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;sup&quot;</span>, [<span class="variable">lien</span>(<span class="string">&quot;#note&quot;</span> + <span class="localvariable">numero</span>,
+                          <span class="variable">String</span>(<span class="localvariable">numero</span>))]);
+}</pre><p>Une balise <code>sup</code> affiche son contenu en «&nbsp;exposant&nbsp;», ce qui signifie que ce
+contenu sera plus petit et un peu plus haut sur la ligne que le reste du texte.
+La cible du lien prendra une forme telle que <code>&quot;#note1&quot;</code>. Les liens contenant un
+caractère «&nbsp;#&nbsp;» font référence aux «&nbsp;ancres&nbsp;» à l’intérieur d’une page, et ici
+nous les utiliserons pour renvoyer le lecteur à la fin de la page, où seront
+les notes de bas de page.</p><p>La balise pour générer des parties mises en emphase est <code>em</code>&nbsp;; un texte normal
+peut être généré sans balise supplémentaire.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">renduParagraphe</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="localvariable">paragraphe</span>.<span class="property">type</span>, <span class="variable">map</span>(<span class="variable">renduFragment</span>,
+                                 <span class="localvariable">paragraphe</span>.<span class="property">contenu</span>));
+}
+
+<span class="keyword">function</span> <span class="variable">renduFragment</span>(<span class="variabledef">fragment</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">fragment</span>.<span class="property">type</span> == <span class="string">&quot;reference&quot;</span>)
+    <span class="keyword">return</span> <span class="variable">basDePage</span>(<span class="localvariable">fragment</span>.<span class="property">numero</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">fragment</span>.<span class="property">type</span> == <span class="string">&quot;enEmphase&quot;</span>)
+    <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;em&quot;</span>, [<span class="localvariable">fragment</span>.<span class="property">contenu</span>]);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">fragment</span>.<span class="property">type</span> == <span class="string">&quot;normal&quot;</span>)
+    <span class="keyword">return</span> <span class="localvariable">fragment</span>.<span class="property">contenu</span>;
+}</pre></div></div><hr/><div class="block"><p>Nous y sommes presque. Le dernier élément pour lequel nous ne disposons pas de
+fonction de génération HTML concerne les notes de bas de page. Pour que les
+liens <code>&quot;#note1&quot;</code> fonctionnent, une ancre doit être incluse dans chaque note de
+bas de page. En HTML, les ancres sont décrites à l’aide d’une balise <code>a</code>,
+également utilisé pour les liens. Dans ce cas, la balise prend un attribut
+<code>name</code> au lieu de <code>href</code>.</p><pre class="code"><span class="keyword">function</span> <span class="variable">renduNoteBasDePage</span>(<span class="variabledef">noteBasDePage</span>) {
+  <span class="keyword">var</span> <span class="variabledef">numero</span> = <span class="string">&quot;[&quot;</span> + <span class="localvariable">noteBasDePage</span>.<span class="property">numero</span> + <span class="string">&quot;] &quot;</span>;
+  <span class="keyword">var</span> <span class="variabledef">ancre</span> = <span class="variable">balise</span>(<span class="string">&quot;a&quot;</span>, [<span class="localvariable">numero</span>], {<span class="property">name</span>: <span class="string">&quot;note&quot;</span> + <span class="localvariable">noteBasDePage</span>.<span class="property">numero</span>});
+  <span class="keyword">return</span> <span class="variable">balise</span>(<span class="string">&quot;p&quot;</span>, [<span class="variable">balise</span>(<span class="string">&quot;small&quot;</span>, [<span class="localvariable">ancre</span>, <span class="localvariable">noteBasDePage</span>.<span class="property">contenu</span>])]);
+}</pre><p>Enfin, voici une fonction qui, recevant un fichier correctement formaté et un
+titre de document, renvoie un document HTML.</p><pre class="code"><span class="keyword">function</span> <span class="variable">renduFichier</span>(<span class="variabledef">fichier</span>, <span class="variabledef">titre</span>) {
+  <span class="keyword">var</span> <span class="variabledef">paragraphes</span> = <span class="variable">map</span>(<span class="variable">transformeParagraphe</span>, <span class="localvariable">fichier</span>.<span class="property">split</span>(<span class="string">&quot;\n\n&quot;</span>));
+  <span class="keyword">var</span> <span class="variabledef">notesBasDePage</span> = <span class="variable">map</span>(<span class="variable">renduNoteBasDePage</span>,
+                      <span class="variable">extraitNotesBasDePage</span>(<span class="localvariable">paragraphes</span>));
+  <span class="keyword">var</span> <span class="variabledef">corps</span> = <span class="variable">map</span>(<span class="variable">renduParagraphe</span>, <span class="localvariable">paragraphes</span>).<span class="property">concat</span>(<span class="localvariable">notesBasDePage</span>);
+  <span class="keyword">return</span> <span class="variable">renduHTML</span>(<span class="variable">documentHtml</span>(<span class="localvariable">titre</span>, <span class="localvariable">corps</span>));
+}
+
+<span class="variable">viewHTML</span>(<span class="variable">renduFichier</span>(<span class="variable">fichierDeErmite</span>(), <span class="string">&quot;Le livre de la programmation&quot;</span>));</pre><p>La méthode <a name="key13"></a><code>concat</code> des objets de type tableau sert à concaténer un tableau
+avec un autre, tout comme l’opérateur <code>+</code> le fait avec les chaînes de
+caractère.</p></div><hr/><div class="block"><p>Dans les chapitres suivant, les fonctions élémentaires d’ordre supérieur comme
+<code>map</code> et <code>reduce</code> seront toujours disponibles, et utilisées dans certains
+exemples. Ici et là, on leur ajoutera d’autres outils qui nous sembleront
+utiles. Dans le <a href="chapter9.html">chapitre 9</a>, nous verrons une approche plus structurée pour
+gérer ce jeu de fonctions de base.</p></div><hr/><div class="block"><p>Lorsqu’on utilise des fonctions d’ordre supérieur, il est souvent agaçant que
+les opérateurs ne soient pas des fonctions en JavaScript. Nous avons eu besoin
+des fonctions <code>ajouter</code> ou <code>equals</code> à différents endroits. Les réécrire à
+chaque fois est fastidieux, n’est-ce pas&nbsp;? Aussi, à partir de maintenant, nous
+supposons l’existence d’un objet nommé <code>op</code>, qui contient ces fonctions :</p><pre class="code"><span class="keyword">var</span> <span class="variable">op</span> = {
+  <span class="string">&quot;+&quot;</span>: <span class="keyword">function</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>){<span class="keyword">return</span> <span class="localvariable">a</span> + <span class="localvariable">b</span>;},
+  <span class="string">&quot;==&quot;</span>: <span class="keyword">function</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>){<span class="keyword">return</span> <span class="localvariable">a</span> == <span class="localvariable">b</span>;},
+  <span class="string">&quot;===&quot;</span>: <span class="keyword">function</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>){<span class="keyword">return</span> <span class="localvariable">a</span> === <span class="localvariable">b</span>;},
+  <span class="string">&quot;!&quot;</span>: <span class="keyword">function</span>(<span class="variabledef">a</span>){<span class="keyword">return</span> !<span class="localvariable">a</span>;}
+  <span class="comment">/* et ainsi de suite */</span>
+};</pre><p>Nous pouvons donc écrire <code>reduce(op[&quot;+&quot;], 0, [1, 2, 3, 4, 5])</code> pour faire la
+somme d’un tableau. Mais que se passe-t-il si nous avons besoin de quelque
+chose comme <code>equals</code> ou <code>creerFonctionAjouter</code>, dans lequel un des arguments a
+déjà une valeur&nbsp;? Dans ce cas nous voilà revenus à l’écriture d’une nouvelle
+fonction.</p><p>Dans les cas comme ceux-là, l’utilisation d’une «&nbsp;<a name="key14"></a>application partielle&nbsp;» est
+intéressante. Vous voulez créer une nouvelle fonction qui connaît déjà un
+certain nombre de ces arguments et traite des arguments supplémentaires passés
+après ces arguments fixes. Vous pourrez le faire en utilisant de façon créative
+la méthode <code>apply</code> d’une fonction :</p><pre class="code"><span class="keyword">function</span> <span class="variable">asArray</span>(<span class="variabledef">quasimentUnTableau</span>, <span class="variabledef">debut</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = (<span class="localvariable">debut</span> || <span class="atom">0</span>); <span class="localvariable">i</span> &lt; <span class="localvariable">quasimentUnTableau</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="localvariable">quasimentUnTableau</span>[<span class="localvariable">i</span>]);
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">partial</span>(<span class="variabledef">func</span>) {
+  <span class="keyword">var</span> <span class="variabledef">argumentsFixes</span> = <span class="variable">asArray</span>(<span class="localvariable">arguments</span>, <span class="atom">1</span>);
+  <span class="keyword">return</span> <span class="keyword">function</span>(){
+    <span class="keyword">return</span> <span class="localvariable">func</span>.<span class="property">apply</span>(<span class="atom">null</span>, <span class="localvariable">argumentsFixes</span>.<span class="property">concat</span>(<span class="variable">asArray</span>(<span class="localvariable">arguments</span>)));
+  };
+}</pre><p>Nous voulons être en mesure de regrouper plusieurs arguments en un seul, pour
+cela, la fonction <code>asArray</code> est nécessaire afin de constituer des tableaux
+normaux avec des objets <code>arguments</code>. Elle copie leur contenu dans un vrai
+tableau, si bien que la méthode <code>concat</code> peut lui être appliquée. Elle peut
+prendre aussi un deuxième argument facultatif, permettant d’ignorer le ou les
+premiers arguments.</p><p>Notez également qu’il faut stocker les <code>arguments</code> de la fonction externe
+(<code>partial</code>) dans une variable avec un autre nom, sinon la fonction interne ne
+peut pas les voir (elle a sa propre variable <code>arguments</code>, qui masque celle de
+la fonction externe).</p><p>Maintenant, <code>equals(10)</code> peut s’écrire <code>partial(op[&quot;==&quot;], 10)</code>, sans nécessiter
+d’écrire, pour l’occasion, une fonction <code>equals</code>. Et vous pouvez faire ceci :</p><pre class="code"><span class="variable">show</span>(<span class="variable">map</span>(<span class="variable">partial</span>(<span class="variable">op</span>[<span class="string">&quot;+&quot;</span>], <span class="atom">1</span>), [<span class="atom">0</span>, <span class="atom">2</span>, <span class="atom">4</span>, <span class="atom">6</span>, <span class="atom">8</span>, <span class="atom">10</span>]));</pre><p>La raison pour laquelle <code>map</code> prend son argument de fonction avant
+l’organisation du tableau est qu’il est souvent utile d’appliquer partiellement
+map en lui attribuant une fonction. Ce qui donne à la fonction davantage de
+puissance, elle n’opère plus sur une seule valeur mais sur un tableau de
+valeurs. Par exemple, si vous avez un tableau de tableaux de nombres, et que
+vous voulez les mettre tous au carré, vous procédez ainsi :</p><pre class="code"><span class="keyword">function</span> <span class="variable">nombreAuCarre</span>(<span class="variabledef">x</span>) {<span class="keyword">return</span> <span class="localvariable">x</span> * <span class="localvariable">x</span>;}
+
+<span class="variable">show</span>(<span class="variable">map</span>(<span class="variable">partial</span>(<span class="variable">map</span>, <span class="variable">nombreAuCarre</span>), [[<span class="atom">10</span>, <span class="atom">100</span>], [<span class="atom">12</span>, <span class="atom">16</span>], [<span class="atom">0</span>, <span class="atom">1</span>]]));</pre></div><hr/><div class="block"><p>Une dernière astuce qui peut être utile quand vous voulez combiner des
+fonctions est la <a name="key15"></a>composition de fonctions. Au début de ce chapitre j’ai
+montré une fonction <code>negate</code>, qui applique l’opérateur booléen <em>not</em> au
+résultat de l’appel d’une fonction :</p><pre class="code"><span class="keyword">function</span> <span class="variable">negate</span>(<span class="variabledef">func</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>() {
+    <span class="keyword">return</span> !<span class="localvariable">func</span>.<span class="property">apply</span>(<span class="atom">null</span>, <span class="localvariable">arguments</span>);
+  };
+}</pre><p>C’est un cas particulier d’une structure plus générale : appeler la fonction A,
+puis appliquer la fonction B au résultat. La composition est un concept usuel
+en mathématiques.  <a name="key16"></a>Elle peut être utilisée dans une fonction de
+haut niveau de la façon suivante :</p><pre class="code"><span class="keyword">function</span> <span class="variable">compose</span>(<span class="variabledef">func1</span>, <span class="variabledef">func2</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>() {
+    <span class="keyword">return</span> <span class="localvariable">func1</span>(<span class="localvariable">func2</span>.<span class="property">apply</span>(<span class="atom">null</span>, <span class="localvariable">arguments</span>));
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">isUndefined</span> = <span class="variable">partial</span>(<span class="variable">op</span>[<span class="string">&quot;===&quot;</span>], <span class="atom">undefined</span>);
+<span class="keyword">var</span> <span class="variable">isDefined</span> = <span class="variable">compose</span>(<span class="variable">op</span>[<span class="string">&quot;!&quot;</span>], <span class="variable">isUndefined</span>);
+<span class="variable">show</span>(<span class="variable">isDefined</span>(<span class="variable">Math</span>.<span class="property">PI</span>));
+<span class="variable">show</span>(<span class="variable">isDefined</span>(<span class="variable">Math</span>.<span class="property">PIE</span>));</pre><p>Nous voilà en train de définir de nouvelles fonctions sans utiliser du tout le
+mot-clé <code>function</code>. Cela peut être utile si vous avez besoin de créer une
+fonction simple à passer, par exemple, à <code>map</code> ou <code>reduce</code>.  Toutefois, quand
+une fonction devient plus complexe que ces exemples, il est généralement plus
+rapide (sans parler du gain en efficacité) de l’écrire avec <code>function</code>.</p></div><ol class="footnotes"><li><a name="footnote1"></a>Comme ceci</li></ol><div class="navigation"><a href="chapter5.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter7.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

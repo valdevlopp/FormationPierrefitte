@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>JavaScript Éloquent</title>
+    <link rel="stylesheet" type="text/css" href="css/book.css"/>
+    <link rel="stylesheet" type="text/css" href="css/highlight.css"/>
+    <link rel="stylesheet" type="text/css" href="css/console.css"/>
+    <link rel="stylesheet" type="text/css" href="css/codemirror.css"/>
+    <script type="text/javascript" src="js/mochi.js"></script>
+    <script type="text/javascript" src="js/codemirror.js"></script>
+    <script type="text/javascript" src="js/paper.js"></script>
+    <style type="text/css">
+      body {font-size: 90%; overflow-y: scroll;}
+      span.h1 {font-weight: bold; font-size: 110%;}
+      h1 {font-weight: bold; font-size: 110%; margin: 0;}
+      .chapterblock {margin-left: 1em;}
+      .chapterblock div {cursor: pointer; font-family: courier new, monospace}
+    </style>
+  </head>
+  <body>
+    <div style="padding: 5px 10px;">
+      <span class="h1">JavaScript Éloquent</span>
+      Bac à sable pour le code de l'<a href="http://nostarch.com/ejs.htm">édition papier</a>
+      [<a href="javascript:void(document.getElementById('help').style.display=document.getElementById('help').style.display?'':'none');">help</a>]
+    </div>
+    <div id="help" style="padding: 5px 20px; margin-top: -10px; display: none">
+      <p>La console ci-dessous permet de modifier et d'exécuter du code
+      JavaScript. La sortie (des functions <code>show</code> et
+      <code>print</code>) s'affiche dans la zone à gauche. Certaines
+      valeurs peuvent être cliquées pour les inspecter plus en détails.
+      La ligne en dessous peut être utilisée pour écrire des
+      expressions JavaScript et les évaluer à la volée. A droite, on
+      trouve l'éditeur dans lequel le code peut être saisi ou chargé,
+      et executé en utilisant les boutons situés en dessous.</p>
+      <p>La liste 'Chapitre X' en bas de la page contient presque tout
+      le code présent dans le livre. Cliquez sur le triangle pour
+      développer ou réduire la liste des morceaux de code d'un chapitre.
+      Puis cliquez sur le nom d'un morceau de code pour le charger, ou
+      cliquez sur [exécuter tout] pour exécuter tout le code d'un
+      chapitre. Pour les chapitres avec de gros exemples, ce dernier
+      choix est le moyen le plus facile de voir les exemples en
+      action.</p>
+      <p>En bas à droite de l'écran se trouve une fenêtre séparée dans
+      laquelle le code de la console s'exécute directement. Les exemples
+      de certains des chapitres (comme le HTML créé dans le chapitre 5)
+      s'afficheront ici.</p>
+    </div>
+    <div id="console" class="console frame open" style="height: 25em; width: auto;"></div>
+    <table width="100%" border="0">
+      <tr><td width="50%" style="vertical-align: top">
+        <div style="padding: 5px 10px;" id="code"></div>
+      </td><td width="50%" style="vertical-align: top">
+        <div id="frameplace"></div>      
+      </td></tr>
+    </table>
+  </body>
+</html>

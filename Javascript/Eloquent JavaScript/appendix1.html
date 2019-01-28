@@ -1,0 +1,78 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Plus de structures de contrôle (obscures) -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'control';</script><div class="navigation"><a href="chapter14.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="appendix2.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Appendice 1: </span>Plus de structures de contrôle (obscures)</h1><div class="block"><p>Dans le <a href="chapter2.html">chapitre 2</a>, un certain nombre de structures de contrôle ont été
+introduites, comme <code>while</code>, <code>for</code>, et <code>break</code>. Pour garder les choses simples,
+j’en ai laissé d’autres de côté, qui, d’après mon expérience, sont beaucoup
+moins utiles. Cet appendice décrit rapidement ces structures de contrôles
+manquantes.</p></div><hr/><div class="block"><p>Pour commencer, il y a <a name="key1"></a><code>do</code>. <code>do</code> fonctionne comme <code>while</code>, mais au lieu
+d’exécuter zéro ou plusieurs fois, il l’exécute une ou plusieurs fois. Une
+boucle <code>do</code> ressemble à cela :</p><pre class="code"><span class="keyword">do</span> {
+  <span class="keyword">var</span> <span class="variable">reponse</span> = <span class="variable">prompt</span>(<span class="string">&quot;Dites 'meuh'.&quot;</span>, <span class="string">&quot;&quot;</span>);
+  <span class="variable">print</span>(<span class="string">&quot;Vous avez dit '&quot;</span>, <span class="variable">reponse</span> , <span class="string">&quot;'.&quot;</span>);
+} <span class="keyword">while</span> (<span class="variable">reponse</span> != <span class="string">&quot;meuh&quot;</span>);</pre><p>Pour bien montrer que la condition est seulement testée <em>après</em> une première
+exécution, on l’écrit à la fin du corps de la boucle.</p></div><hr/><div class="block"><p>Ensuite, il y a <a name="key2"></a><code>continue</code>. Celui-là est très lié à <code>break</code> et peut être
+utilisé aux mêmes endroits. Alors que le <code>break</code> saute <em>en dehors</em> de la boucle
+et fait continuer le programme après la boucle, <code>continue</code> saute à l’itération
+suivante de la boucle.</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">i</span> = <span class="atom">0</span>; <span class="variable">i</span> &lt; <span class="atom">10</span>; <span class="variable">i</span>++) {
+  <span class="keyword">if</span> (<span class="variable">i</span> % <span class="atom">3</span> != <span class="atom">0</span>)
+    <span class="keyword">continue</span>;
+  <span class="variable">print</span>(<span class="variable">i</span>, <span class="string">&quot; est divisible par trois.&quot;</span>);
+}</pre><p>Un effet similaire peut en général être obtenu simplement avec <code>if</code>, mais il
+existe des cas où <code>continue</code> sera plus joli.</p></div><hr/><div class="block"><p>Quand il y a une boucle à l’intérieur d’une autre boucle, un <code>break</code> ou un
+<code>continue</code> n’affectera que la boucle interne. Parfois, vous aurez envie de
+sauter en dehors de la boucle <em>extérieure</em>. Pour être capable de référencer une
+boucle spécifique, les boucles peuvent être <a name="key3"></a>labellisée. Un label est un nom
+(n’importe quel nom de variable fera l’affaire), suivi de deux points (<code>:</code>).</p><pre class="code"><span class="property">exterieur</span>: <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">coteA</span> = <span class="atom">1</span>; <span class="variable">coteA</span> &lt; <span class="atom">10</span>; <span class="variable">coteA</span>++) {
+  <span class="property">interieur</span>: <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">coteB</span> = <span class="atom">1</span>; <span class="variable">coteB</span> &lt; <span class="atom">10</span>; <span class="variable">coteB</span>++) {
+    <span class="keyword">var</span> <span class="variable">hypotenuse</span> = <span class="variable">Math</span>.<span class="property">sqrt</span>(<span class="variable">coteA</span> * <span class="variable">coteA</span> + <span class="variable">coteB</span> * <span class="variable">coteB</span>);
+    <span class="keyword">if</span> (<span class="variable">hypotenuse</span> % <span class="atom">1</span> == <span class="atom">0</span>) {
+      <span class="variable">print</span>(<span class="string">&quot;Un triangle rectangle avec ses côtés adjacents à l’angle droit de longueurs &quot;</span>,
+            <span class="variable">coteA</span>, <span class="string">&quot; et &quot;</span>, <span class="variable">coteB</span>, <span class="string">&quot; a une hypoténuse de &quot;</span>,
+            <span class="variable">hypotenuse</span>, <span class="string">&quot;.&quot;</span>);
+      <span class="keyword">break</span> <span class="variable">exterieur</span>;
+    }
+  }
+}</pre></div><hr/><div class="block"><p>Ensuite, il existe une construction appelée <a name="key4"></a><code>switch</code> qui peut être utilisée
+pour choisir quel code exécuter suivant une certaine valeur. C’est quelque
+chose d’utile, mais la syntaxe JavaScript utilisée pour cela (qui est empruntée
+au langage de programmation C) est si bizarre et moche que je préfère en
+général utiliser une chaîne de <code>if</code> à la place.</p><pre class="code"><span class="keyword">function</span> <span class="variable">conseilMeteo</span>(<span class="variabledef">meteo</span>) {
+  <span class="keyword">switch</span>(<span class="localvariable">meteo</span>) {
+    <span class="keyword">case</span> <span class="string">&quot;pluvieux&quot;</span>:
+      <span class="variable">print</span>(<span class="string">&quot;Pensez à prendre un parapluie.&quot;</span>);
+      <span class="keyword">break</span>;
+    <span class="keyword">case</span> <span class="string">&quot;ensoleillé&quot;</span>:
+      <span class="variable">print</span>(<span class="string">&quot;Habillez-vous légèrement.&quot;</span>);
+    <span class="keyword">case</span> <span class="string">&quot;nuageux&quot;</span>:
+      <span class="variable">print</span>(<span class="string">&quot;Allez dehors.&quot;</span>);
+      <span class="keyword">break</span>;
+    <span class="property">default</span>:
+      <span class="variable">print</span>(<span class="string">&quot;Type de temps inconnu : &quot;</span>, <span class="localvariable">meteo</span>);
+      <span class="keyword">break</span>;
+  }
+}
+
+<span class="variable">conseilMeteo</span>(<span class="string">&quot;ensoleillé&quot;</span>);</pre><p>À l’intérieur du bloc ouvert par <code>switch</code>, vous pouvez écrire un certain nombre
+de labels <code>case</code>. Le programme sautera au label qui correspond à la valeur
+donnée au <code>switch</code>, ou sautera à <code>default</code> si on ne trouve aucune valeur
+correspondante. Il commence alors à exécuter les instructions à cet endroit, et
+<em>continue</em> à travers les autres labels, jusqu’à ce qu’il atteigne un <code>break</code>.
+Dans certains cas, comme le cas <code>&quot;ensoleillé&quot;</code> dans notre exemple, cela permet
+de partager du code entre plusieurs cas (il est recommandé d’aller dehors à la
+fois pour le temps ensoleillé et pour le temps nuageux). La plupart du temps,
+cela ajoute juste beaucoup de <code>break</code> pas très jolis, ou bien cause des
+problèmes quand vous oubliez d’en ajouter un.</p><p>Comme pour les boucles, on peut donner un label aux structures <code>switch</code>.</p></div><hr/><div class="block"><p>Enfin, il y a le mot-clé nommé <a name="key5"></a><code>with</code>. Je ne l’ai en fait jamais <em>utilisé</em>
+dans un vrai programme, mais j’ai vu d’autres personnes l’utiliser, il peut
+donc être utile de savoir ce que c’est. Le code utilisant <code>with</code> ressemble à
+cela :</p><pre class="code"><span class="keyword">var</span> <span class="variable">pointDeVue</span> = <span class="string">&quot;extérieur&quot;</span>;
+<span class="keyword">var</span> <span class="variable">objet</span> = {<span class="property">nom</span>: <span class="string">&quot;Ignatius&quot;</span>, <span class="property">pointDeVue</span>: <span class="string">&quot;intérieur&quot;</span>};
+<span class="keyword">with</span>(<span class="variable">objet</span>) {
+  <span class="variable">print</span>(<span class="string">&quot;Nom == &quot;</span>, <span class="variable">nom</span>, <span class="string">&quot;, point de vue == &quot;</span>, <span class="variable">pointDeVue</span>);
+  <span class="variable">nom</span> = <span class="string">&quot;Raoul&quot;</span>;
+  <span class="keyword">var</span> <span class="variable">nouvelleVariable</span> = <span class="atom">49</span>;
+}
+<span class="variable">show</span>(<span class="variable">objet</span>.<span class="property">nom</span>);
+<span class="variable">show</span>(<span class="variable">nouvelleVariable</span>);</pre><p>À l’intérieur du bloc, les propriétés de l’objet passé à <code>with</code> agissent comme
+des variables. Des variables nouvellement introduites ne sont toutefois pas
+ajoutées à l’objet. Je suppose que l’idée derrière cette construction était que
+cela pouvait être utile dans des méthodes qui utilisent beaucoup les propriétés
+de leur objet. Vous pouvez commencer de telles méthodes avec <code>with(this) {…}</code>,
+et ainsi ne pas avoir à écrire <code>this</code> tout le temps après cela.</p></div><div class="navigation"><a href="chapter14.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="appendix2.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

@@ -1,0 +1,359 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Programmation Web : un cours condensé -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'web';</script><div class="navigation"><a href="chapter10.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter12.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 11: </span>Programmation Web : un cours condensé</h1><div class="block"><p>Vous lisez probablement ceci dans un navigateur web, donc vous êtes susceptible
+d’être au moins un peu familier avec le World Wide Web. Ce chapitre contient
+une rapide et superficielle introduction aux différents éléments qui font
+fonctionner la toile, et la manière dont ils sont liés au JavaScript. Les trois
+suivants sont plus pratiques et présentent certaines des manières avec
+lesquelles JavaScript peut-être utilisé pour inspecter et changer une page web.</p></div><hr/><div class="block"><p>L’Internet est fondamentalement un simple réseau d’ordinateurs couvrant
+l’essentiel du monde. Les réseaux d’ordinateurs permettent aux ordinateurs de
+s’envoyer des messages les uns aux autres. Les techniques qui sont à la base de
+la mise en réseau sont un sujet intéressant mais pas le propos de ce livre.
+Tout ce que vous avez à savoir est que, généralement, un ordinateur, que nous
+appellerons <a name="key1"></a>serveur, attend que d’autres ordinateurs se mettent à lui parler.
+Une fois qu’un autre ordinateur, le <a name="key2"></a>client, ouvre une communication avec ce
+serveur, ils vont échanger ce qui a besoin d’être échangé en utilisant un
+langage spécifique, un <a name="key3"></a>protocole.</p><p>L’Internet est utilisé pour transporter des messages pour <em>nombre</em> de
+différents protocoles. Il y a des protocoles pour chatter, des protocoles pour
+l’échange de fichiers, des protocoles utilisés par des logiciels malicieux afin
+de contrôler l’ordinateur du pauvre schnock qui les a installés et ainsi de
+suite. Le protocole qui nous intéresse est celui qu’on utilise pour le World
+Wide Web. Il s’appelle <a name="key4"></a>HTTP, ce qui signifie Hyper Text Transfer Protocol
+(Protocole de Transfert Hyper Texte) et il sert à retrouver des pages web et
+les fichiers qui leur sont associés.</p><p>En communication HTTP, le serveur est l’ordinateur sur lequel la page web est
+conservée. Le client est un ordinateur, comme le vôtre, qui demande une page au
+serveur, afin de pouvoir l’afficher. Demander une page ainsi s’appelle une
+«&nbsp;<a name="key5"></a>requête HTTP&nbsp;».</p></div><hr/><div class="block"><p>Les pages web et autres fichiers qui sont accessibles à travers l’Internet sont
+identifiés par des «&nbsp;<a name="key6"></a>URL&nbsp;», ce qui est une abréviation pour Universal
+Resource Locators (Localisateurs de Ressource Universel). Une URL ressemble à
+ceci:</p><pre class="preformatted">http://acc6.its.brooklyn.cuny.edu/~phalsall/texts/taote-v3.html</pre><p>Elle est composée de trois parties. Le début, <code>http://</code>, indique que cette URL
+utilise le protocole HTTP. Il y a d’autres protocoles, comme le FTP (File
+Transfer Protocol ou Protocole de Transfert de Fichiers), qui utilisent eux
+aussi des URL. La partie suivante, <code>acc6.its.brooklyn.cuny.edu</code>, nomme le
+serveur sur lequel cette page peut-être trouvée. La fin de l’URL,
+<code>/~phalsal/texts/taote-v3.html</code>, nomme le fichier spécifique sur ce serveur.</p><p>La plupart du temps, le World Wide Web est accessible grâce à un navigateur.
+Après avoir tapé une URL ou cliqué un lien, le navigateur fait la requête HTTP
+appropriée au serveur adéquat. Si tout se passe bien, le serveur répond en
+renvoyant un ficher au navigateur, qui le montre à l’utilisateur d’une façon ou
+d’une autre.</p><p>Quand, comme dans l’exemple, le fichier retrouvé est un document <a name="key7"></a>HTML, il
+sera affiché comme une page web. Nous avons brièvement discuté d’HTML dans le
+<a href="chapter6.html">chapitre 6</a>, où nous avons vu qu’il pouvait référencer des fichiers image. Dans le
+<a href="chapter9.html">chapitre 9</a>, nous avons trouvé que les pages HTML peuvent contenir la balise
+<code>&lt;script&gt;</code> pour charger des fichiers de code JavaScript. Quand un document HTML
+s’affiche, un navigateur récupère tous ces fichiers supplémentaires depuis leur
+serveur, de manière à les ajouter au document.</p></div><hr/><div class="block"><p>Bien qu’une URL soit supposée pointer sur un fichier, il est possible qu’un
+serveur web fasse quelque chose de plus compliqué que simplement rechercher un
+ficher et l’envoyer au client. ―&nbsp;Il peut traiter ce fichier d’une certaine
+manière en premier, ou peut-être n’y a-t-il pas du tout de fichier, mais
+seulement un programme qui, quand on lui donne une URL, a une façon de générer
+le document pertinent pour elle.</p><p>Des programmes qui transforment ou génèrent des documents sur un serveur sont
+une façon populaire de rendre les pages web moins statiques. Quand un fichier
+est juste un fichier, il est toujours le même, mais quand il y a un programme
+pour le fabriquer chaque fois qu’il est demandé, il peut être fait pour sembler
+différent à chaque utilisateur, en fonction de son identification et de ses
+préférences. Cela peut aussi rendre la gestion de contenu sur les pages web
+bien plus simple ―&nbsp;au lieu d’ajouter un nouveau fichier HTML chaque fois que
+quelque chose de nouveau est placé sur un site web, un nouveau document est
+stocké dans un entrepôt central et le programme sait où le trouver et comment
+le montrer aux clients.</p><p>Ce type de programmation web s’appelle <a name="key8"></a>programmation côté serveur. Cela
+affecte le document avant qu’il ne soit envoyé à l’utilisateur. Dans certains
+cas, il est pratique d’avoir un programme qui tourne <em>après</em> que la page a été
+envoyée, quand l’utilisateur la regarde. Ceci s’appelle <a name="key9"></a>programmation côté
+client, car le programme tourne sur l’ordinateur du client. La programmation
+web côté client est ce pour quoi JavaScript a été inventé.</p></div><hr/><div class="block"><p>Faire tourner des programmes côté client comporte un problème implicite. Vous
+ne pouvez jamais vraiment savoir à l’avance quels genres de programmes la page
+que vous visitez va faire fonctionner. Si elle peut envoyer des informations de
+votre ordinateur vers d’autres, endommager quelque chose ou infiltrer votre
+système, surfer sur la toile pourrait être une activité bien hasardeuse.</p><p>Pour résoudre ce dilemme, les navigateurs limitent sévèrement les choses qu’un
+programme JavaScript peut faire. Il n’est pas permis de consulter vos fichiers
+ou de modifier quoi que ce soit d’étranger à la page web dont il provient.
+Isoler un environnement de programmation comme cela, se nomme <a name="key10"></a>sand-boxing
+(jouer dans le bac à sable). Offrir aux programmes suffisamment de place pour
+être utiles et en même temps les restreindre suffisamment pour les empêcher de
+faire du mal, n’est pas une chose simple à faire. Tous les quelques mois, un
+programmeur JavaScript découvre une nouvelle façon de contourner les
+limitations, de faire quelque chose de mal ou de transgresser les barrières qui
+entourent la vie privée. Les responsables des navigateurs répondent en
+modifiant leurs programmes pour rendre cette astuce impossible et tout va bien
+à nouveau ―&nbsp;jusqu’à ce que le prochain problème soit découvert.</p></div><hr/><div class="block"><p>Une des premières astuces de JavaScript qui devint largement utilisée est la
+méthode <a name="key11"></a><a name="key12"></a><code>open</code> de l’objet <code>window</code>. Elle prend une URL comme
+argument et ouvrira une nouvelle fenêtre affichant cette URL.</p><pre class="code"><span class="keyword">var</span> <span class="variable">perry</span> = <span class="variable">window</span>.<span class="property">open</span>(<span class="string">&quot;http://www.pbfcomics.com&quot;</span>);</pre><p>À moins que vous n’ayez désactivé le bloqueur de pop-up dans le <a href="chapter6.html">chapitre 6</a>, il y a
+une chance que cette nouvelle fenêtre soit bloquée. Il y a une bonne raison
+pour que les bloqueurs de pop-up existent. Les programmeurs web,
+particulièrement ceux qui essayent d’attirer l’attention des gens sur les
+publicités, ont tellement abusé de cette pauvre méthode <code>window.open</code> qu’à
+présent, la plupart des utilisateurs la détestent avec passion. Elle a son
+utilité pourtant et dans ce livre nous l’utiliserons pour afficher certains
+exemples de page. D’une manière générale, vos scripts ne devraient pas ouvrir
+de nouvelle fenêtre sauf quand l’utilisateur le demande.</p><p>Notez que parce qu’<code>open</code> (c’est également le cas de <code>setTimeout</code> et d’autres)
+est une méthode de l’objet <code>window</code>, la partie <code>window.</code> peut être enlevée.
+Quand une fonction est appelée «&nbsp;normalement&nbsp;», elle est appelée comme une
+méthode sur l’objet global, à savoir <code>window</code>.  Personnellement, je pense que
+<code>open</code> semble un peu générique, donc généralement je tape <code>window.open</code>, qui
+indique clairement que c’est une fenêtre qui est en cours d’ouverture.</p><p>La valeur retournée par <code>window.open</code> est une nouvelle fenêtre. C’est l’objet
+global pour le script tournant dans cette fenêtre, et il contient toutes les
+choses standards comme le constructeur <code>Object</code> et l’objet <code>Math</code>. Mais si vous
+essayez d’y jeter un œil, la plupart des navigateurs ne vont (probablement) pas
+vous laisser faire…</p><pre class="code invalid"><span class="variable">show</span>(<span class="variable">perry</span>.<span class="property">Math</span>);</pre><p>C’est la partie du sand-boxing que j’ai mentionnée plus tôt. Les pages ouvertes
+par votre navigateur peuvent afficher des informations qui vous sont seulement
+destinées, par exemple sur des sites où vous vous êtes identifiés, et il serait
+donc mauvais que n’importe quel script au hasard puisse y aller et les lire.
+L’exception à cette règle, ce sont les pages ouvertes pour le même domaine :
+quand un script tournant sur une page de <code>eloquentjavascript.net</code> ouvre une
+autre page de ce même domaine, il peut faire tout ce qu’il veut sur cette page.</p><p>Une fenêtre ouverte peut être fermée avec sa méthode
+<a name="key13"></a><a name="key14"></a><code>close</code>. Si vous ne l’avez pas déjà fermée vous-même…</p><pre class="code"><span class="variable">perry</span>.<span class="property">close</span>();</pre><p>D’autres types de sous-documents, comme les frames (documents dans un document)
+sont aussi des fenêtres du point de vue d’un programme JavaScript et ont leur
+propre environnement JavaScript. En fait, l’environnement auquel vous avez
+accédé dans la console appartient à une petite frame invisible quelque part
+dans cette page ―&nbsp;de cette manière, il est un petit peu plus difficile pour
+vous d’accidentellement mettre la pagaille dans toute la page.</p></div><hr/><div class="block"><p>Chaque objet fenêtre a une propriété <a name="key15"></a><code>document</code>, qui contient un objet
+représentant le document affiché dans la fenêtre. Cet objet contient, par
+exemple, une propriété <a name="key16"></a><code>location</code>, avec des informations
+sur l’URL du document.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">location</span>.<span class="property">href</span>);</pre><p>Mettre <code>document.location.href</code> à une nouvelle URL peut être utilisé pour
+demander au navigateur de charger un autre document. Une autre application de
+l’objet <code>document</code> est sa méthode <a name="key17"></a><code>write</code>. Cette méthode,
+quand on lui donne un argument texte, écrit du HTML dans le document. Quand
+c’est utilisé dans un document totalement chargé, cela remplacera le document
+complet par le HTML donné, ce qui n’est généralement pas ce que vous voulez.
+L’idée est d’avoir un script l’appelant pendant que le document est en cours de
+chargement, dans ce cas le HTML écrit sera inséré dans le document à l’endroit
+où la balise <code>script</code> l’a déclenché. C’est une manière simple d’ajouter des
+éléments dynamiques à une page. Par exemple, voici un document carrément simple
+affichant l’heure courante.</p><pre class="code"><span class="variable">print</span>(<span class="variable">horlogeParlante</span>);
+<span class="keyword">var</span> <span class="variable">temps</span> = <span class="variable">viewHTML</span>(<span class="variable">horlogeParlante</span>);</pre><pre class="code"><span class="variable">temps</span>.<span class="property">close</span>();</pre><p>Souvent, la technique affichée dans le <a href="chapter12.html">chapitre 12</a> fournit une manière plus propre
+et plus souple de modifier un document, mais occasionnellement,
+<code>document.write</code> est la manière la plus belle et la plus simple de le faire.</p></div><hr/><div class="block"><p>Une autre application populaire du JavaScript dans les pages web tourne autour
+des <a name="key18"></a>formulaires. Dans les cas où vous ne seriez pas tout à fait sûr du rôle
+des «&nbsp;formulaires&nbsp;», laissez-moi vous présenter un résumé rapide.</p><p>Une requête HTTP élémentaire est une simple requête pour un fichier. Quand ce
+fichier n’est pas vraiment un fichier passif, mais un programme côté serveur,
+il peut devenir utile d’inclure des informations autres qu’un nom de fichier
+dans la requête. Pour cela, les requêtes HTTP sont autorisées à contenir des «
+paramètres&nbsp;» additionnels. Voici un exemple:</p><pre class="preformatted">http://www.google.com/search?q=empire%20aztec</pre><p>Après le fichier (<code>/search</code>), l’URL continue avec un point d’interrogation,
+suivi de paramètres. Cette requête a un paramètre, nommé <code>q</code> (vraisemblablement
+pour &quot;query&quot;, c’est-à-dire requête), dont la valeur est <code>empire aztec</code>. La
+partie <code>%20</code> correspond à une espace. Il y a nombre de caractères qui peuvent
+apparaître dans ces valeurs, comme les espaces, les esperluettes ou les points
+d’interrogation. Ceux-ci sont remplacés par un <code>%</code> suivi par une valeur
+numérique <a class="footref" href="#footnote1">1</a>, ce qui a la même fonction que les antislash utilisés dans les
+textes et expressions rationnelles, mais est encore plus illisible.</p><p>JavaScript fournit les fonctions <a name="key19"></a><code>encodeURIComponent</code> et
+<a name="key20"></a><code>decodeURIComponent</code> pour ajouter ces codes aux textes et également les
+enlever.</p><pre class="code"><span class="keyword">var</span> <span class="variable">encode</span> = <span class="variable">encodeURIComponent</span>(<span class="string">&quot;empire aztec&quot;</span>);
+<span class="variable">show</span>(<span class="variable">encode</span>);
+<span class="variable">show</span>(<span class="variable">decodeURIComponent</span>(<span class="variable">encode</span>));</pre><p>Quand une requête contient plus d’un paramètre, ils sont séparés par une
+esperluette, comme dans…</p><pre class="preformatted">http://www.google.com/search?q=empire%20aztec&amp;lang=fr</pre></div><hr/><div class="block"><p>Un formulaire, essentiellement, est une manière de rendre facile aux
+utilisateurs des navigateurs la création de ces URL paramétrées. Il contient un
+nombre de champs, comme des boîtes d’entrée de texte, des cases à cocher qui
+peuvent être «&nbsp;cochées&nbsp;» et «&nbsp;décochées&nbsp;» ou des bidules permettant de choisir
+parmi un ensemble de valeurs. Il contient en général aussi un bouton de «
+soumission&nbsp;» et, invisible à l’utilisateur, une URL «&nbsp;action&nbsp;» à laquelle il
+sera envoyé. Quand on clique sur le bouton «&nbsp;soumettre&nbsp;» ou qu’on appuie sur la
+touche Entrée, les informations qui ont été saisies dans les champs sont
+ajoutées comme paramètres à cette URL action, et le navigateur va demander
+cette URL.</p><p>Voici le HTML pour un formulaire simple :</p><pre class="preformatted">&lt;form name=&quot;info_utilisateur&quot; method=&quot;get&quot; action=&quot;info.html&quot;&gt;
+  &lt;p&gt;S’il vous plaît donnez-nous vos informations, afin que nous puissions vous envoyer du spam.&lt;/p&gt;
+  &lt;p&gt;Nom: &lt;input type=&quot;text&quot; name=&quot;nom&quot;/&gt;&lt;/p&gt;
+  &lt;p&gt;courriel: &lt;input type=&quot;text&quot; name=&quot;email&quot;/&gt;&lt;/p&gt;
+  &lt;p&gt;Sexe: &lt;select name=&quot;sexe&quot;&gt;
+            &lt;option&gt;Homme&lt;/option&gt;
+            &lt;option&gt;Femme&lt;/option&gt;
+            &lt;option&gt;Autre&lt;/option&gt;
+          &lt;/select&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;input name=&quot;envoyer&quot; type=&quot;submit&quot; value=&quot;Envoyer&nbsp;!&quot;/&gt;&lt;/p&gt;
+&lt;/form&gt;</pre><p>Le nom du formulaire peut être utilisé pour y accéder avec JavaScript, comme
+nous allons le voir dans un moment. Les noms des champs déterminent les noms
+des paramètres HTTP qui sont utilisés afin de stocker leurs valeurs. Envoyer ce
+formulaire peut produire une URL comme ceci:</p><pre class="preformatted">http://planetspam.com/info.html?nom=Ted&amp;email=ted@zork.com&amp;sexe=Homme</pre><p>De nombreuses autres balises et propriétés qui peuvent être utilisés dans les
+formulaires mais nous nous en tiendrons dans ce livre aux plus simples, afin de
+nous concentrer sur le JavaScript.</p></div><hr/><div class="block"><p>La propriété <code>method=&quot;get&quot;</code> du formulaire d’exemple ci-dessus indique que ce
+formulaire doit encoder les valeurs qu’on lui donne en tant que paramètres
+d’URL, comme montré avant. Il existe une méthode alternative pour envoyer les
+paramètres, qui s’appelle <code>post</code>. Une requête HTTP utilisant la méthode <code>post</code>
+contient, en plus d’une URL, un bloc de données. Un formulaire utilisant la
+méthode <code>post</code> met les valeurs de ses paramètres dans ce bloc de données plutôt
+que dans l’URL.</p><p>Quand on envoie de grandes quantités de données, la méthode <code>get</code> va générer
+des URL d’un kilomètre de long, donc <code>post</code> est généralement plus pratique.
+Mais la différence entre les deux méthodes n’est pas juste une question de
+convenance. Traditionnellement, les requêtes <code>get</code> sont utilisées pour demander
+un document au serveur, alors que les requêtes <code>post</code> sont utilisées pour
+déclencher une action qui change quelque chose sur le serveur. Par exemple,
+obtenir une liste des messages récents d’un forum Internet serait une requête
+<code>get</code>, alors qu’ajouter un nouveau message serait une requête <code>post</code>. Il y a
+une bonne raison pour laquelle la plupart des pages suivent cette distinction
+―&nbsp;les programmes qui explorent automatiquement le web, comme ceux utilisés par
+les moteurs de recherche, vont généralement seulement faire des requêtes <code>get</code>.
+Si des changements sur un site peuvent être faits par une requête <code>get</code>, ces
+robots d’exploration bien intentionnés pourraient faire pas mal de dégâts.</p></div><hr/><div class="block"><p>Quand le navigateur affiche une page contenant un formulaire, les programmes
+JavaScript peuvent inspecter et modifier les valeurs qui sont entrées dans les
+champs du formulaire. Cela ouvre des possibilités pour toutes sortes d’astuces,
+comme vérifier les valeurs avant qu’elles ne soient envoyées au serveur ou
+remplir automatiquement certains champs.</p><p>Le formulaire affiché ci-dessus peut être trouvé dans le fichier
+<code>example_getinfo.html</code>. Ouvrez-le.</p><pre class="code"><span class="keyword">var</span> <span class="variable">formulaire</span> = <span class="variable">window</span>.<span class="property">open</span>(<span class="string">&quot;example_getinfo.html&quot;</span>);</pre><p>Quand une URL ne contient pas un nom de serveur, elle est appelée <a name="key21"></a>URL
+relative. Les URL relatives sont interprétées par le navigateur pour
+référencer des fichiers sur le même serveur que le document en cours. À moins
+qu’il ne commence par un slash, le chemin (ou répertoire) du document en cours
+est aussi conservé et le chemin donné lui est ajouté.</p><p>Nous ajouterons une vérification de validité au formulaire, afin qu’il soumette
+seulement si le champ nom n’est pas laissé vide et si le champ courriel
+contient quelque chose qui ressemble à une adresse électronique valide. Parce
+que nous ne voulons plus que le formulaire soit soumis immédiatement quand le
+bouton «&nbsp;Envoyer&nbsp;!&nbsp;» est cliqué. Sa propriété <code>type</code> a été changée de
+<code>&quot;submit&quot;</code> à <code>&quot;button&quot;</code>, ce qui le change en un bouton ordinaire sans aucun
+effet. ―&nbsp;Le <a href="chapter13.html">chapitre 13</a> montrera une <em>bien</em> meilleure manière de faire ceci, mais
+pour l’instant, nous utilisons la méthode naïve.</p></div><hr/><div class="block"><p><a name="key22"></a>Afin de travailler avec la fenêtre nouvellement ouverte (si vous
+l’avez fermée, rouvrez-la d’abord), nous lui «&nbsp;attachons&nbsp;» la console, comme
+ceci:</p><pre class="code"><span class="variable">attach</span>(<span class="variable">formulaire</span>);</pre><p>Après avoir fait ceci, le code lancé de la console tournera dans la fenêtre
+donnée. Pour vérifier que nous fonctionnons effectivement avec la bonne
+fenêtre, nous pouvons regarder les propriétés <code>location</code> et <code>title</code> du
+document.</p><pre class="code"><span class="variable">print</span>(<span class="variable">document</span>.<span class="property">location</span>.<span class="property">href</span>);
+<span class="variable">print</span>(<span class="variable">document</span>.<span class="property">title</span>);</pre><p>Étant donné que nous avons entré un nouvel environnement, les variables
+précédemment définies, comme <code>formulaire</code>, ne sont plus présentes.</p><pre class="code invalid"><span class="variable">show</span>(<span class="variable">formulaire</span>);</pre><p><a name="key23"></a>Pour revenir à notre environnement de départ, nous pouvons utiliser
+la fonction <code>detach</code> (sans argument). Mais d’abord, nous avons à ajouter le
+système de validation au formulaire.</p></div><hr/><div class="block"><p>Toute balise HTML affichée dans un document a un objet JavaScript associé. Ces
+objets peuvent être utilisés pour inspecter et manipuler presque tout aspect du
+document. Dans ce chapitre, nous allons travailler avec les objets pour
+formulaires et champs de formulaire. Le <a href="chapter12.html">chapitre 12</a> traite de façon plus détaillée
+de ces objets.</p><p><a name="key24"></a>L’objet <code>document</code> a une propriété nommée <code>forms</code>, qui
+contient des liens vers tous les formulaires du document, par nom. Notre
+formulaire a une propriété <code>name=&quot;info_utilisateur&quot;</code>, afin d’être trouvable
+sous la propriété <code>info_utilisateur</code>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">formulaireUtilisateur</span> = <span class="variable">document</span>.<span class="property">forms</span>.<span class="property">info_utilisateur</span>;
+<span class="variable">print</span>(<span class="variable">formulaireUtilisateur</span>.<span class="property">method</span>);
+<span class="variable">print</span>(<span class="variable">formulaireUtilisateur</span>.<span class="property">action</span>);</pre><p>Dans ce cas, les propriétés <code>method</code> et <code>action</code> qui ont été données à la
+balise HTML <code>form</code> sont aussi présentes comme propriétés de l’objet JavaScript.
+C’est souvent le cas, mais pas toujours: Certaines propriétés HTML sont
+orthographiées différemment en JavaScript, d’autres ne sont pas présentes du
+tout. Le <a href="chapter12.html">chapitre 12</a> exposera un moyen d’obtenir toutes les propriétés.</p><p>L’objet de la balise <code>form</code> a une propriété <code>elements</code>, qui se réfère a un
+objet contenant les champs du formulaire, par nom.</p><pre class="code"><span class="keyword">var</span> <span class="variable">champsNom</span> = <span class="variable">formulaireUtilisateur</span>.<span class="property">elements</span>.<span class="property">nom</span>;
+<span class="variable">champsNom</span>.<span class="property">value</span> = <span class="string">&quot;Eugène&quot;</span>;</pre><p>Les objets d’entrée texte ont une propriété <code>value</code>, qui peut être utilisée
+pour lire et changer leur contenu. Si vous regardez la fenêtre du formulaire
+après le fonctionnement du code ci-dessus, vous verrez que le nom a été rempli.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 11.1</div><div class="exercise"><p>Être capable de lire les valeurs des champs du formulaire rend possible
+l’écriture d’une fonction <code>valideInfo</code>, qui prend un objet formulaire comme
+argument et retourne une valeur booléenne: <code>true</code> quand le champ <code>nom</code> n’est
+pas vide et le champ <code>email</code> contient quelque chose qui ressemble à une adresse
+électronique, sinon <code>false</code>. Écrivez cette fonction.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">valideInfo</span>(<span class="variabledef">formulaire</span>) {
+  <span class="keyword">return</span> <span class="localvariable">formulaire</span>.<span class="property">elements</span>.<span class="property">nom</span>.<span class="property">value</span> != <span class="string">&quot;&quot;</span> &amp;&amp;
+    <span class="string">/^.+@.+\.\w{2,3}$/</span>.<span class="property">test</span>(<span class="localvariable">formulaire</span>.<span class="property">elements</span>.<span class="property">email</span>.<span class="property">value</span>);
+}
+
+<span class="variable">show</span>(<span class="variable">valideInfo</span>(<span class="variable">document</span>.<span class="property">forms</span>.<span class="property">info_utilisateur</span>));</pre><p>Vous avez bien pensé à utiliser une expression rationnelle pour la vérification
+du courriel, n’est-ce pas&nbsp;?</p></div></div><hr/><div class="block"><p>Tout ce que nous avons à faire maintenant est de déterminer ce qui arrive quand
+les gens cliquent sur le bouton «&nbsp;Envoyer&nbsp;!&nbsp;». Pour l’instant, il ne se passe
+rien du tout. Cela sera corrigé en réglant sa propriété <code>onclick</code>.</p><pre class="code"><span class="variable">formulaireUtilisateur</span>.<span class="property">elements</span>.<span class="property">envoyer</span>.<span class="property">onclick</span> = <span class="keyword">function</span>() {
+  <span class="variable">alert</span>(<span class="string">&quot;Clic&nbsp;!&quot;</span>);
+};</pre><p>Tout comme les actions données à <code>setInterval</code> et <code>setTimeout</code> (<a href="chapter8.html">chapitre 8</a>), la
+valeur stockée dans une propriété <a name="key25"></a><code>onclick</code> (ou similaire) peut être soit une
+fonction soit une chaîne de code JavaScript. Dans ce cas, nous lui donnons une
+fonction qui ouvre une fenêtre d’alerte. Essayez de la sélectionner.</p></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 11.2</div><div class="exercise"><p>Finissez le validateur de formulaire en donnant à la propriété <code>onclick</code> du
+bouton une nouvelle valeur ―&nbsp;une fonction qui vérifie le formulaire, le soumet
+quand il est valide, ou génère un message d’avertissement quand il ne l’est
+pas. Il est utile de savoir que les objets formulaires ont une méthode
+<a name="key26"></a><code>submit</code> qui ne prend aucun paramètre et soumet le formulaire.</p></div><div class="solution"><pre class="code"><span class="variable">formulaireUtilisateur</span>.<span class="property">elements</span>.<span class="property">envoyer</span>.<span class="property">onclick</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (<span class="variable">valideInfo</span>(<span class="variable">formulaireUtilisateur</span>))
+    <span class="variable">formulaireUtilisateur</span>.<span class="property">submit</span>();
+  <span class="keyword">else</span>
+    <span class="variable">alert</span>(<span class="string">&quot;Donnez-nous un nom et une adresse électronique valides&nbsp;!&quot;</span>);
+};</pre></div></div><hr/><div class="block"><p>Une autre astuce liée aux entrées de formulaire, ainsi que d’autres choses qui
+peuvent être «&nbsp;sélectionnées&nbsp;», comme les boutons ou liens, est la méthode
+<a name="key27"></a><code>focus</code>. Quand vous savez avec certitude qu’un utilisateur voudra saisir dans
+un certain champ dès qu’il entre dans la page, vous pouvez faire en sorte que
+votre script y place le curseur, afin qu’il n’ait pas à cliquer pour le
+sélectionner d’une quelconque manière.</p><pre class="code"><span class="variable">formulaireUtilisateur</span>.<span class="property">elements</span>.<span class="property">nom</span>.<span class="property">focus</span>();</pre><p>Puisque le formulaire est dans une autre fenêtre, il n’est pas forcément
+évident que quelque chose ait été sélectionné, cela dépend du navigateur que
+vous utilisez. Certaines pages vont aussi automatiquement faire passer le
+curseur sur le champ suivant quand il semble que vous ayez fini de remplir un
+champ ―&nbsp;par exemple, quand vous tapez un code postal. Ceci ne devrait pas être
+fait de manière exagérée&nbsp;― cela donne à la page un comportement auquel
+l’utilisateur ne s’attend pas. S’il est habitué à la tabulation pour déplacer
+le curseur manuellement ou a fait une erreur sur le dernier caractère et veut
+l’enlever, ce curseur sauteur magique est très ennuyeux.</p></div><hr/><div class="block"><pre class="code"><span class="variable">detach</span>();</pre><p>Testez le validateur. Quand vous entrez une information valide et cliquez sur
+le bouton, le formulaire devrait se soumettre. Si la console y est toujours
+attachée, cela la fera se détacher, car la page se rechargera et
+l’environnement JavaScript sera remplacé par un nouveau.</p><p>Si vous n’avez pas encore clos la fenêtre de formulaire, ceci la fermera.</p><pre class="code"><span class="variable">formulaire</span>.<span class="property">close</span>();</pre></div><hr/><div class="block"><p>Cela peut sembler simple, mais je vous assure que la programmation côté client
+n’est pas de tout repos. Cela peut même parfois être une épreuve douloureuse.
+Pourquoi&nbsp;? Parce que les programmes qui sont supposés tourner sur l’ordinateur
+client doivent généralement fonctionner dans les navigateurs les plus
+populaires. Chacun de ces navigateurs a tendance à fonctionner de manière
+légèrement différente. Pour rendre les choses plus complexes, chacun d’entre
+eux contient son propre ensemble de problèmes. Ne présumez pas qu’un programme
+est sans bug juste parce qu’il a été fait par une entreprise qui pèse plusieurs
+milliards de dollars. Donc il nous revient à nous, développeurs web, de
+rigoureusement tester nos programmes, d’arriver à comprendre ce qui va pas et
+de trouver des manières de contourner les problèmes.</p><p>Certains d’entre vous peuvent penser «&nbsp;Je vais juste remonter tous les
+problèmes/bugs que je trouve aux fabricants du navigateur et ils vont
+certainement les résoudre immédiatement&nbsp;». Ces gens se préparent à une grosse
+déception. Les plus récentes versions d’Internet Explorer, le navigateur qui
+est toujours utilisé par quelque soixante dix pour cent des surfeurs de la
+toile (et que chaque développeur web aime à taquiner) contient toujours des
+bugs qui sont connus depuis plus de cinq ans. De sérieux bugs en plus.</p><p>Mais que cela ne vous décourage pas. Avec un état d’esprit du genre
+obsessionnel-compulsif comme il convient, de tels problèmes lancent des défis
+merveilleux. Et pour ceux d’entre vous qui n’aiment pas perdre leur temps, être
+prudent et éviter les recoins obscurs des fonctionnalités du navigateur vous
+évitera de tomber sur des problèmes trop embarrassants.</p></div><hr/><div class="block"><p>À part les bugs, les différences de conception d’interface entre navigateurs
+produisent un défi intéressant. La situation en cours ressemble à quelque chose
+comme ceci : d’un côté, il y a tous les «&nbsp;petits&nbsp;» navigateurs : Firefox,
+Safari et Opéra sont les plus importants mais il en existe d’autres. Ces
+navigateurs font tous un effort raisonnable pour adhérer à un ensemble de
+standards qui ont été développés ou sont en train d’être développés, par le
+W3C, une organisation qui essaie de faire de la toile un environnement moins
+désordonné en définissant des interfaces standards pour des choses comme ceci.
+D’un autre côté, il y a Internet Explorer, le navigateur de Microsoft, qui a
+grandi jusqu’à dominer à une époque quand la plupart de ces standards
+n’existaient pas vraiment encore et n’a guère fait d’efforts pour s’ajuster à
+ce que les autres font.</p><p>Dans certains domaines, tels que la façon dont le contenu d’un document HTML
+peut être interprété par le JavaScript (<a href="chapter12.html">chapitre 12</a>), les standards sont basés sur
+la méthode inventée par Internet Explorer et les choses marchent plus ou moins
+de la même façon pour tous les navigateurs. Dans d’autres domaines, tels que la
+façon dont les évènements sont gérés (clic de souris, touche du clavier
+enfoncée et autres), Internet Explorer fonctionne différemment des autres.</p><p>Pendant longtemps, en partie à cause du manque de jugeote du développeur
+JavaScript moyen, en partie à cause des incompatibilités entre navigateurs qui
+étaient bien pires quand les navigateurs comme Internet Explorer versions 4 et
+5 et les vieilles versions de Netscape étaient encore fréquentes, la manière
+habituelle de gérer de telles différences était de détecter quel navigateur
+l’utilisateur faisait tourner et de disperser dans le code des solutions
+alternatives pour chaque navigateur ―&nbsp;si c’est Internet Explorer, fais ceci,
+si c’est Netscape, fais cela, et si c’est n’importe quel autre navigateur
+auquel nous n’avons pas pensé, garde l’espoir que tout se passera pour le
+mieux. Vous pouvez imaginer à quel point ces programmes étaient hideux, obscurs
+et longs.</p><p>Nombre de sites pouvaient aussi refuser de se charger quand ils étaient ouverts
+dans un navigateur qui n’était «&nbsp;pas supporté&nbsp;». Cela obligea quelques-uns des
+navigateurs mineurs à ravaler leur fierté et prétendre qu’ils étaient Internet
+Explorer, juste assez pour être autorisés à charger de telles pages. Les
+propriétés de l’objet <a name="key28"></a><code>navigator</code> contiennent des informations sur le
+navigateur dans lequel une page a été chargée, mais à cause de ces mensonges
+cette information n’est pas particulièrement fiable. Voyez ce que dit le
+vôtre<a class="footref" href="#footnote2">2</a>:</p><pre class="code"><span class="variable">forEachIn</span>(<span class="variable">navigator</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+  <span class="variable">print</span>(<span class="localvariable">nom</span>, <span class="string">&quot; = &quot;</span>, <span class="localvariable">valeur</span>);
+});</pre><p>Une meilleure approche consiste à essayer «&nbsp;d’isoler&nbsp;» nos programmes des
+différences entre navigateurs. Si vous devez, par exemple, en découvrir plus
+sur un évènement, comme le clic que nous avons géré en modifiant la propriété
+<code>onclick</code> de notre bouton d’envoi, vous devez regarder l’objet de
+l’environnement global nommé <code>event</code> dans Internet Explorer, mais vous devez
+utiliser le premier argument passé à la fonction gérant cet évènement dans les
+autres navigateurs. Pour gérer ceci, et nombre d’autres différences liées aux
+évènements, on peut écrire une fonction d’aide pour attacher les évènements aux
+choses, elle prendra soin de toute la plomberie et permettra aux fonctions de
+gestion d’évènements d’être les mêmes pour tous les navigateurs. Dans le
+<a href="chapter13.html">chapitre 13</a> nous écrirons une fonction de ce genre.<a class="footref" href="#footnote3">3</a></p></div><hr/><div class="block"><p>Ces chapitres ne donneront qu’une introduction superficielle du sujet des
+interfaces des navigateurs. Elles ne sont le principal sujet de ce livre et
+elles sont suffisamment complexes pour remplir un livre par elles-mêmes. Quand
+vous aurez compris les bases de ces interfaces (et compris quelque chose à
+propos d’HTML), ce ne sera pas trop difficile de rechercher des informations
+spécifiques en ligne. Les documentations des interfaces des navigateurs
+<a href="http://www.mozilla.org/docs/dom/domref/dom_shortTOC.html">Firefox</a> et
+<a href="http://msdn2.microsoft.com/library/yek4tbz0p.aspx">Internet Explorer</a>
+constituent de bons points de départ.</p><p>Les informations dans les prochains chapitres n’aborderont pas les caprices des
+navigateurs de «&nbsp;génération antérieure&nbsp;». Elles parlent d’Internet Explorer 6,
+Firefox 1.5, Opera 9, Safari 3, ou n’importe quelle version plus récente de ces
+mêmes navigateurs. La plus grande part sera aussi applicable aux modernes mais
+obscurs navigateurs comme Konqueror, mais cela n’a pas été complètement
+vérifié. Heureusement, ces navigateurs de génération antérieure ont plus ou
+moins disparu, et ne sont plus guère utilisés.</p><p>Il y a, malgré tout, un groupe d’utilisateurs web qui vont toujours utiliser un
+navigateur sans JavaScript. Une large part de ce groupe est constitué de
+personnes utilisant un navigateur graphique usuel, mais avec JavaScript
+désactivé pour des raisons de sécurité. Ensuite ceux qui utilisent des
+navigateurs textes, ou navigateurs pour personnes aveugles. Quand on travaille
+sur un site «&nbsp;sérieux&nbsp;», c’est une bonne idée de commencer par un simple
+système HTML qui fonctionne et ensuite d’ajouter des bidouilles non
+essentielles et des trucs pratiques avec JavaScript.</p></div><ol class="footnotes"><li><a name="footnote1"></a>La valeur qu’un caractère prend est décidée par le standard ASCII, qui
+assigne les nombres 0 à 127 à un ensemble de lettres et symboles utilisés par
+l’alphabet Latin. Ce standard est un précurseur du standard Unicode mentionné
+dans le <a href="chapter2.html">chapitre 2</a>.</li><li><a name="footnote2"></a>Certains navigateurs semblent cacher les propriétés de l’objet <code>navigator</code>,
+dans ce cas ce qui suit n’affichera rien.</li><li><a name="footnote3"></a>Note: Les caprices de navigateur mentionnés dans les chapitres suivants font
+référence à l’état en cours en début 2007, et peuvent ne plus être aussi précis
+sur certains points.</li></ol><div class="navigation"><a href="chapter10.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter12.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

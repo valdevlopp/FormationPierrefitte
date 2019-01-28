@@ -1,0 +1,717 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Structures de données : objets et tableaux -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'data';</script><div class="navigation"><a href="chapter3.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter5.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 4: </span>Structures de données : objets et tableaux</h1><div class="block"><p>Ce chapitre sera consacré à la résolution de quelques problèmes simples. En
+chemin, nous allons étudier deux nouveaux types de valeurs, les tableaux et les
+objets, et quelques techniques les concernant.</p><p>Considérons la situation suivante : votre tante Émilie l’excentrique, dont la
+rumeur dit qu’elle vit avec cinquante chats (en fait personne n’arrive à les
+compter), vous envoie régulièrement des courriels pour vous tenir au courant de
+ses exploits. Ils sont de la forme suivante :</p><blockquote>Mon cher neveu,
+Ta mère m’a dit que tu t’es mis au parachutisme. Est-ce que c’est vrai&nbsp;? Fais
+bien attention à toi, jeune homme&nbsp;! Tu te souviens de ce qui est arrivé à mon
+mari&nbsp;? Et c’était seulement du deuxième étage&nbsp;!<br/><br/>Quoi qu’il en soit, les choses sont très intéressantes de mon côté. J’ai
+passé toute la semaine à essayer d’attirer l’attention de M. Drake, le gentil
+monsieur qui a emménagé juste à côté, mais je pense qu’il a peur des chats. À
+moins qu’il n’y soit allergique&nbsp;? Je vais essayer de poser Gros Igor sur son
+épaule la prochaine fois qu’il vient. Je suis curieuse de voir le résultat.<br/><br/>Par ailleurs, l’arnaque dont je t’ai parlé fonctionne mieux que prévu. J’ai
+déjà récupéré cinq «&nbsp;paiements&nbsp;» et seulement une seule réclamation. Je
+commence malgré tout à avoir quelques remords. Et puis tu as sans doute
+raison, ça doit être illégal d’une manière ou d’une autre.<br/><br/>(etc.)<br/><br/>Grosses bises,
+Tante Émilie<br/><br/>Décédé le 27/04/2006 : Black Leclère<br/><br/>Est né le 05/04/2006 (mère, Lady Pénélope) : Lion Rouge, Docteur Hobbles III,
+Petit Iroquois</blockquote><p>Pour amuser cette vieille dame, vous voudriez garder une trace de la généalogie
+de ses chats, pour pouvoir ajouter des commentaires comme «&nbsp;P.-S. J’espère que
+Docteur Hobbles II a bien fêté son anniversaire samedi&nbsp;!&nbsp;», ou bien «&nbsp;Comment
+va cette vieille Lady Pénélope&nbsp;? Elle a cinq ans maintenant, n’est-ce pas&nbsp;?&nbsp;»,
+en évitant de préférence de demander des nouvelles des chats décédés. Vous avez
+une grande quantité de vieux courriels de votre tante et, par chance, elle est
+très constante dans sa manière de donner les renseignements sur les naissances
+et décès des chats à la fin de ses courriels, toujours dans le même format.</p><p>Vous n’avez pas envie de parcourir à la main tous ces messages. Heureusement,
+nous avions justement besoin d’un exemple, nous allons donc écrire un programme
+qui va faire le travail pour nous. Pour commencer, nous allons écrire un
+programme qui va nous donner la liste des chats qui sont toujours vivants à la
+fin du dernier courriel.</p><p>Avant que vous ne posiez la question, au début de cette correspondance, la
+tante Émilie n’avait qu’un seul chat : Spot (elle était encore assez
+conformiste à cette époque).</p></div><hr/><div class="block"><div class="picture"><img src="img/eyes.png"/></div></div><hr/><div class="block"><p>Il est généralement préférable d’avoir une idée de départ sur ce que va faire
+un programme avant de se mettre à l’écrire… Voici le plan :</p><ol><li>Commencer par un ensemble de noms de chats ne comprenant que «&nbsp;Spot&nbsp;».</li><li>Parcourir chaque courriel dans l’archive dans l’ordre chronologique.</li><li>Chercher les paragraphes qui commencent par «&nbsp;Est né le&nbsp;» ou «&nbsp;Décédé le&nbsp;».</li><li>Ajouter les noms trouvés dans les paragraphes qui commencent par «&nbsp;Est né le&nbsp;» à l’ensemble de noms.</li><li>Supprimer les noms de chats trouvés dans les paragraphes qui commencent par «&nbsp;Décédé le&nbsp;» de notre ensemble.</li></ol><p>On extraira les noms d’un paragraphe de la façon suivante :</p><ol><li>Trouver les deux-points (:) dans le paragraphe.</li><li>Prendre la partie après ce signe.</li><li>Dans cette partie, séparer les noms en cherchant les virgules.</li></ol><p>Cet énoncé d’exercice peut rendre nécessaire d’oublier quelques instants les
+exceptions possibles et d’accepter aveuglément que tante Émilie utilise
+toujours le même format d’écriture, qu’elle n’oublie jamais un nom de chat, ni
+ne fait de faute de frappe. Mais votre tante est comme ça et ça tombe bien pour
+nous.</p></div><hr/><div class="block"><p>D’abord, je vais vous expliquer les <a name="key1"></a>propriétés. Beaucoup de valeurs en
+JavaScript ont d’autres valeurs qui leur sont associées. Ces associations sont
+appelées propriétés. Chaque chaîne de caractères a une propriété appelée
+<a name="key2"></a><code>length</code>, (longueur), qui correspond à un nombre, la quantité de caractères
+dans cette chaîne.</p><p>On peut accéder aux <a name="key3"></a>propriétés de deux manières :</p><pre class="code"><span class="keyword">var</span> <span class="variable">texte</span> = <span class="string">&quot;brume pourpre&quot;</span>;
+<span class="variable">show</span>(<span class="variable">texte</span>[<span class="string">&quot;length&quot;</span>]);
+<span class="variable">show</span>(<span class="variable">texte</span>.<span class="property">length</span>);</pre><p>La deuxième manière est un raccourci de la première et ne fonctionne que
+lorsque le nom de la propriété s’écrit comme un nom de variable ―&nbsp;lorsqu’il
+n’y a pas d’espace ou de symbole et lorsqu’elle ne commence pas par un chiffre.</p><p>Les valeurs <code>null</code> et <code>undefined</code> n’ont pas de propriété. Essayez de lire des
+propriétés de ces valeurs donnera une erreur. Essayez le code suivant, juste
+pour voir le type de message d’erreur que votre navigateur va retourner dans ce
+cas de figure (dans certains navigateurs, ce message sera assez mystérieux).</p><pre class="code invalid"><span class="keyword">var</span> <span class="variable">rienDuTout</span> = <span class="atom">null</span>;
+<span class="variable">show</span>(<span class="variable">rienDuTout</span>.<span class="property">length</span>);</pre></div><hr/><div class="block"><p>Les propriétés d’une chaîne de caractères ne peuvent pas être changées. Elles
+sont plus nombreuses que la seule longueur <code>length</code>, comme nous allons le voir,
+mais vous ne pouvez ajouter ni supprimer aucune propriété.</p><p>C’est différent avec les valeurs du type <a name="key4"></a>object. Leur rôle principal
+est de conserver d’autres valeurs. Ils ont, en quelque sorte, leur propre jeu
+de «&nbsp;tentacules&nbsp;» sous forme de propriétés. Vous pouvez les modifier, les
+supprimer ou en ajouter de nouvelles.</p><p><a name="key5"></a>Un objet peut s’écrire de la façon suivante :</p><pre class="code"><span class="keyword">var</span> <span class="variable">chat</span> = {<span class="property">couleur</span>: <span class="string">&quot;gris&quot;</span>, <span class="property">nom</span>: <span class="string">&quot;Spot&quot;</span>, <span class="property">taille</span>: <span class="atom">46</span>};
+<span class="variable">chat</span>.<span class="property">taille</span> = <span class="atom">47</span>;
+<span class="variable">show</span>(<span class="variable">chat</span>.<span class="property">taille</span>);
+<span class="keyword">delete</span> <span class="variable">chat</span>.<span class="property">taille</span>;
+<span class="variable">show</span>(<span class="variable">chat</span>.<span class="property">taille</span>);
+<span class="variable">show</span>(<span class="variable">chat</span>);</pre><p>Comme les variables, chaque propriété attachée à un objet a un nom sous forme
+d’une chaîne de caractères. La première instruction crée un objet dans lequel
+la propriété <code>&quot;couleur&quot;</code> contient la chaîne <code>&quot;gris&quot;</code>, la propriété <code>&quot;nom&quot;</code> est
+liée à la chaîne <code>&quot;Spot&quot;</code>, et la propriété <code>&quot;taille&quot;</code> fait référence au nombre
+<code>46</code>. La deuxième ligne modifie la propriété <code>taille</code> en lui donnant une
+nouvelle valeur, ce qui se fait de la même manière que pour la modification
+d’une variable.  </p><p>Le mot-clé <a name="key6"></a><code>delete</code> supprime les propriétés. Essayer de lire une propriété
+qui n’existe pas donnera la valeur <code>undefined</code>.</p><p>Si une propriété qui n’existe pas encore est affectée avec l’opérateur <a name="key7"></a><code>=</code>,
+elle est ajoutée à l’objet.</p><pre class="code"><span class="keyword">var</span> <span class="variable">vide</span> = {};
+<span class="variable">vide</span>.<span class="property">plusVraiment</span> = <span class="atom">1000</span>;
+<span class="variable">show</span>(<span class="variable">vide</span>.<span class="property">plusVraiment</span>);</pre><p>Les propriétés dont le nom ne pourrait pas être une variable doivent être mises
+entre guillemets au moment de la création de l’objet et utilisées avec des
+crochets :</p><pre class="code"><span class="keyword">var</span> <span class="variable">truc</span> = {<span class="string">&quot;gabba gabba&quot;</span>: <span class="string">&quot;hey&quot;</span>, <span class="string">&quot;5&quot;</span>: <span class="atom">10</span>};
+<span class="variable">show</span>(<span class="variable">truc</span>[<span class="string">&quot;5&quot;</span>]);
+<span class="variable">truc</span>[<span class="string">&quot;5&quot;</span>] = <span class="atom">20</span>;
+<span class="variable">show</span>(<span class="variable">truc</span>[<span class="atom">2</span> + <span class="atom">3</span>]);
+<span class="keyword">delete</span> <span class="variable">truc</span>[<span class="string">&quot;gabba gabba&quot;</span>];</pre><p>Comme vous pouvez le voir, on peut mettre n’importe quelle expression entre les
+crochets. Elle sera convertie en une chaîne pour définir le nom de la
+propriété. On peut aussi utiliser des variables pour donner un nom à une
+propriété :</p><pre class="code"><span class="keyword">var</span> <span class="variable">nomDePropriete</span> = <span class="string">&quot;length&quot;</span>;
+<span class="keyword">var</span> <span class="variable">texte</span> = <span class="string">&quot;grandeLigne&quot;</span>;
+<span class="variable">show</span>(<span class="variable">texte</span>[<span class="variable">nomDePropriete</span>]);</pre><p>L’opérateur <a name="key8"></a><code>in</code> peut servir à tester si un objet possède une certaine
+propriété. Son résultat est un booléen.</p><pre class="code"><span class="keyword">var</span> <span class="variable">poupeeRusse</span> = {};
+<span class="variable">poupeeRusse</span>.<span class="property">contenu</span> = <span class="variable">poupeeRusse</span>;
+<span class="variable">show</span>(<span class="string">&quot;contenu&quot;</span> in <span class="variable">poupeeRusse</span>);
+<span class="variable">show</span>(<span class="string">&quot;contenu&quot;</span> in <span class="variable">poupeeRusse</span>.<span class="property">contenu</span>);</pre></div><hr/><div class="block"><p>Quand les valeurs d’un objet sont affichées sur la console, on peut cliquer à
+la souris pour inspecter leurs propriétés. La fenêtre de sortie devient une
+fenêtre «&nbsp;inspecteur&nbsp;». Le petit «&nbsp;x&nbsp;» en haut à droite s’utilise pour
+retourner à la fenêtre de sortie et la flèche gauche permet de retourner aux
+propriétés de l’objet inspecté.  </p><pre class="code"><span class="variable">show</span>(<span class="variable">poupeeRusse</span>);</pre></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 4.1</div><div class="exercise"><p>La solution pour le problème des chats passe par un ensemble de noms. Un
+ensemble (ou «&nbsp;<a name="key9"></a>set&nbsp;») est un groupe de valeurs dans lequel aucune valeur ne
+peut apparaître plus d’une fois. Si les noms de chats sont des chaînes de
+caractères, pouvez-vous imaginer une façon pour qu’un objet devienne un
+ensemble de noms&nbsp;?</p><p>Écrivez maintenant la façon dont un nom peut être ajouté à cet ensemble,
+comment on peut le supprimer et comment on peut vérifier si un certain nom est
+bien présent dans l’ensemble.  </p></div><div class="solution"><p>Une solution consiste à mémoriser le contenu de l’ensemble sous la forme de
+propriétés d’un objet. Pour ajouter un nom, on crée une propriété avec ce nom
+en lui affectant une valeur, n’importe laquelle. Pour supprimer un nom, on
+supprimera la propriété de l’objet. L’opérateur <code>in</code> sera utilisé pour savoir
+si une certaine propriété fait partie de l’ensemble<a class="footref" href="#footnote1">1</a>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">set</span> = {<span class="string">&quot;Spot&quot;</span>: <span class="atom">true</span>};
+<span class="comment">// Ajoute &quot;Croc Blanc&quot; à l’ensemble</span>
+<span class="variable">set</span>[<span class="string">&quot;Croc Blanc&quot;</span>] = <span class="atom">true</span>;
+<span class="comment">// Supprime &quot;Spot&quot;</span>
+<span class="keyword">delete</span> <span class="variable">set</span>[<span class="string">&quot;Spot&quot;</span>];
+<span class="comment">// Regarde si &quot;Asoka&quot; est dans l’ensemble</span>
+<span class="variable">show</span>(<span class="string">&quot;Asoka&quot;</span> in <span class="variable">set</span>);</pre></div></div><hr/><div class="block"><p>Les valeurs des <a name="key10"></a>objets peuvent apparemment changer. Les types de
+valeurs vues dans le <a href="chapter2.html">chapitre 2</a> sont toutes invariables, il n’est pas possible
+de changer une valeur existante pour ces types de données. Vous pouvez les
+associer ou en tirer de nouvelles valeurs, mais lorsque vous prenez une chaîne
+de caractères particulière, le texte à l’intérieur ne peut pas être modifié.
+Avec les objets, d’un autre côté, le contenu d’une valeur peut être modifié en
+changeant ses propriétés.</p><p>Lorsque nous considérons deux nombres, <code>120</code> et <code>120</code>, il est possible dans
+tous les cas pratiques de les considérer comme des nombres identiques. Avec des
+objets, il y a une différence importante entre avoir deux «&nbsp;références&nbsp;» du
+même objet et avoir deux objets distincts qui possèdent les mêmes propriétés.
+Considérons le code suivant :</p><pre class="code"><span class="keyword">var</span> <span class="variable">objet1</span> = {<span class="property">valeur</span>: <span class="atom">10</span>};
+<span class="keyword">var</span> <span class="variable">objet2</span> = <span class="variable">objet1</span>;
+<span class="keyword">var</span> <span class="variable">objet3</span> = {<span class="property">valeur</span>: <span class="atom">10</span>};
+
+<span class="variable">show</span>(<span class="variable">objet1</span> == <span class="variable">objet2</span>);
+<span class="variable">show</span>(<span class="variable">objet1</span> == <span class="variable">objet3</span>);
+
+<span class="variable">objet1</span>.<span class="property">valeur</span> = <span class="atom">15</span>;
+<span class="variable">show</span>(<span class="variable">objet2</span>.<span class="property">valeur</span>);
+<span class="variable">show</span>(<span class="variable">objet3</span>.<span class="property">valeur</span>);</pre><p><code>objet1</code> et <code>objet2</code> sont deux variables attachées à la <em>même</em> valeur. Il n’y a
+en fait qu’un seul objet, c’est pourquoi en changeant <code>objet1</code> on change
+également la valeur de <code>objet2</code>. La variable <code>objet3</code> pointe vers un autre
+objet qui contient au départ la même propriété que <code>objet1</code> mais elle a une
+existence distincte.</p><p>L’opérateur JavaScript <a name="key11"></a><code>==</code>, lorsqu’il compare des objets, ne retournera la
+valeur booléenne <code>true</code> que si chacune des valeurs qu’on lui donne à comparer
+sont exactement les mêmes. Comparer des objets différents ayant des contenus
+identiques donnera le résultat <code>false</code>. C’est utile dans certaines situations,
+mais peu adapté à d’autres.</p></div><hr/><div class="block"><p>Les valeurs d’un objet peuvent jouer de nombreux rôles. Se comporter comme un
+ensemble n’est que l’un d’entre eux. Nous allons voir d’autres utilisations
+dans ce chapitre et le <a href="chapter8.html">chapitre 8</a> montrera d’autres façons importantes d’utiliser
+les objets.</p><p>Dans le plan d’action pour le problème des chats ―&nbsp;en fait, appelons-le un
+<em>algorithme</em> au lieu d’un plan, cela nous donne l’impression qu’on sait de quoi
+on parle&nbsp;― dans l’algorithme, on parle de parcourir chaque courriel contenu
+dans une archive. Mais comment se présente cette archive&nbsp;? Et d’où vient-elle&nbsp;?</p><p>Ne vous inquiétez pas de la deuxième question pour le moment. Le <a href="chapter14.html">chapitre 14</a>
+explique quelques-unes des possibilités pour importer des données dans vos
+programmes. Pour l’instant, on dira que les courriels sont déjà là, comme par
+magie. La magie est parfois très facile, avec les ordinateurs.</p></div><hr/><div class="block"><p>La façon dont l’archive est enregistrée reste une question pertinente. Elle
+contient quantité de courriels. Un courriel peut être vu comme une chaîne de
+caractères, c’est évident. Toute l’archive pourrait être mise dans une énorme
+chaîne de caractères mais ce ne serait pas pratique. Ce qu’il nous faut, c’est
+une structure de chaînes de caractères distinctes.</p><p>Les objets sont justement utilisés pour structurer des choses. On pourrait très
+bien créer un objet comme celui-ci :</p><pre class="code"><span class="keyword">var</span> <span class="variable">archiveDeMessages</span> = {<span class="string">&quot;le premier courriel&quot;</span>: <span class="string">&quot;Mon cher neveu, …&quot;</span>,
+                   <span class="string">&quot;le deuxième courriel&quot;</span>: <span class="string">&quot;…&quot;</span>
+                   <span class="comment">/* et ainsi de suite… */</span>};</pre><p>Mais parcourir les courriels du début à la fin serait difficile ―&nbsp;comment le
+programme peut-il deviner le nom de ces propriétés&nbsp;? La solution est d’utiliser
+des noms de propriétés plus prévisibles :</p><pre class="code"><span class="keyword">var</span> <span class="variable">archiveDeMessages</span> = {<span class="atom">0</span>: <span class="string">&quot;Mon cher neveu, … (courriel numéro 1)&quot;</span>,
+                   <span class="atom">1</span>: <span class="string">&quot;(courriel numéro 2)&quot;</span>,
+                   <span class="atom">2</span>: <span class="string">&quot;(courriel numéro 3)&quot;</span>};
+
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">courant</span> = <span class="atom">0</span>; <span class="variable">courant</span> in <span class="variable">archiveDeMessages</span>; <span class="variable">courant</span>++)
+  <span class="variable">print</span>(<span class="string">&quot;Traitement du courriel #&quot;</span>, <span class="variable">courant</span>, <span class="string">&quot;: &quot;</span>, <span class="variable">archiveDeMessages</span>[<span class="variable">courant</span>]);</pre><p>La chance veut qu’il existe un type d’objet particulier qui corresponde
+exactement à ce type de besoin. Ce sont les <a name="key12"></a>tableaux et ils fournissent des
+commodités très utiles, comme <a name="key13"></a><code>length</code> (longueur), une propriété qui contient
+le nombre d’éléments dans le tableau et bien d’autres fonctions utiles pour ce
+type de structure.</p><p><a name="key14"></a>Pour créer de nouveaux tableaux on utilise des crochets (<code>[</code> et <code>]</code>):</p><pre class="code"><span class="keyword">var</span> <span class="variable">archiveDeMessages</span> = [<span class="string">&quot;courriel un&quot;</span>, <span class="string">&quot;courriel deux&quot;</span>, <span class="string">&quot;courriel trois&quot;</span>];
+
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">courant</span> = <span class="atom">0</span>; <span class="variable">courant</span> &lt; <span class="variable">archiveDeMessages</span>.<span class="property">length</span>; <span class="variable">courant</span>++)
+  <span class="variable">print</span>(<span class="string">&quot;Traitement du courriel #&quot;</span>, <span class="variable">courant</span>, <span class="string">&quot;: &quot;</span>, <span class="variable">archiveDeMessages</span>[<span class="variable">courant</span>]);</pre><p>Dans cet exemple, le nombre d’éléments n’est plus spécifié explicitement. Le
+premier a automatiquement le numéro 0, le deuxième le numéro 1 et ainsi de
+suite.</p><p>Pourquoi commencer à 0&nbsp;? Dans la vie courante on compte d’habitude à partir de
+1. Aussi étrange que cela paraisse, la numérotation à partir de 0 est souvent
+plus pratique pour programmer. Faites avec pour l’instant, vous allez vous y
+faire.</p><p>Commencer par l’élément 0 veut aussi dire que dans une structure qui a <code>X</code>
+éléments, le dernier élément sera trouvé à la position <code>X - 1</code>. C’est pourquoi
+la boucle <code>for</code> dans notre exemple teste la valeur <code>courant &lt;
+archiveDeMessages.length</code>. Il n’y a pas d’élément à la position
+<code>archiveDeMessages.length</code>, donc dès que <code>courant</code> atteint cette valeur, on
+arrête la boucle.</p></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 4.2</div><div class="exercise"><p>Écrivez une fonction nommée <code>serie</code> qui prend un argument, un nombre positif et
+retourne un tableau contenant chaque nombre de 0 jusqu’au nombre donné en
+paramètre inclus.</p><p>Un tableau vide peut être créé en tapant simplement <code>[]</code>. Souvenez-vous que
+pour ajouter une propriété à un tableau ou à un objet, il suffit d’affecter une
+valeur à cette propriété avec l’opérateur <code>=</code>. La propriété <code>length</code> est mise à
+jour automatiquement quand des éléments sont ajoutés.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">serie</span>(<span class="variabledef">max</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt;= <span class="localvariable">max</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">resultat</span>[<span class="localvariable">i</span>] = <span class="localvariable">i</span>;
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}
+<span class="variable">show</span>(<span class="variable">serie</span>(<span class="atom">4</span>));</pre><p>Au lieu de nommer la variable de boucle <code>compteur</code> ou <code>courant</code>, comme je l’ai
+fait jusqu’à présent, elle s’appelle désormais simplement <code>i</code>. L’utilisation
+d’une seule lettre, habituellement <code>i</code>, <code>j</code> ou <code>k</code> pour les variables de boucle
+est une habitude très répandue en programmation. Son origine tient presque à de
+la paresse : on préfère taper un caractère que sept et des noms comme
+<code>compteur</code> et <code>courant</code> ne donnent pas forcément plus d’informations sur la
+variable.</p><p>Si un programme utilise trop souvent des variables à un seul caractère, sans
+explication, il peut devenir très difficile à comprendre. Dans mes propres
+programmes, j’essaie de me limiter à quelques cas de figures seulement. Les
+petites boucles font partie de ces cas. Si la boucle contient une autre boucle
+et que celle-ci utilise aussi une variable appelée <code>i</code>, la boucle intérieure va
+modifier la variable dont se sert la première boucle, et rien ne va
+fonctionner. Ou pourrait utiliser <code>j</code> pour la boucle intérieure, mais en
+général, lorsque le corps d’une boucle est grand, vous devriez utiliser un nom
+de variable ayant une signification utile pour la compréhension.</p></div></div><hr/><div class="block"><p>Les objets chaînes de caractères et tableaux contiennent tous deux, outre la
+propriété <code>length</code>, un certain nombre d’autres propriétés qui font référence à
+des fonctions.</p><pre class="code"><span class="keyword">var</span> <span class="variable">doh</span> = <span class="string">&quot;Doh&quot;</span>;
+<span class="variable">print</span>(typeof <span class="variable">doh</span>.<span class="property">toUpperCase</span>);
+<span class="variable">print</span>(<span class="variable">doh</span>.<span class="property">toUpperCase</span>());</pre><p>Chaque chaîne de caractères a une propriété <a name="key15"></a><code>toUpperCase</code>. Lorsqu’elle est
+appelée, elle retourne une copie de la chaîne, transformée avec chaque lettre
+en majuscule. Il y a aussi l’équivalent <a name="key16"></a><code>toLowerCase</code>. Devinez le résultat…</p><p>Remarquez que même si l’appel de <code>toUpperCase</code> se fait sans arguments, la
+fonction a malgré tout accès au contenu de la chaîne de caractères <code>&quot;Doh&quot;</code>, la
+valeur dont elle est une propriété. La façon dont cela fonctionne est décrite
+dans le <a href="chapter8.html">chapitre 8</a>.</p><p>Les propriétés qui se comportent comme des fonctions sont généralement appelées
+<a name="key17"></a>méthodes, ainsi, <code>toUpperCase</code> est une méthode des objets chaînes de
+caractères.</p><pre class="code"><span class="keyword">var</span> <span class="variable">flipper</span> = [];
+<span class="variable">flipper</span>.<span class="property">push</span>(<span class="string">&quot;Flipper&quot;</span>);
+<span class="variable">flipper</span>.<span class="property">push</span>(<span class="string">&quot;le&quot;</span>);
+<span class="variable">flipper</span>.<span class="property">push</span>(<span class="string">&quot;dauphin&quot;</span>);
+<span class="variable">show</span>(<span class="variable">flipper</span>.<span class="property">join</span>(<span class="string">&quot; &quot;</span>));
+<span class="variable">show</span>(<span class="variable">flipper</span>.<span class="property">pop</span>());
+<span class="variable">show</span>(<span class="variable">flipper</span>);</pre><p>La méthode <a name="key18"></a><code>push</code>, associée aux tableaux, peut être utilisée pour ajouter des
+valeurs à ceux-ci. Nous aurions pu l’utiliser dans l’exercice précédent, à la
+place de <code>resultat[i] = i</code>. Il y a aussi la méthode <a name="key19"></a><code>pop</code>, complémentaire de
+<code>push</code> : elle supprime le dernier élément d’un tableau et retourne sa valeur.
+<a name="key20"></a><code>join</code> construit une seule chaîne de caractères à partir d’un tableau de
+chaînes de caractères. Le paramètre utilisé avec cette méthode sera inséré
+entre chaque valeur du tableau, avant l’assemblage de la chaîne de caractères
+finale.</p></div><hr/><div class="block"><p>Revenons à nos chats : nous savons maintenant qu’utiliser un tableau serait une
+bonne idée pour ranger les archives des courriels. Sur cette page, la fonction
+<code>recupererLesMessages</code> sera utilisée pour récupérer (magiquement) ce tableau.
+Parcourir les courriels qu’il contient pour les traiter un par un devient
+simple comme un jeu d’enfant :</p><pre class="code"><span class="keyword">var</span> <span class="variable">archiveDeMessages</span> = <span class="variable">recupererLesMessages</span>();
+
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">i</span> = <span class="atom">0</span>; <span class="variable">i</span> &lt; <span class="variable">archiveDeMessages</span>.<span class="property">length</span>; <span class="variable">i</span>++) {
+  <span class="keyword">var</span> <span class="variable">message</span> = <span class="variable">archiveDeMessages</span>[<span class="variable">i</span>];
+  <span class="variable">print</span>(<span class="string">&quot;Traitement du courriel #&quot;</span>, <span class="variable">i</span>);
+  <span class="comment">// Faire plus de choses…</span>
+}</pre><p>Nous avons également décidé d’une manière de représenter un ensemble de chats
+vivants. Le problème qui reste à traiter, cependant, est celui de détecter des
+paragraphes d’un courriel qui contiennent <code>&quot;Est né le&quot;</code> ou <code>&quot;Décédé le&quot;</code>.</p></div><hr/><div class="block"><p>La première question qui vient à l’esprit est de savoir ce qu’est un paragraphe
+au juste. Dans ce cas, la valeur de la chaîne elle-même n’est pas d’une grande
+utilité : le concept du texte en JavaScript ne va guère plus loin que l’idée de
+«&nbsp;suite de caractères&nbsp;», si bien que nous devons définir les paragraphes de
+cette façon.</p><p>Nous avons vu plus haut qu’il existe une chose qui s’appelle un caractère de
+fin de ligne. C’est ce que la plupart des gens utilisent pour séparer les
+paragraphes. Nous considérons donc un paragraphe comme une partie du courriel
+qui commence par un caractère saut de ligne ou au début du contenu du message
+et se termine au caractère saut de ligne suivant ou bien à la fin du contenu.</p><p>Et nous n’avons même pas à écrire nous-mêmes l’algorithme pour scinder une
+chaîne en paragraphes. Les chaînes ont déjà une méthode appelée <a name="key21"></a><code>split</code>, qui
+est (pratiquement) l’inverse de la méthode <code>join</code> pour les tableaux. Elle
+découpe une chaîne en un tableau en utilisant la chaîne fournie comme argument
+pour déterminer à quel endroit opérer les divisions en paragraphes.</p><pre class="code"><span class="keyword">var</span> <span class="variable">mots</span> = <span class="string">&quot;Les villes de l’arrière-pays&quot;</span>;
+<span class="variable">show</span>(<span class="variable">mots</span>.<span class="property">split</span>(<span class="string">&quot; &quot;</span>));</pre><p>Ainsi, découper avec des caractères saut de ligne (<code>&quot;\n&quot;</code>) est une méthode
+utilisable pour diviser un courriel en paragraphes.</p></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 4.3</div><div class="exercise"><p><code>split</code> et <code>join</code> ne sont pas exactement l’inverse l’une de l’autre.
+<code>string.split(x).join(x)</code> produit toujours la valeur originale, mais pas
+<code>array.join(x).split(x)</code>. Pouvez-vous donner un exemple de tableau dans lequel
+<code>.join(&quot; &quot;).split(&quot; &quot;)</code> produit une valeur différente&nbsp;?</p></div><div class="solution"><pre class="code"><span class="keyword">var</span> <span class="variable">tableau</span> = [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>, <span class="string">&quot;c d&quot;</span>];
+<span class="variable">show</span>(<span class="variable">tableau</span>.<span class="property">join</span>(<span class="string">&quot; &quot;</span>).<span class="property">split</span>(<span class="string">&quot; &quot;</span>));</pre></div></div><hr/><div class="block"><p>Les paragraphes qui ne commencent ni par «&nbsp;Né&nbsp;le&nbsp;» ni par «&nbsp;Décédé le&nbsp;» peuvent
+être ignorés par le programme. Comment peut-on tester si une chaîne commence
+par un mot particulier&nbsp;? On peut utiliser la méthode <a name="key22"></a><code>charAt</code> pour obtenir un
+caractère particulier dans une chaîne.  <code>x.charAt(0)</code> donne le premier
+caractère, <code>1</code> est le deuxième et ainsi de suite. Voici une façon de vérifier
+si une chaîne commence par «&nbsp;Né le&nbsp;» :</p><pre class="code"><span class="keyword">var</span> <span class="variable">paragraphe</span> = <span class="string">&quot;Est né le 15/11/2003 (mère, Spot) : Croc Blanc&quot;</span>;
+<span class="variable">show</span>(<span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">0</span>) == <span class="string">&quot;E&quot;</span> &amp;&amp; <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">1</span>) == <span class="string">&quot;s&quot;</span> &amp;&amp;
+     <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">2</span>) == <span class="string">&quot;t&quot;</span> &amp;&amp; <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">3</span>) == <span class="string">&quot; &quot;</span> &amp;&amp;
+     <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">4</span>) == <span class="string">&quot;n&quot;</span> &amp;&amp; <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">5</span>) == <span class="string">&quot;é&quot;</span> &amp;&amp;
+     <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">6</span>) == <span class="string">&quot; &quot;</span> &amp;&amp; <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">7</span>) == <span class="string">&quot;l&quot;</span> &amp;&amp;
+     <span class="variable">paragraphe</span>.<span class="property">charAt</span>(<span class="atom">8</span>) == <span class="string">&quot;e&quot;</span>);</pre><p>Mais cela devient un peu pénible ―&nbsp;imaginez que vous devez vérifier la
+présence d’un mot de 10 caractères. On peut cependant en tirer une leçon utile
+: si une instruction est démesurément longue, on peut l’étendre sur plusieurs
+lignes. Le résultat peut être plus facile à lire en alignant le début de la
+nouvelle ligne avec le premier élément similaire de la première ligne.</p><p>Les chaînes possèdent également une méthode nommée <a name="key23"></a><code>slice</code>. Elle permet de
+copier un morceau de la chaîne de caractères, en commençant par le caractère à
+la position donnée par le premier argument, et se terminant avant le caractère
+(non inclus) à la position donnée par le second argument. Cela permet de
+vérifier une chaîne de caractères en peu de lignes.</p><pre class="code"><span class="variable">show</span>(<span class="variable">paragraphe</span>.<span class="property">slice</span>(<span class="atom">0</span>, <span class="atom">9</span>) == <span class="string">&quot;Est né le&quot;</span>);</pre></div><hr/><div class="block"><a name="exercise4"></a><div class="exercisenum">Ex. 4.4</div><div class="exercise"><p>Écrivez une fonction nommée <code>chaineCommencePar</code> qui prend deux arguments, tous
+les deux des chaînes de caractères. Elle renvoie <code>true</code> quand le premier
+argument commence par les caractères du second argument, sinon elle renvoie
+<code>false</code>.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">chaineCommencePar</span>(<span class="variabledef">chaine</span>, <span class="variabledef">motif</span>) {
+  <span class="keyword">return</span> <span class="localvariable">chaine</span>.<span class="property">slice</span>(<span class="atom">0</span>, <span class="localvariable">motif</span>.<span class="property">length</span>) == <span class="localvariable">motif</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">chaineCommencePar</span>(<span class="string">&quot;rotation&quot;</span>, <span class="string">&quot;rot&quot;</span>));</pre></div></div><hr/><div class="block"><p>Que se passe-t-il quand <code>charAt</code> ou <code>slice</code> sont utilisés pour prendre un
+fragment de chaîne qui n’existe pas&nbsp;? Est-ce que la fonction
+<code>chaineCommencePar</code> que j’ai montrée va encore fonctionner si la chaîne
+recherchée est plus longue que celle dans laquelle on cherche&nbsp;?</p><pre class="code"><span class="variable">show</span>(<span class="string">&quot;Ouai&quot;</span>.<span class="property">charAt</span>(<span class="atom">250</span>));
+<span class="variable">show</span>(<span class="string">&quot;Nan&quot;</span>.<span class="property">slice</span>(<span class="atom">1</span>, <span class="atom">10</span>));</pre><p><code>charAt</code> va renvoyer <code>&quot;&quot;</code> s’il n’existe pas de caractère à la position donnée
+et <code>slice</code> va tout simplement laisser tomber la partie de la nouvelle chaîne
+qui n’existe pas.</p><p>Cela confirme que cette version de <code>chaineCommencePar</code> fonctionne. Quand la
+fonction <code>chaineCommencePar(&quot;Idiots&quot;,&quot;Mes très chers collègues&quot;)</code> est appelée,
+l’appel à <code>slice</code> renverra toujours une chaîne plus courte que <code>motif</code>, parce
+que le premier argument, <code>chaine</code>, ne comporte pas assez de caractères. C’est
+pour cette raison que la comparaison avec <code>==</code> renverra <code>false</code>, ce qui est
+correct.</p><p>C’est une bonne idée de toujours consacrer un moment pour prendre en
+considération les entrées aberrantes (mais valides) dans un programme. On les
+appelle en général des cas imprévus et il est très fréquent qu’un programme qui
+tourne à merveille avec toutes les entrées «&nbsp;normales&nbsp;» se plante complètement
+avec des cas imprévus.</p></div><hr/><div class="block"><p>La seule partie de notre problème de chats qui ne soit pas encore résolue est
+l’extraction des noms d’un paragraphe. L’algorithme était le suivant :</p><ol><li>Trouver le deux-points (:) dans le paragraphe.</li><li>Prendre la partie après ce signe.</li><li>Dans cette partie, séparer les noms en cherchant les virgules.</li></ol><p>Il faut reproduire cela à la fois pour les paragraphes qui commencent par
+<code>Décès le</code> et ceux qui commencent par <code>Est né le</code>. Ce serait une bonne idée de
+le mettre dans une fonction, de sorte que les deux parties de code qui gèrent
+les différentes sortes de paragraphes puissent l’utiliser.</p></div><hr/><div class="block"><a name="exercise5"></a><div class="exercisenum">Ex. 4.5</div><div class="exercise"><p>Savez-vous écrire une fonction <code>nomDesChats</code> qui prenne un paragraphe comme
+argument et renvoie un tableau de noms&nbsp;?</p><p>Les chaînes ont une méthode <a name="key24"></a><code>indexOf</code> que l’on peut utiliser pour trouver la
+(première) position d’un caractère ou une sous-chaîne à l’intérieur d’une
+chaîne. De même si on ne donne qu’un seul argument à <code>slice</code>, elle renverra la
+partie de la chaîne depuis la première position jusqu’à son extrémité.</p><p>Il peut être pratique d’utiliser la console pour «&nbsp;explorer&nbsp;» les fonctions.
+Par exemple, tapez <code>&quot;foo: bar&quot;.indexOf(&quot;:&quot;)</code><a class="footref" href="#footnote2">2</a> et voyez ce qui se passe.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">nomDesChats</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">var</span> <span class="variabledef">deuxPoints</span> = <span class="localvariable">paragraphe</span>.<span class="property">indexOf</span>(<span class="string">&quot;:&quot;</span>);
+  <span class="keyword">return</span> <span class="localvariable">paragraphe</span>.<span class="property">slice</span>(<span class="localvariable">deuxPoints</span> + <span class="atom">2</span>).<span class="property">split</span>(<span class="string">&quot;, &quot;</span>);
+}
+
+<span class="variable">show</span>(<span class="variable">nomDesChats</span>(<span class="string">&quot;Est né le 20/09/2004 (mère, Bess la Jaune): &quot;</span> +
+              <span class="string">&quot;Docteur Hobbles II, Kaïra&quot;</span>));</pre><p>La partie la plus délicate, qui n’a pas été mentionnée lors la description
+originale de l’algorithme, est le traitement des espaces après les deux-points
+et les virgules. Le <code>+2</code>, utilisé pour le découpage de chaînes, est nécessaire
+pour laisser de côté le deux-points lui-même et l’espace qui le suit.
+L’argument pour <code>split</code> contient à la fois une virgule et une espace, parce que
+ce sont les séparateurs de noms, plutôt que par une simple virgule.</p><p>Cette fonction n’effectue aucune vérification de problèmes éventuels. Nous
+faisons comme si, dans ce cas précis, l’entrée était toujours correcte.</p></div></div><hr/><div class="block"><p>Tout ce qui nous reste à faire maintenant, c’est de rassembler les pièces du
+puzzle. Voici une façon de s’y prendre :</p><pre class="code"><span class="keyword">var</span> <span class="variable">archiveDeMessages</span> = <span class="variable">recupererLesMessages</span>();
+<span class="keyword">var</span> <span class="variable">chatsVivants</span> = {<span class="string">&quot;Spot&quot;</span>: <span class="atom">true</span>};
+
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">message</span> = <span class="atom">0</span>; <span class="variable">message</span> &lt; <span class="variable">archiveDeMessages</span>.<span class="property">length</span>; <span class="variable">message</span>++) {
+  <span class="keyword">var</span> <span class="variable">paragraphes</span> = <span class="variable">archiveDeMessages</span>[<span class="variable">message</span>].<span class="property">split</span>(<span class="string">&quot;\n&quot;</span>);
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">paragraphe</span> = <span class="atom">0</span>;
+       <span class="variable">paragraphe</span> &lt; <span class="variable">paragraphes</span>.<span class="property">length</span>;
+       <span class="variable">paragraphe</span>++) {
+    <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>], <span class="string">&quot;Est né le&quot;</span>)) {
+      <span class="keyword">var</span> <span class="variable">noms</span> = <span class="variable">nomDesChats</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>]);
+      <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">nom</span> = <span class="atom">0</span>; <span class="variable">nom</span> &lt; <span class="variable">noms</span>.<span class="property">length</span>; <span class="variable">nom</span>++)
+        <span class="variable">chatsVivants</span>[<span class="variable">noms</span>[<span class="variable">nom</span>]] = <span class="atom">true</span>;
+    }
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>], <span class="string">&quot;Décédé le&quot;</span>)) {
+      <span class="keyword">var</span> <span class="variable">noms</span> = <span class="variable">nomDesChats</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>]);
+      <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">nom</span> = <span class="atom">0</span>; <span class="variable">nom</span> &lt; <span class="variable">noms</span>.<span class="property">length</span>; <span class="variable">noms</span>++)
+        <span class="keyword">delete</span> <span class="variable">chatsVivants</span>[<span class="variable">noms</span>[<span class="variable">nom</span>]];
+    }
+  }
+}
+
+<span class="variable">show</span>(<span class="variable">chatsVivants</span>);</pre><p>Voilà un bloc de code assez copieux et dense. Nous allons voir tout de suite
+comment l’alléger un peu. Mais d’abord jetons un coup d’œil aux résultats. Nous
+savons comment vérifier si un chat particulier a survécu :</p><pre class="code"><span class="keyword">if</span> (<span class="string">&quot;Spot&quot;</span> in <span class="variable">chatsVivants</span>)
+  <span class="variable">print</span>(<span class="string">&quot;Spot est vivant&nbsp;!&quot;</span>);
+<span class="keyword">else</span>
+  <span class="variable">print</span>(<span class="string">&quot;Ce bon vieux Spot, qu’il repose en paix.&quot;</span>);</pre><p>Mais comment allons-nous faire pour dresser la liste de tous les chats vivants
+? Le mot-clé <a name="key25"></a><code>in</code> a une signification légèrement différente lorsqu’il est
+utilisé avec <code>for</code> :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">chat</span> <span class="keyword">in</span> <span class="variable">chatsVivants</span>)
+  <span class="variable">print</span>(<span class="variable">chat</span>);</pre><p>Une boucle comme celle-là va parcourir les noms des propriétés d’un objet, ce
+qui nous permettra d’énumérer tous les noms de notre ensemble.</p></div><hr/><div class="block"><p>Certaines parties de code ressemblent à une jungle impénétrable. L’exemple de
+solution pour le problème des chats souffre de ce défaut. Une façon de ménager
+des clairières consiste tout simplement à ajouter des lignes vides. Cela
+améliore la lisibilité, mais ne résout pas véritablement le problème.</p><p>Ce qu’il nous faut ici, c’est casser le code. Nous avons déjà écrit deux
+fonctions d’aide, <code>chaineCommencePar</code> et <code>nomDesChats</code>, qui toutes deux
+résolvent une petite partie du problème de façon compréhensible. Continuons sur
+cette lancée.</p><pre class="code"><span class="keyword">function</span> <span class="variable">ajouterAuSet</span>(<span class="variabledef">set</span>, <span class="variabledef">valeurs</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">valeurs</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">set</span>[<span class="localvariable">valeurs</span>[<span class="localvariable">i</span>]] = <span class="atom">true</span>;
+}
+
+<span class="keyword">function</span> <span class="variable">enleverDuSet</span>(<span class="variabledef">set</span>, <span class="variabledef">valeurs</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">valeurs</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="keyword">delete</span> <span class="localvariable">set</span>[<span class="localvariable">valeurs</span>[<span class="localvariable">i</span>]];
+}</pre><p>Ces deux fonctions traitent de l’ajout et de la suppression des noms dans
+l’ensemble. Ce qui supprime déjà les deux plus importantes boucles internes de
+la solution :</p><pre class="code"><span class="keyword">var</span> <span class="variable">chatsVivants</span> = {<span class="property">Spot</span>: <span class="atom">true</span>};
+
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">message</span> = <span class="atom">0</span>; <span class="variable">message</span> &lt; <span class="variable">archiveDeMessages</span>.<span class="property">length</span>; <span class="variable">message</span>++) {
+  <span class="keyword">var</span> <span class="variable">paragraphes</span> = <span class="variable">archiveDeMessages</span>[<span class="variable">message</span>].<span class="property">split</span>(<span class="string">&quot;\n&quot;</span>);
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">paragraphe</span> = <span class="atom">0</span>;
+       <span class="variable">paragraphe</span> &lt; <span class="variable">paragraphes</span>.<span class="property">length</span>;
+       <span class="variable">paragraphe</span>++) {
+    <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>], <span class="string">&quot;Est né le&quot;</span>))
+      <span class="variable">ajouterAuSet</span>(<span class="variable">chatsVivants</span>, <span class="variable">nomDesChats</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>]));
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>], <span class="string">&quot;Décédé le&quot;</span>))
+      <span class="variable">enleverDuSet</span>(<span class="variable">chatsVivants</span>, <span class="variable">nomDesChats</span>(<span class="variable">paragraphes</span>[<span class="variable">paragraphe</span>]));
+  }
+}</pre><p>C’est un sacré progrès, si je peux me permettre. Pourquoi <code>ajouterAuSet</code> et
+<code>enleverDuSet</code> prennent-ils l’ensemble comme argument&nbsp;? Ils pourraient utiliser
+la variable <code>chatsVivants</code> directement, s’ils le voulaient. La raison, c’est
+que de cette façon elles ne sont pas totalement liées à notre problème. Si
+<code>ajouterAuSet</code> changeait directement <code>chatsVivants</code>, il faudrait l’appeler
+<code>ajouterChatsDansEnsembleDeChats</code> ou quelque chose comme ça. Tel que nous
+l’utilisons, c’est un outil utile pour des cas plus généraux.</p><p>Même si nous ne devions jamais utiliser ces fonctions pour quoi que ce soit
+d’autre, ce qui est très probable, il est utile de les décrire de cette façon.
+Car elles se «&nbsp;suffisent à elles-même&nbsp;», on peut les lire et les comprendre,
+sans avoir besoin de connaître une variable externe nommée <code>chatsVivants</code>.</p><p>Ces fonctions ne sont pas pures : elles modifient l’objet <code>set</code> qui a été passé
+en premier argument. Cela rend les choses un peu plus délicates qu’avec des
+fonctions pures mais c’est déjà beaucoup moins perturbant que des fonctions qui
+perdent les pédales et modifient les valeurs de variables comme ça leur chante.</p></div><hr/><div class="block"><p>Nous continuons à découper l’algorithme en petites unités :</p><pre class="code"><span class="keyword">function</span> <span class="variable">trouverChatsVivants</span>() {
+  <span class="keyword">var</span> <span class="variabledef">archiveDeMessages</span> = <span class="variable">recupererLesMessages</span>();
+  <span class="keyword">var</span> <span class="variabledef">chatsVivants</span> = {<span class="string">&quot;Spot&quot;</span>: <span class="atom">true</span>};
+
+  <span class="keyword">function</span> <span class="variabledef">traiterParagraphe</span>(<span class="variabledef">paragraphe</span>) {
+    <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="localvariable">paragraphe</span>, <span class="string">&quot;Est né le&quot;</span>))
+      <span class="variable">ajouterAuSet</span>(<span class="localvariable">chatsVivants</span>, <span class="variable">nomDesChats</span>(<span class="localvariable">paragraphe</span>));
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="localvariable">paragraphe</span>, <span class="string">&quot;Décédé le&quot;</span>))
+      <span class="variable">enleverDuSet</span>(<span class="localvariable">chatsVivants</span>, <span class="variable">nomDesChats</span>(<span class="localvariable">paragraphe</span>));
+  }
+
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">message</span> = <span class="atom">0</span>; <span class="localvariable">message</span> &lt; <span class="localvariable">archiveDeMessages</span>.<span class="property">length</span>; <span class="localvariable">message</span>++) {
+    <span class="keyword">var</span> <span class="variabledef">paragraphes</span> = <span class="localvariable">archiveDeMessages</span>[<span class="localvariable">message</span>].<span class="property">split</span>(<span class="string">&quot;\n&quot;</span>);
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">paragraphes</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+      <span class="localvariable">traiterParagraphe</span>(<span class="localvariable">paragraphes</span>[<span class="localvariable">i</span>]);
+  }
+  <span class="keyword">return</span> <span class="localvariable">chatsVivants</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">combien</span> = <span class="atom">0</span>;
+<span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">chat</span> <span class="keyword">in</span> <span class="variable">trouverChatsVivants</span>())
+  <span class="variable">combien</span>++;
+<span class="variable">print</span>(<span class="string">&quot;Il y a &quot;</span>, <span class="variable">combien</span>, <span class="string">&quot; chats.&quot;</span>);</pre><p>La totalité de l’algorithme est encapsulée dans une fonction. Cela signifie
+qu’elle ne laisse rien traîner en vrac derrière elle après exécution :
+<code>chatsVivants</code> est maintenant une variable locale dans la fonction et non plus
+une variable globale, si bien qu’elle n’existe que pendant que la fonction
+s’exécute. Le code qui a besoin de cet ensemble peut appeler
+<code>trouverChatsVivants</code> et utiliser la valeur qu’il renvoie.</p><p>Il me semble que faire de <code>traiterParagraphe</code> une fonction distincte peut aussi
+clarifier les choses. Mais celle-ci est si étroitement liée à l’algorithme des
+chats qu’elle n’aurait aucun sens dans une autre situation. De plus, elle a
+besoin d’accéder à la variable <code>chatsVivants</code>. C’est donc une candidate
+parfaite pour devenir une fonction à l’intérieur d’une fonction. Quand elle
+existe à l’intérieur de <code>trouverChatsVivants</code>, il est clair qu’elle n’est
+pertinente que là et qu’elle a accès aux variables de sa fonction parente.</p><p>Cette solution est en fait plus <em>grande</em> que la précédente. Mais elle est plus
+propre et j’espère que vous reconnaîtrez qu’elle est plus lisible.</p></div><hr/><div class="block"><p>Le programme ignore encore un grand nombre d’informations qui sont incluses
+dans les courriels. Il s’agit des dates de naissance, de mort et des noms des
+mères.</p><p>Commençons par les dates : quelle pourrait être la meilleure façon de stocker
+une date&nbsp;? Nous pourrions créer un objet avec ces trois propriétés,  <code>year</code>
+(année), <code>month</code> (mois), et <code>day</code> (jour) et stocker ensuite des nombres à
+l’intérieur.</p><pre class="code"><span class="keyword">var</span> <span class="variable">quand</span> = {<span class="property">year</span>: <span class="atom">1980</span>, <span class="property">month</span>: <span class="atom">2</span>, <span class="property">day</span>: <span class="atom">1</span>};</pre><p>Mais JavaScript fournit déjà une sorte d’objet pour cela. Un tel objet peut
+être créé en utilisant le mot-clé <a name="key26"></a><code>new</code> :</p><pre class="code"><span class="keyword">var</span> <span class="variable">quand</span> = <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1980</span>, <span class="atom">1</span>, <span class="atom">1</span>);
+<span class="variable">show</span>(<span class="variable">quand</span>);</pre><p>Tout comme la notation avec les accolades et les deux-points que nous avons
+déjà vue, <code>new</code> est une façon de créer des valeurs d’un objet. Au lieu de
+préciser tous les noms de propriétés et les valeurs, une fonction est utilisée
+pour créer l’objet. Cela rend possible de définir une sorte de procédure
+standard pour créer des objets. Les fonctions comme celle-là s’appellent
+<a name="key27"></a>constructeurs et nous verrons comment les écrire dans <a href="chapter8.html">chapitre 8</a>.</p><p>Le constructeur <a name="key28"></a><code>Date</code> peut être utilisé de différentes manières</p><pre class="code"><span class="variable">show</span>(<span class="keyword">new</span> <span class="variable">Date</span>());
+<span class="variable">show</span>(<span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1980</span>, <span class="atom">1</span>, <span class="atom">1</span>));
+<span class="variable">show</span>(<span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">2007</span>, <span class="atom">2</span>, <span class="atom">30</span>, <span class="atom">8</span>, <span class="atom">20</span>, <span class="atom">30</span>));</pre><p>Comme vous pouvez le voir, ces objets peuvent enregistrer l’heure d’un jour
+aussi bien qu’une date. Quand aucun argument n’est précisé, un objet
+représentant l’heure et la date actuelles est créé. Des arguments peuvent être
+précisés pour stocker une heure et une date précises. L’ordre des arguments est
+l’année, le mois, le jour, l’heure, la minute, la seconde puis la milliseconde.
+Les quatre derniers arguments sont optionnels et définis à 0 s’ils ne sont pas
+précisés.</p><p>Pour décrire les mois, on utilise la numérotation de 0 à 11, qui peut provoquer
+une confusion. Surtout que les nombres définissant les jours commencent eux à
+1.</p></div><hr/><div class="block"><p>Le contenu de l’objet <code>Date</code> peut être inspecté avec un nombre de méthodes
+<code>get…</code>.</p><pre class="code"><span class="keyword">var</span> <span class="variable">aujourdHui</span> = <span class="keyword">new</span> <span class="variable">Date</span>();
+<span class="variable">print</span>(<span class="string">&quot;Année : &quot;</span>, <span class="variable">aujourdHui</span>.<span class="property">getFullYear</span>(), <span class="string">&quot;, mois : &quot;</span>,
+      <span class="variable">aujourdHui</span>.<span class="property">getMonth</span>(), <span class="string">&quot;, jour : &quot;</span>, <span class="variable">aujourdHui</span>.<span class="property">getDate</span>());
+<span class="variable">print</span>(<span class="string">&quot;Heure : &quot;</span>, <span class="variable">aujourdHui</span>.<span class="property">getHours</span>(), <span class="string">&quot;, minutes : &quot;</span>,
+      <span class="variable">aujourdHui</span>.<span class="property">getMinutes</span>(), <span class="string">&quot;, secondes: &quot;</span>, <span class="variable">aujourdHui</span>.<span class="property">getSeconds</span>());
+<span class="variable">print</span>(<span class="string">&quot;Jour de la semaine : &quot;</span>, <span class="variable">aujourdHui</span>.<span class="property">getDay</span>());</pre><p>Tous ces éléments, excepté la méthode <code>getDay</code>, ont une variable <code>set…</code> qui
+peut être utilisée pour modifier la valeur de l’objet date.</p><p>Dans l’objet, une date est représentée par la somme de millisecondes cumulées
+depuis le 1er Janvier 1970. Vous pouvez imaginer que c’est un nombre assez
+impressionnant.</p><pre class="code"><span class="keyword">var</span> <span class="variable">aujourdHui</span> = <span class="keyword">new</span> <span class="variable">Date</span>();
+<span class="variable">show</span>(<span class="variable">aujourdHui</span>.<span class="property">getTime</span>());</pre><p>Une chose très utile à faire avec les dates, c’est de les comparer.</p><pre class="code"><span class="keyword">var</span> <span class="variable">chuteDuMur</span> = <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1989</span>, <span class="atom">10</span>, <span class="atom">9</span>);
+<span class="keyword">var</span> <span class="variable">premiereGuerreDuGolf</span> = <span class="keyword">new</span> <span class="variable">Date</span> (<span class="atom">1990</span>, <span class="atom">6</span>, <span class="atom">2</span>);
+<span class="variable">show</span>(<span class="variable">chuteDuMur</span> &lt; <span class="variable">premiereGuerreDuGolf</span>);
+<span class="variable">show</span>(<span class="variable">chuteDuMur</span> == <span class="variable">chuteDuMur</span>);
+<span class="comment">// mais</span>
+<span class="variable">show</span>(<span class="variable">chuteDuMur</span> == <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1989</span>, <span class="atom">10</span>, <span class="atom">9</span>));</pre><p>Comparer les dates avec <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code> et <code>&gt;=</code> remplit exactement l’office que
+nous voulons en faire. Quand un objet date est comparé avec lui-même, le
+résultat est <code>true</code>, ce qui est bien également. Mais quand <a name="key29"></a><code>==</code> est utilisé
+pour comparer un objet date à un autre objet date distinct mais de même valeur,
+on obtient <code>false</code>. Étrange, non&nbsp;?</p><p>Comme précisé plus tôt, <code>==</code> retournera la valeur <a href="lors de la
+comparaison de deux éléments différents, même si ces deux éléments contiennent
+les mêmes propriétés. Ceci est un peu maladroit et sujet à erreur, puisqu’on
+s’attendrait à ce que |&gt;=| et |==| aient le même comportement. Tester si deux
+dates sont égales peut être fait de cette manière :">false</a></p><pre class="code"><span class="keyword">var</span> <span class="variable">chuteDuMur1</span> = <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1989</span>, <span class="atom">10</span>, <span class="atom">9</span>),
+<span class="variable">chuteDuMur2</span> = <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1989</span>, <span class="atom">10</span> ,<span class="atom">9</span>);
+<span class="variable">show</span>(<span class="variable">chuteDuMur1</span>.<span class="property">getTime</span>() == <span class="variable">chuteDuMur2</span>.<span class="property">getTime</span>());</pre></div><hr/><div class="block"><p>Au-delà de la date et l’heure, l’objet <code>Date</code> contient aussi des informations
+sur le <a name="key30"></a>fuseau horaire. Quand il est une heure à Amsterdam, en fonction de la
+période de l’année il peut être midi à Londres et sept heures du matin à New
+York. De telles heures ne peuvent être rapprochées que si vous prenez les
+fuseaux horaires en compte. La fonction <a name="key31"></a><code>getTimezoneOffset</code> d’une <code>Date</code> peut
+être utilisée pour trouver de combien de minutes elle s’éloigne du GMT (Heure
+du méridien de Greenwich)</p><pre class="code"><span class="keyword">var</span> <span class="variable">maintenant</span> = <span class="keyword">new</span> <span class="variable">Date</span>();
+<span class="variable">print</span>(<span class="variable">maintenant</span>.<span class="property">getTimezoneOffset</span>());</pre></div><hr/><div class="block"><a name="exercise6"></a><div class="exercisenum">Ex. 4.6</div><div class="exercise"><pre class="preformatted">&quot;Décédé le 27/04/2006 : Black Leclère&quot;</pre><p>La partie date est toujours exactement à la même place du paragraphe. Comme
+c’est pratique. Écrivez une fonction <code>extraireDate</code> qui prend un tel paragraphe
+pour argument, extrait la date et la renvoie sous la forme d’un objet date.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">extraireDate</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">function</span> <span class="variabledef">nombreEnPosition</span>(<span class="variabledef">position</span>, <span class="variabledef">longueur</span>) {
+    <span class="keyword">return</span> <span class="variable">Number</span>(<span class="localvariable">paragraphe</span>.<span class="property">slice</span>(<span class="localvariable">position</span>, <span class="localvariable">position</span> + <span class="localvariable">longueur</span>));
+  }
+  <span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">Date</span>(<span class="localvariable">nombreEnPosition</span>(<span class="atom">16</span>, <span class="atom">4</span>), <span class="localvariable">nombreEnPosition</span>(<span class="atom">13</span>, <span class="atom">2</span>) - <span class="atom">1</span>,
+                  <span class="localvariable">nombreEnPosition</span>(<span class="atom">10</span>, <span class="atom">2</span>));
+}
+
+<span class="variable">show</span>(<span class="variable">extraireDate</span>(<span class="string">&quot;Décédé le 27-04-2006 : Black Leclère&quot;</span>));</pre><p>Cela marcherait sans les appels à <code>Number</code>, mais comme je l’ai expliqué plus
+haut, je préfère ne pas utiliser de chaînes comme si elles étaient des nombres.
+La fonction interne a été introduite pour éviter d’avoir à répéter trois fois
+les parties <code>Number</code> et <code>slice</code>.</p><p>Notez le <code>-1</code> pour le numéro du mois. Comme la plupart des gens, tante Émilie
+compte les mois à partir de 1, nous devons donc ajuster cette valeur avant de
+la donner au constructeur <code>Date</code> (le numéro du jour ne relève pas du même
+problème, puisque les objets <code>Date</code> comptent les jours de la façon humaine
+habituelle).</p><p>Dans le <a href="chapter10.html">chapitre 10</a>, nous verrons une façon plus pratique et plus sûre d’extraire
+des parties de chaînes qui ont une structure déterminée.</p></div></div><hr/><div class="block"><p>Stocker des chats est une opération qui va se dérouler différemment à partir de
+maintenant. Au lieu de simplement mettre la valeur <code>true</code> sur l’ensemble, nous
+stockons un objet avec les informations sur le chat. Lorsqu’un chat meurt, nous
+ne le supprimons pas de l’ensemble, nous ajoutons simplement la propriété
+<code>deces</code> à l’objet pour stocker la date à laquelle le pauvre animal a trépassé.</p><p>Cela signifie que nos fonctions <code>ajouterAuSet</code> et <code>enleverDuSet</code> sont devenues
+inutiles. Quelque chose de comparable est nécessaire, mais il s’agit de stocker
+aussi les dates de naissance et par la suite, les noms des mères.</p><pre class="code"><span class="keyword">function</span> <span class="variable">enregistrementChat</span>(<span class="variabledef">nom</span>, <span class="variabledef">dateNaissance</span>, <span class="variabledef">mere</span>) {
+  <span class="keyword">return</span> {<span class="property">nom</span>: <span class="localvariable">nom</span>, <span class="property">naissance</span>: <span class="localvariable">dateNaissance</span>, <span class="property">mere</span>: <span class="localvariable">mere</span>};
+}
+
+<span class="keyword">function</span> <span class="variable">ajouterChats</span>(<span class="variabledef">set</span>, <span class="variabledef">noms</span>, <span class="variabledef">dateNaissance</span>, <span class="variabledef">mere</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">noms</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">set</span>[<span class="localvariable">noms</span>[<span class="localvariable">i</span>]] = <span class="variable">enregistrementChat</span>(<span class="localvariable">noms</span>[<span class="localvariable">i</span>], <span class="localvariable">dateNaissance</span>, <span class="localvariable">mere</span>);
+}
+<span class="keyword">function</span> <span class="variable">chatsDecedes</span>(<span class="variabledef">set</span>, <span class="variabledef">noms</span>, <span class="variabledef">dateDeces</span>) {
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">noms</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">set</span>[<span class="localvariable">noms</span>[<span class="localvariable">i</span>]].<span class="property">deces</span> = <span class="localvariable">dateDeces</span>;
+}</pre><p><code>enregistrementChat</code> est une fonction distincte pour créer ces objets de
+stockage. Elle pourrait être utile dans d’autres situations, telles que la
+création d’un objet pour Spot. «&nbsp;Record&nbsp;» («&nbsp;enregistrement&nbsp;» en français) est
+le terme qu’on emploie couramment pour des objets de ce type, qui sont utilisés
+pour regrouper un nombre limité de valeurs.</p></div><hr/><div class="block"><p>Essayons donc maintenant d’extraire les noms des mamans chats qui se trouvent
+dans des paragraphes.</p><pre class="preformatted">&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;</pre><p>Voici un moyen d’obtenir cela…</p><pre class="code"><span class="keyword">function</span> <span class="variable">extraireNomMere</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">var</span> <span class="variabledef">start</span> = <span class="localvariable">paragraphe</span>.<span class="property">indexOf</span>(<span class="string">&quot;(mère, &quot;</span>) + <span class="string">&quot;(mère, &quot;</span>.<span class="property">length</span>;
+  <span class="keyword">var</span> <span class="variabledef">end</span> = <span class="localvariable">paragraphe</span>.<span class="property">indexOf</span>(<span class="string">&quot;)&quot;</span>);
+  <span class="keyword">return</span> <span class="localvariable">paragraphe</span>.<span class="property">slice</span>(<span class="localvariable">start</span>, <span class="localvariable">end</span>);
+}
+
+<span class="variable">show</span>(<span class="variable">extraireNomMere</span>(<span class="string">&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;</span>));</pre><p>Notez comment la position de départ a dû être ajustée à la longueur de <code>&quot;(mère,
+&quot;</code>, parce que <code>indexOf</code> renvoie la position initiale de la chaîne et non la
+finale.</p></div><hr/><div class="block"><a name="exercise7"></a><div class="exercisenum">Ex. 4.7</div><div class="exercise"><p>Ce que fait <code>extraireNomMere</code> peut être exprimé d’une façon plus générale.
+Écrivez une fonction <code>extraireChaineEntre</code> qui prend trois arguments, qui
+seront tous des chaînes. Elle renverra la partie du premier argument qui
+apparaît entre les chaînes fournies par le deuxième et le troisième argument.</p><p>Ainsi, <code>extraireChaineEntre(&quot;Est né le 15/11/2003 (mère, Spot): Croc Blanc&quot;,
+&quot;(mère, &quot;, &quot;)&quot;)</code> donne <code>&quot;Spot&quot;</code>.</p><p><code>extraireChaineEntre(&quot;bu ] boo [ bah ] gzz&quot;, &quot;[ &quot;, &quot; ]&quot;)</code> renvoie <code>&quot;bah&quot;</code>.</p><p>Pour faire marcher ce deuxième exemple, il peut être utile de savoir qu’on peut
+attribuer à <code>indexOf</code> un second paramètre facultatif qui précise à partir de
+quel point doit commencer la recherche.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">extraireChaineEntre</span>(<span class="variabledef">chaine</span>, <span class="variabledef">debut</span>, <span class="variabledef">fin</span>) {
+  <span class="keyword">var</span> <span class="variabledef">indexDebut</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">debut</span>) + <span class="localvariable">debut</span>.<span class="property">length</span>;
+  <span class="keyword">var</span> <span class="variabledef">indexFin</span> = <span class="localvariable">chaine</span>.<span class="property">indexOf</span>(<span class="localvariable">fin</span>, <span class="localvariable">indexDebut</span>);
+  <span class="keyword">return</span> <span class="localvariable">chaine</span>.<span class="property">slice</span>(<span class="localvariable">indexDebut</span>, <span class="localvariable">indexFin</span>);
+}
+<span class="variable">show</span>(<span class="variable">extraireChaineEntre</span>(<span class="string">&quot;bu ] boo [ bah ] gzz&quot;</span>, <span class="string">&quot;[ &quot;</span>, <span class="string">&quot; ]&quot;</span>));</pre></div></div><hr/><div class="block"><p>Avoir la fonction <code>extraireChaineEntre</code> rend possible l’expression de
+extraireNomMere de façon plus simple :</p><pre class="code"><span class="keyword">function</span> <span class="variable">extraireNomMere</span>(<span class="variabledef">paragraphe</span>) {
+  <span class="keyword">return</span> <span class="variable">extraireChaineEntre</span>(<span class="localvariable">paragraphe</span>, <span class="string">&quot;(mère, &quot;</span>, <span class="string">&quot;)&quot;</span>);
+}</pre></div><hr/><div class="block"><p>Le nouvel algorithme à chats amélioré ressemble maintenant à ça :</p><pre class="code"><span class="keyword">function</span> <span class="variable">trouverChats</span>() {
+  <span class="keyword">var</span> <span class="variabledef">archiveDeMessages</span> = <span class="variable">recupererLesMessages</span>();
+  <span class="keyword">var</span> <span class="variabledef">chats</span> = {<span class="string">&quot;Spot&quot;</span>: <span class="variable">enregistrementChat</span>(<span class="string">&quot;Spot&quot;</span>, <span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">1997</span>, <span class="atom">2</span>, <span class="atom">5</span>),
+              <span class="string">&quot;inconnue&quot;</span>)};
+
+  <span class="keyword">function</span> <span class="variabledef">traiterParagraphe</span>(<span class="variabledef">paragraphe</span>) {
+    <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="localvariable">paragraphe</span>, <span class="string">&quot;Est né le&quot;</span>))
+      <span class="variable">ajouterChats</span>(<span class="localvariable">chats</span>, <span class="variable">nomDesChats</span>(<span class="localvariable">paragraphe</span>), <span class="variable">extraireDate</span>(<span class="localvariable">paragraphe</span>),
+              <span class="variable">extraireNomMere</span>(<span class="localvariable">paragraphe</span>));
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">chaineCommencePar</span>(<span class="localvariable">paragraphe</span>, <span class="string">&quot;Décédé le&quot;</span>))
+      <span class="variable">chatsDecedes</span>(<span class="localvariable">chats</span>, <span class="variable">nomDesChats</span>(<span class="localvariable">paragraphe</span>), <span class="variable">extraireDate</span>(<span class="localvariable">paragraphe</span>));
+  }
+
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">message</span> = <span class="atom">0</span>; <span class="localvariable">message</span> &lt; <span class="localvariable">archiveDeMessages</span>.<span class="property">length</span>; <span class="localvariable">message</span>++) {
+    <span class="keyword">var</span> <span class="variabledef">paragraphes</span> = <span class="localvariable">archiveDeMessages</span>[<span class="localvariable">message</span>].<span class="property">split</span>(<span class="string">&quot;\n&quot;</span>);
+    <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">paragraphes</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+      <span class="localvariable">traiterParagraphe</span>(<span class="localvariable">paragraphes</span>[<span class="localvariable">i</span>]);
+  }
+  <span class="keyword">return</span> <span class="localvariable">chats</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">tousLesChats</span> = <span class="variable">trouverChats</span>();</pre><p>Obtenir ces données supplémentaires nous permet d’avoir finalement une idée
+plus précise des chats dont parle tante Émilie. Une fonction comme celle-ci
+pourrait être utile :</p><pre class="code"><span class="keyword">function</span> <span class="variable">formatDate</span>(<span class="variabledef">date</span>) {
+  <span class="keyword">return</span> <span class="localvariable">date</span>.<span class="property">getDate</span>() + <span class="string">&quot;/&quot;</span> + (<span class="localvariable">date</span>.<span class="property">getMonth</span>() + <span class="atom">1</span>) +
+         <span class="string">&quot;/&quot;</span> + <span class="localvariable">date</span>.<span class="property">getFullYear</span>();
+}
+
+<span class="keyword">function</span> <span class="variable">renseignementSurChat</span>(<span class="variabledef">data</span>, <span class="variabledef">nom</span>) {
+  <span class="keyword">if</span> (!(<span class="localvariable">nom</span> in <span class="localvariable">data</span>))
+    <span class="keyword">return</span> <span class="string">&quot;Aucun chat s’appelant &quot;</span> + <span class="localvariable">nom</span> + <span class="string">&quot; n’a été trouvé.&quot;</span>;
+
+  <span class="keyword">var</span> <span class="variabledef">chat</span> = <span class="localvariable">data</span>[<span class="localvariable">nom</span>];
+  <span class="keyword">var</span> <span class="variabledef">message</span> = <span class="localvariable">nom</span> + <span class="string">&quot;, est né le &quot;</span> + <span class="variable">formatDate</span>(<span class="localvariable">chat</span>.<span class="property">naissance</span>) +
+                <span class="string">&quot; de la mère &quot;</span> + <span class="localvariable">chat</span>.<span class="property">mere</span>;
+  <span class="keyword">if</span> (<span class="string">&quot;deces&quot;</span> in <span class="localvariable">chat</span>)
+    <span class="localvariable">message</span> += <span class="string">&quot;, décédé le &quot;</span> + <span class="variable">formatDate</span>(<span class="localvariable">chat</span>.<span class="property">deces</span>);
+  <span class="keyword">return</span> <span class="localvariable">message</span> + <span class="string">&quot;.&quot;</span>;
+}
+
+<span class="variable">print</span>(<span class="variable">renseignementSurChat</span>(<span class="variable">tousLesChats</span>, <span class="string">&quot;Gros Igor&quot;</span>));</pre><p>La première instruction <code>return</code> dans <code>renseignementSurChat</code> est utilisée comme
+issue de secours. Si aucune donnée n’est fournie sur un chat particulier, le
+reste de la fonction est dépourvu de sens, nous renvoyons donc immédiatement
+une valeur qui empêche le reste du code de s’exécuter.</p><p>Dans le passé, certains groupes de programmeurs considéraient comme malsaines
+les fonctions contenant de multiples instructions <code>return</code>. Selon eux, cela
+rendait difficile de voir quel code était exécuté et quel code ne l’était pas.
+D’autres techniques, qui seront abordées dans le <a href="chapter5.html">chapitre 5</a>, ont rendu cet
+argument plus ou moins obsolète, mais vous pouvez toujours tomber à l’occasion
+sur quelqu’un qui critiquera l’utilisation de raccourcis avec l’instruction
+<code>return</code>.</p></div><hr/><div class="block"><a name="exercise8"></a><div class="exercisenum">Ex. 4.8</div><div class="exercise"><p>La fonction <code>formatDate</code> utilisée par <code>renseignementSurChat</code> n’ajoute pas de
+zéro avant la partie mois et jour quand ce sont des nombres à un seul chiffre.
+Écrivez une nouvelle version qui fera cela.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">formatDate</span>(<span class="variabledef">date</span>) {
+  <span class="keyword">function</span> <span class="variabledef">pad</span>(<span class="variabledef">nombre</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">nombre</span> &lt; <span class="atom">10</span>)
+      <span class="keyword">return</span> <span class="string">&quot;0&quot;</span> + <span class="localvariable">nombre</span>;
+    <span class="keyword">else</span>
+      <span class="keyword">return</span> <span class="localvariable">nombre</span>;
+  }
+  <span class="keyword">return</span> <span class="localvariable">pad</span>(<span class="localvariable">date</span>.<span class="property">getDate</span>()) + <span class="string">&quot;/&quot;</span> + <span class="localvariable">pad</span>(<span class="localvariable">date</span>.<span class="property">getMonth</span>() + <span class="atom">1</span>) +
+             <span class="string">&quot;/&quot;</span> + <span class="localvariable">date</span>.<span class="property">getFullYear</span>();
+}
+<span class="variable">print</span>(<span class="variable">formatDate</span>(<span class="keyword">new</span> <span class="variable">Date</span>(<span class="atom">2000</span>, <span class="atom">0</span>, <span class="atom">1</span>)));</pre></div></div><hr/><div class="block"><a name="exercise9"></a><div class="exercisenum">Ex. 4.9</div><div class="exercise"><p>Écrivez une fonction <code>lePlusVieuxChat</code> qui, étant donné un objet ayant des
+chats comme arguments, renvoie le nom du plus vieux chat vivant.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">lePlusVieuxChat</span>(<span class="variabledef">data</span>) {
+  <span class="keyword">var</span> <span class="variabledef">lePlusVieux</span> = <span class="atom">null</span>;
+
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">nom</span> <span class="keyword">in</span> <span class="localvariable">data</span>) {
+    <span class="keyword">var</span> <span class="variabledef">chat</span> = <span class="localvariable">data</span>[<span class="localvariable">nom</span>];
+    <span class="keyword">if</span> (!(<span class="string">&quot;deces&quot;</span> in <span class="localvariable">chat</span>) &amp;&amp;
+        (<span class="localvariable">lePlusVieux</span> == <span class="atom">null</span> || <span class="localvariable">lePlusVieux</span>.<span class="property">naissance</span> &gt; <span class="localvariable">chat</span>.<span class="property">naissance</span>))
+      <span class="localvariable">lePlusVieux</span> = <span class="localvariable">chat</span>;
+  }
+
+  <span class="keyword">if</span> (<span class="localvariable">lePlusVieux</span> == <span class="atom">null</span>)
+    <span class="keyword">return</span> <span class="atom">null</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="localvariable">lePlusVieux</span>.<span class="property">nom</span>;
+}
+
+<span class="variable">print</span>(<span class="variable">lePlusVieuxChat</span>(<span class="variable">tousLesChats</span>));</pre><p>La condition donnée avec la commande <code>if</code> pourrait paraître un peu intimidante.
+On peut la lire comme : «&nbsp;ne stocker le chat en cours dans la variable
+<code>lePlusVieux</code> que s’il n’est pas mort, et si <code>lePlusVieux</code> est soit <code>null</code> soit
+un chat qui est né après le chat en cours&nbsp;».</p><p>Notez que cette fonction renvoie <code>null</code> quand il n’existe aucun chat vivant
+dans <code>data</code>. Que fait votre solution à l’exercice dans ce cas&nbsp;?</p></div></div><hr/><div class="block"><p>Maintenant que vous êtes familiarisé avec les tableaux, je peux vous montrer
+quelque chose de lié. Quel que soit le nom d’une fonction, une variable
+spéciale nommée <a name="key32"></a><code>arguments</code> est ajoutée à l’environnement dans lequel le
+corps de la fonction tourne. Cette variable se réfère à un objet qui ressemble
+à un tableau. Il a la propriété <code>0</code> pour le premier argument, <code>1</code> pour le
+second, et ainsi de suite pour chaque argument donné par la fonction. Il
+possède également une propriété <a name="key33"></a><code>length</code>.</p><p>Cependant, cet objet n’est pas véritablement un tableau, il ne possède pas de
+méthodes telles que <code>push</code> et il ne met pas à jour automatiquement sa propriété
+<code>length</code> quand vous lui ajoutez quelque chose. Pourquoi n’est-ce pas le cas&nbsp;?
+Je n’ai jamais vraiment compris l’utilité de tout cela, mais c’est quelque
+chose dont vous devez avoir connaissance.</p><pre class="code"><span class="keyword">function</span> <span class="variable">compteurArgument</span>() {
+  <span class="variable">print</span>(<span class="string">&quot;Vous m’avez donné &quot;</span>, <span class="localvariable">arguments</span>.<span class="property">length</span>, <span class="string">&quot; arguments.&quot;</span>);
+}
+<span class="variable">compteurArgument</span>(<span class="string">&quot;Mort&quot;</span>, <span class="string">&quot;Famine&quot;</span>, <span class="string">&quot;Fléau&quot;</span>);</pre><p>Certaines fonctions peuvent prendre nombre quelconque d’arguments, comme par
+exemple la fonction <code>print</code>. Cette fonction particulière opère une boucle sur
+les valeurs des <code>arguments</code> d’un objet pour en faire quelque chose. D’autres
+peuvent prendre des arguments de manière optionnelle qui sont initialisés à une
+valeur par défaut sensée si l’utilisateur ne fournit pas de valeur.</p><pre class="code"><span class="keyword">function</span> <span class="variable">ajouter</span>(<span class="variabledef">nombre</span>, <span class="variabledef">combien</span>) {
+   <span class="keyword">if</span> (<span class="localvariable">arguments</span>.<span class="property">length</span> &lt; <span class="atom">2</span>)
+     <span class="localvariable">combien</span> = <span class="atom">1</span>;
+   <span class="keyword">return</span> <span class="localvariable">nombre</span> + <span class="localvariable">combien</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">ajouter</span>(<span class="atom">6</span>));
+<span class="variable">show</span>(<span class="variable">ajouter</span>(<span class="atom">6</span>, <span class="atom">4</span>));</pre></div><hr/><div class="block"><a name="exercise10"></a><div class="exercisenum">Ex. 4.10</div><div class="exercise"><p>Étendez la fonction <code>serie</code> de l’<a href="chapter4.html#exercise2">exercice 4.2</a> pour prendre un second argument,
+optionnel. Si un seul argument est donné à la fonction, elle se comporte comme
+précédemment et produit une série commençant à 0 jusqu’au nombre donné. Si deux
+arguments sont donnés, le premier indique le début de la série, le second la
+fin.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">serie</span>(<span class="variabledef">debut</span>, <span class="variabledef">fin</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">arguments</span>.<span class="property">length</span> &lt; <span class="atom">2</span>) {
+    <span class="localvariable">fin</span> = <span class="localvariable">debut</span>;
+    <span class="localvariable">debut</span> = <span class="atom">0</span>;
+  }
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="localvariable">debut</span>; <span class="localvariable">i</span> &lt;= <span class="localvariable">fin</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">resultat</span>.<span class="property">push</span>(<span class="localvariable">i</span>);
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">serie</span>(<span class="atom">4</span>));
+<span class="variable">show</span>(<span class="variable">serie</span>(<span class="atom">2</span>, <span class="atom">4</span>));</pre><p>L’argument optionnel ne fonctionne pas exactement comme celui de l’exemple
+<code>ajouter</code> ci-dessus. Quand il n’est pas précisé, le premier argument prend le
+rôle de <code>fin</code> et <code>debut</code> devient <code>0</code>.  </p></div></div><hr/><div class="block"><a name="exercise11"></a><div class="exercisenum">Ex. 4.11</div><div class="exercise"><p>Vous devez vous rappeler la ligne de code citée en introduction :</p><pre class="code invalid"><span class="variable">print</span>(<span class="variable">somme</span>(<span class="variable">serie</span>(<span class="atom">1</span>, <span class="atom">10</span>)));</pre><p>Nous avons la fonction <code>serie</code> maintenant. Tout ce dont nous avons besoin pour
+faire fonctionner cette ligne est une fonction <code>somme</code>. Cette fonction prend un
+tableau de nombre en arguments et retourne leur somme. Écrivez-la, ce devrait
+être simple.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">somme</span>(<span class="variabledef">nombres</span>) {
+  <span class="keyword">var</span> <span class="variabledef">total</span> = <span class="atom">0</span>;
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">0</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">nombres</span>.<span class="property">length</span>; <span class="localvariable">i</span>++)
+    <span class="localvariable">total</span> += <span class="localvariable">nombres</span>[<span class="localvariable">i</span>];
+  <span class="keyword">return</span> <span class="localvariable">total</span>;
+}
+
+<span class="variable">print</span>(<span class="variable">somme</span>(<span class="variable">serie</span>(<span class="atom">1</span>, <span class="atom">10</span>)));</pre></div></div><hr/><div class="block"><p>Le <a href="chapter2.html">chapitre 2</a> nous a permis d’étudier les fonctions <code>Math.max</code> et <code>Math.min</code>.
+Avec ce que vous connaissez maintenant, vous pourrez noter que <code>max</code> et <code>min</code>
+sont déjà les propriétés d’un objet enregistré sous le nom de <code>Math</code>. Voici un
+autre rôle que les objets peuvent jouer : celui d’entrepôt pour un grand nombre
+de valeurs liées.  </p><p>Il y a beaucoup de valeurs dans <code>Math</code>, si elles avaient été placées
+directement dans l’environnement global, elles l’auraient, comme on dit,
+pollué. Plus il y a de noms utilisés, plus il est probable d’écraser par
+accident la valeur d’une variable. Par exemple, il n’est pas incongru de
+vouloir nommer une variable <code>max</code>.</p><p>La plupart des langages vous arrêteront, ou du moins vous alerteront, quand
+vous définirez une variable avec un nom déjà utilisé par l’environnement. Pas
+JavaScript.</p><p>De toute façon, on peut trouver tout un ensemble de fonctions mathématiques et
+de constantes dans <code>Math</code>. Toutes les fonctions trigonométriques sont présentes
+: <code>cos</code>, <code>sin</code>, <code>tan</code>, <code>acos</code>, <code>asin</code> et <code>atan</code>. π et e, qui sont écrits en
+capitales (<code>PI</code> et <code>E</code>), ce qui était à une époque une façon très à la mode
+d’indiquer que quelque chose est une constante. <code>pow</code> est un bon moyen de
+substitution des fonctions <code>puissance</code> que nous avons écrites, il accepte les
+exposants négatifs et fractionnels. <code>sqrt</code> extrait la racine carrée d’un
+nombre. <code>max</code> et <code>min</code> peuvent donner le maximum ou le minimum de deux valeurs.
+<a name="key34"></a><a name="key35"></a><a name="key36"></a><code>round</code>, <code>floor</code>, et <code>ceil</code> vont
+respectivement arrondir un nombre à l’entier le plus proche, à l’entier
+inférieur et supérieur le plus proche.</p><p>Il existe un grand nombre d’autres valeurs dans <code>Math</code>, mais ce texte est une
+introduction, pas une <a name="key37"></a>référence. Les références sont ce que vous consultez
+lorsque vous soupçonnez qu’il existe quelque chose dans un langage, mais avez
+besoin de savoir comment ça s’appelle ou comment ça marche au juste.
+Malheureusement, il n’existe aucune référence totalement exhaustive pour le
+JavaScript. C’est essentiellement parce que sa forme courante est la résultante
+d’un processus chaotique pendant lequel différents navigateurs lui ont ajouté
+diverses extensions à différentes périodes. Le document standard ECMA,
+mentionné dans l’introduction, fournit une solide documentation du langage de
+base, mais il est plus ou moins lisible. Pour la plupart de vos questions, vous
+pouvez compter sur le <a href="https://developer.mozilla.org/fr/JavaScript/">Mozilla Developer Network</a>.</p></div><hr/><div class="block"><p>Vous avez peut-être déjà pensé à un moyen de découvrir ce qui est disponible
+avec l’objet <code>Math</code> :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">nom</span> <span class="keyword">in</span> <span class="variable">Math</span>)
+  <span class="variable">print</span>(<span class="variable">nom</span>);</pre><p>Mais hélas, rien n’apparaît. De même, quand vous faites ceci :</p><pre class="code"><span class="keyword">for</span> (<span class="keyword">var</span> <span class="variable">nom</span> <span class="keyword">in</span> [<span class="string">&quot;Huey&quot;</span>, <span class="string">&quot;Dewey&quot;</span>, <span class="string">&quot;Loui&quot;</span>])
+  <span class="variable">print</span>(<span class="variable">nom</span>);</pre><p>Vous ne voyez que <code>0</code>, <code>1</code>, et <code>2</code>, pas <code>length</code>, ni <code>push</code>, ou <code>join</code>, qui s’y
+trouvent pourtant bel et bien. Apparemment, certaines propriétés des objets
+sont cachées<a name="key38"></a>. Il y a une bonne raison à ça : tous les objets
+ont quelques méthodes, par exemple <a name="key39"></a><code>toString</code> qui convertit l’objet en une
+sorte de chaîne pertinente, mais vous ne souhaiterez sûrement pas les voir
+quand vous êtes par exemple, à la recherche des chats que vous avez stockés
+dans l’objet.</p><p>Pourquoi les propriétés de <code>Math</code> sont-elles cachées&nbsp;? Ce n’est pas très clair
+pour moi. Il y a sûrement quelqu’un qui a voulu en faire un type d’objet
+mystérieux.</p><p>Toutes les propriétés que vos programmes ajoutent aux objets sont visibles. Il
+n’y a pas moyen de les cacher, ce qui est regrettable parce que, comme vous le
+verrez dans le <a href="chapter8.html">chapitre 8</a>, il serait sympa d’ajouter des méthodes aux objets sans
+avoir à les rendre visibles dans des boucles <code>for</code>/<code>in</code>.</p></div><hr/><div class="block"><p><a name="key40"></a>Certaines propriétés sont en lecture seule, vous
+pouvez récupérer leur valeur mais pas la modifier. Par exemple, les propriétés
+d’une valeur de chaîne sont toutes en lecture seule.</p><p>D’autres propriétés sont &quot;actives&quot;. Modifier leur valeur a des conséquences.
+Par exemple, le fait de diminuer la longueur d’un tableau provoque la
+disparition des éléments en trop:</p><pre class="code"><span class="keyword">var</span> <span class="variable">tableau</span> = [<span class="string">&quot;Ciel&quot;</span>, <span class="string">&quot;Terre&quot;</span>, <span class="string">&quot;Homme&quot;</span>];
+<span class="variable">tableau</span>.<span class="property">length</span> = <span class="atom">2</span>;
+<span class="variable">show</span>(<span class="variable">tableau</span>);</pre></div><ol class="footnotes"><li><a name="footnote1"></a>Il y a quelques problèmes subtils avec cette approche dont nous parlerons et
+que nous résoudrons dans le <a href="chapter8.html">chapitre 8</a>. On ne s’en occupera pas pour ce chapitre.</li><li><a name="footnote2"></a>NdT: les mots <code>foo</code> et <code>bar</code> n’ont pas de signification précise, et
+illustrent parfois des exemples de code.</li></ol><div class="navigation"><a href="chapter3.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter5.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

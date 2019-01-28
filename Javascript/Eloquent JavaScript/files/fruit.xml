@@ -1,0 +1,14 @@
+<catalogue>
+  <fruit>
+    <nom>pomme</nom>
+    <couleur>rouge</couleur>
+  </fruit>
+  <fruit>
+    <nom>orange</nom>
+    <couleur>orange</couleur>
+  </fruit>
+  <fruit>
+    <nom>banane</nom>
+    <couleur>jaune</couleur>
+  </fruit>
+</catalogue>

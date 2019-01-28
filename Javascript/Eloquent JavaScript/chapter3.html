@@ -1,0 +1,350 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Fonctions -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'functions';</script><div class="navigation"><a href="chapter2.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter4.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 3: </span>Fonctions</h1><div class="block"><p>Un programme doit souvent exécuter la même tâche en différents endroits. Il est
+fastidieux de répéter à chaque fois les instructions nécessaires et c’est un
+facteur d’erreurs possibles. Il vaudrait mieux réunir ces instructions au même
+endroit et demander au programme d’y faire un détour chaque fois que c’est
+nécessaire. C’est pour ça qu’on a inventé les <a name="key1"></a>fonctions : ce sont des unités
+de code que le programme peut parcourir à volonté. Afficher une chaîne à
+l’écran nécessite un certain nombre d’instructions, mais si nous disposons
+d’une fonction <code>print</code> il nous suffit d’écrire <code>print(&quot;Aleph&quot;)</code> et le tour est
+joué.</p><p>Cependant, si on voit les fonctions simplement comme des boîtes de conserve de
+code on ne les considère pas à leur juste valeur. Si nécessaire, elles peuvent
+jouer les rôles de fonctions pures, d’algorithmes, de détours, d’abstractions,
+de moyens de décision, de modules, de prolongements, de structures de données
+et de bien d’autres choses encore. Être capable d’utiliser efficacement des
+fonctions est une compétence nécessaire pour qui veut programmer sérieusement.
+Ce chapitre propose une introduction au sujet, le <a href="chapter6.html">chapitre 6</a> aborde plus en
+profondeur les subtilités des fonctions.</p></div><hr/><div class="block"><p><a name="key2"></a>Pour commencer, les fonctions pures sont ce que l’on appelait «
+fonction&nbsp;» en cours de mathématiques, que vous avez, je l’espère, suivi à un
+moment de votre vie. Prendre le cosinus ou la valeur absolue d’un nombre est
+une fonction pure à un argument. L’addition est une fonction pure à deux
+arguments.</p><p>Les propriétés qui définissent les fonctions pures sont qu’elles retournent
+toujours la même valeur pour les mêmes arguments et n’ont jamais d’effet de
+bord. Elles prennent des arguments, retournent une valeur basée sur ces
+arguments, et ne perdent pas leur temps à faire autre chose.</p><p>En JavaScript, l’addition est un opérateur, mais elle peut être encapsulée dans
+une fonction comme ceci (et aussi inutile que cela puisse sembler, nous allons
+rencontrer des situations dans lesquelles ça sera vraiment utile).  </p><pre class="code"><span class="keyword">function</span> <span class="variable">ajouter</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>) {
+  <span class="keyword">return</span> <span class="localvariable">a</span> + <span class="localvariable">b</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">ajouter</span>(<span class="atom">2</span>, <span class="atom">2</span>));</pre><p><code>ajouter</code> est le nom de la fonction. <code>a</code> et <code>b</code> sont les noms des deux
+arguments.</p><p>Le mot-clé <a name="key3"></a><code>function</code> est toujours utilisé lorsque l’on crée une fonction.
+Lorsqu’il est suivi d’un nom de variable, la fonction créée sera stockée sous
+ce nom. À la suite du nom, vient une liste de noms d’<a name="key4"></a>arguments, et enfin,
+après celle-ci le <a name="key5"></a>corps de la fonction. Contrairement à ceux autour du corps
+d’une boucle <code>while</code> ou d’une instruction <code>if</code>, les accolades autour du corps
+d’une fonction sont obligatoires<a class="footref" href="#footnote1">1</a>.</p><p>Le mot-clé <a name="key6"></a><code>return</code>, suivi d’une expression, est utilisé pour déterminer la
+valeur qu’une fonction renvoie. Lorsque l’exécution arrive sur une instruction
+<code>return</code>, elle saute immédiatement hors de la fonction courante et transmet la
+valeur retournée au code qui a appelé la fonction. Une instruction <code>return</code>
+sans expression à la suite fait renvoyer <code>undefined</code> à la fonction.</p><p>Un corps peut évidemment avoir plus d’une instruction en son sein. Voici une
+fonction pour calculer des puissances (avec des exposants entiers positifs) : </p><pre class="code"><span class="keyword">function</span> <span class="variable">puissance</span>(<span class="variabledef">base</span>, <span class="variabledef">exposant</span>) {
+  <span class="keyword">var</span> <span class="variabledef">resultat</span> = <span class="atom">1</span>;
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">compteur</span> = <span class="atom">0</span>; <span class="localvariable">compteur</span> &lt; <span class="localvariable">exposant</span>; <span class="localvariable">compteur</span>++)
+    <span class="localvariable">resultat</span> *= <span class="localvariable">base</span>;
+  <span class="keyword">return</span> <span class="localvariable">resultat</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">puissance</span>(<span class="atom">2</span>, <span class="atom">10</span>));</pre><p>Si vous avez résolu l’<a href="chapter2.html#exercise2">exercice 2.2</a>, cette technique utilisée pour calculer une
+puissance devrait vous sembler familière.</p><p>Créer une variable (<code>resultat</code>) et la mettre à jour sont des effets de bord.
+Est-ce que je ne viens pas de dire que les fonctions pures n’ont pas d’effets
+de bord&nbsp;?</p><p>Une variable créée à l’intérieur d’une fonction existe uniquement à l’intérieur
+de celle-ci. Heureusement, sinon le programmeur devrait trouver un nom
+différent pour chaque variable dont il a besoin dans un programme. Comme
+<code>resultat</code> existe uniquement à l’intérieur de <code>puissance</code>, le changement ne
+dure que jusqu’à ce que la fonction retourne quelque chose, et du point de vue
+du code qui l’appelle, il n’y a pas d’effet de bord.  </p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 3.1</div><div class="exercise"><p>Écrivez une fonction appelée <code>absolu</code> qui retourne la valeur absolue du nombre
+qui lui est donné en argument. La valeur absolue d’un nombre négatif est la
+version positive du même nombre, et la valeur absolue d’un nombre positif (ou
+zéro) est le nombre lui-même.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">absolu</span>(<span class="variabledef">nombre</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">nombre</span> &lt; <span class="atom">0</span>)
+    <span class="keyword">return</span> -<span class="localvariable">nombre</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="localvariable">nombre</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">absolu</span>(-<span class="atom">144</span>));</pre></div></div><hr/><div class="block"><p>Les fonctions pures ont deux propriétés très sympathiques. Il est facile de
+s’en souvenir et de les réutiliser.</p><p>Si une fonction est pure, un appel à celle-ci peut être considéré comme une
+chose indépendante. Si vous n’êtes pas sûr qu’elle fonctionne correctement,
+vous pouvez la tester en l’appelant directement depuis la console, ce qui est
+facile car elle ne dépend d’aucun contexte<a class="footref" href="#footnote2">2</a>. Il est facile de faire ces tests
+automatiquement ―&nbsp;d’écrire un programme qui teste une fonction spécifique. Les
+fonctions non pures peuvent renvoyer différentes valeurs basées sur toutes
+sortes de facteurs, et avoir des effets de bord qui pourraient être difficiles
+à tester et à prévoir.</p><p>Comme les fonctions pures sont auto-suffisantes, elles ont tendance à être
+utiles et pertinentes dans un plus grand nombre de situations que les non
+pures. Prenez <code>show</code>, par exemple. L’utilité de cette fonction dépend de la
+présence d’un espace spécial à l’écran pour afficher sa sortie. Si cet espace
+n’existe pas, la fonction est inutile. Nous pouvons imaginer une fonction
+analogue, appelons-la <code>format</code>, qui prend une valeur en argument et renvoie une
+chaîne de caractères représentant cette valeur. Cette fonction est utile dans
+plus de situations que <code>show</code>.  </p><p>Bien sûr, <code>format</code> ne résout pas le même problème que <code>show</code>, et aucune
+fonction pure ne sera capable de résoudre ce problème, parce que cela nécessite
+des effets de bord. Dans beaucoup de cas, les fonctions non pures sont
+exactement ce dont vous avez besoin. Dans d’autres cas, un problème peut être
+résolu avec une fonction pure, mais la variante non-pure est beaucoup plus
+adaptée ou efficace.</p><p>Par conséquent, lorsque quelque chose peut facilement être exprimé par une
+fonction pure, écrivez-le ainsi. Mais ne vous sentez pas coupable d’avoir écrit
+des fonctions non pures.</p></div><hr/><div class="block"><p>Les fonctions avec effets de bord ne contiennent pas obligatoirement une
+instruction <code>return</code>. Si aucune instruction <code>return</code> n’est trouvée, la fonction
+renvoie <code>undefined</code></p><pre class="code"><span class="keyword">function</span> <span class="variable">crier</span>(<span class="variabledef">message</span>) {
+  <span class="variable">alert</span>(<span class="localvariable">message</span> + <span class="string">&quot;&nbsp;!!&quot;</span>);
+}
+
+<span class="variable">crier</span>(<span class="string">&quot;Youpi&quot;</span>);</pre></div><hr/><div class="block"><p>Les noms des arguments d’une fonction sont disponibles comme variables au sein
+de celle-ci. Ils feront référence aux valeurs des arguments avec lesquels est
+appelée la fonction, et comme les variables normales créées à l’intérieur d’une
+fonction, ils n’existent pas à l’extérieur de celle-ci. En plus de
+l’<a name="key7"></a>environnement global, il y a aussi de plus petits <a name="key8"></a>environnements locaux créés par des appels de fonctions. Lorsque l’on
+cherche une variable à l’intérieur d’une fonction, l’environnement local est
+examiné en premier, et ensuite, seulement si la variable n’existe pas là, on la
+cherche dans l’environnement global. Cela permet à une variable à l’intérieur
+d’une fonction de <a name="key9"></a>masquer une variable globale du même nom.</p><pre class="code"><span class="keyword">function</span> <span class="variable">alertEstPrint</span>(<span class="variabledef">valeur</span>) {
+  <span class="keyword">var</span> <span class="variabledef">alert</span> = <span class="variable">print</span>;
+  <span class="localvariable">alert</span>(<span class="localvariable">valeur</span>);
+}
+
+<span class="variable">alertEstPrint</span>(<span class="string">&quot;Troglodytes&quot;</span>);</pre><p>Les variables dans cet environnement local sont visibles seulement pour le code
+à l’intérieur de la fonction. Si cette fonction appelle une autre fonction, la
+fonction nouvellement créée ne voit pas les variables à l’intérieur de la
+première fonction.</p><pre class="code"><span class="keyword">var</span> <span class="variable">variable</span> = <span class="string">&quot;globale&quot;</span>;
+
+<span class="keyword">function</span> <span class="variable">afficherVariable</span>() {
+  <span class="variable">print</span>(<span class="string">&quot;à l’intérieur de afficherVariable, la variable contient '&quot;</span> +
+        <span class="variable">variable</span> + <span class="string">&quot;'.&quot;</span>);
+}
+
+<span class="keyword">function</span> <span class="variable">test</span>() {
+  <span class="keyword">var</span> <span class="variabledef">variable</span> = <span class="string">&quot;locale&quot;</span>;
+  <span class="variable">print</span>(<span class="string">&quot;à l’intérieur de test, la variable contient '&quot;</span> + <span class="localvariable">variable</span> + <span class="string">&quot;'.&quot;</span>);
+  <span class="variable">afficherVariable</span>();
+}
+
+<span class="variable">test</span>();</pre><p>Cependant, et c’est un phénomène subtil mais extrêmement utile, lorsqu’une
+fonction est définie <em>à l’intérieur</em> d’une autre fonction, son environnement
+local sera basé sur l’environnement local qui l’entoure plutôt que sur
+l’environnement global.</p><pre class="code"><span class="keyword">var</span> <span class="variable">variable</span> = <span class="string">&quot;globale&quot;</span>;
+<span class="keyword">function</span> <span class="variable">fonctionParente</span>() {
+  <span class="keyword">var</span> <span class="variabledef">variable</span> = <span class="string">&quot;locale&quot;</span>;
+  <span class="keyword">function</span> <span class="variabledef">fonctionFille</span>() {
+    <span class="variable">print</span>(<span class="localvariable">variable</span>);
+  }
+  <span class="localvariable">fonctionFille</span>();
+}
+<span class="variable">fonctionParente</span>();</pre><p>Au final, la visibilité des variables à l’intérieur d’une fonction est
+déterminée par la place de cette fonction dans le texte du programme. Toutes
+les variables définies «&nbsp;au-dessus&nbsp;» de la définition d’une fonction sont
+visibles, qu’elles soient dans les corps des fonctions qui la renferment ou
+globales pour tout le programme. Cette approche de la visibilité des variables
+est appelée <a name="key10"></a>portée lexicale.</p></div><hr/><div class="block"><p>Les gens qui ont l’expérience d’autres langages de programmation pourraient
+s’attendre à ce qu’un <a name="key11"></a>bloc de code (entre accolades) crée également un nouvel
+environnement local. Pas en JavaScript. Les fonctions sont les seules qui
+délimitent une nouvelle portée. Vous avez le droit d’utiliser
+des blocs autonomes comme ceci…</p><pre class="code"><span class="keyword">var</span> <span class="variable">quelqueChose</span> = <span class="atom">1</span>;
+{
+  <span class="keyword">var</span> <span class="variable">quelqueChose</span> = <span class="atom">2</span>;
+  <span class="variable">print</span>(<span class="string">&quot;À l’intérieur : &quot;</span> + <span class="variable">quelqueChose</span>);
+}
+<span class="variable">print</span>(<span class="string">&quot;À l’extérieur : &quot;</span> + <span class="variable">quelqueChose</span>);</pre><p>… mais le <code>quelqueChose</code> à l’intérieur du bloc fait référence à la même
+variable que celui à l’extérieur du bloc. En fait, bien que les blocs comme
+celui-ci soient permis, ils sont parfaitement inutiles. La plupart des gens
+admettent que c’est une erreur de conception des créateurs de JavaScript, et
+ECMAScript Harmony ajoutera certains moyens de définir des variables qui
+restent à l’intérieur des blocs (le mot-clé <code>let</code>).</p></div><hr/><div class="block"><p>Voici un cas qui pourrait vous surprendre :</p><pre class="code"><span class="keyword">var</span> <span class="variable">variable</span> = <span class="string">&quot;globale&quot;</span>;
+<span class="keyword">function</span> <span class="variable">fonctionParente</span>() {
+  <span class="keyword">var</span> <span class="variabledef">variable</span> = <span class="string">&quot;locale&quot;</span>;
+  <span class="keyword">function</span> <span class="variabledef">fonctionFille</span>() {
+    <span class="variable">print</span>(<span class="localvariable">variable</span>);
+  }
+  <span class="keyword">return</span> <span class="localvariable">fonctionFille</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">fille</span> = <span class="variable">fonctionParente</span>();
+<span class="variable">fille</span>();</pre><p><code>fonctionParente</code> <em>renvoie</em> sa fonction interne et le code en bas de appelle
+cette fonction. Même si <code>fonctionParente</code> a fini de s’exécuter à ce moment-là,
+l’environnement local dans lequel <code>variable</code> a la valeur <code>locale</code> existe
+toujours, et <code>fonctionFille</code> continue de l’utiliser. Ce phénomène s’appelle une
+fermeture lexicale (ou <a name="key12"></a>closure en anglais).  </p></div><hr/><div class="block"><p>La portée lexicale permet non seulement de rendre très facile et rapide à
+discerner dans quelle partie d’un programme une variable sera disponible, mais
+aussi de «&nbsp;synthétiser&nbsp;» des fonctions. En utilisant certaines des variables
+venant d’une fonction l’englobant, une fonction interne peut être amenée à
+faire des choses différentes. Imaginez que nous ayons besoin de plusieurs
+fonctions différentes mais similaires, l’une d’entre elles ajoutant 2 à son
+argument, l’autre ajoutant 5 et ainsi de suite.  </p><pre class="code"><span class="keyword">function</span> <span class="variable">creerFonctionAjouter</span>(<span class="variabledef">quantite</span>) {
+  <span class="keyword">function</span> <span class="variabledef">ajouter</span>(<span class="variabledef">nombre</span>) {
+    <span class="keyword">return</span> <span class="localvariable">nombre</span> + <span class="localvariable">quantite</span>;
+  }
+  <span class="keyword">return</span> <span class="localvariable">ajouter</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">ajouterDeux</span> = <span class="variable">creerFonctionAjouter</span>(<span class="atom">2</span>);
+<span class="keyword">var</span> <span class="variable">ajouterCinq</span> = <span class="variable">creerFonctionAjouter</span>(<span class="atom">5</span>);
+<span class="variable">show</span>(<span class="variable">ajouterDeux</span>(<span class="atom">1</span>) + <span class="variable">ajouterCinq</span>(<span class="atom">1</span>));</pre><p>Pour bien comprendre, vous ne devez pas considérer que les fonctions
+empaquettent seulement des calculs, mais aussi un environnement. Les fonctions
+globales s’exécutent simplement dans l’environnement global, c’est assez
+évident. Mais une fonction définie à l’intérieur d’une autre fonction conserve
+l’accès à l’environnement existant dans cette fonction à l’instant où elle a
+été définie.</p><p>Par conséquent, la fonction <code>ajouter</code> de l’exemple au-dessus, qui est créée
+lorsque <code>creerFonctionAjouter</code> est appelée, capture un environnement dans
+lequel <code>quantite</code> a une certaine valeur. Il empaquette cet environnement avec
+le calcul <code>return nombre + quantite</code> à l’intérieur d’une valeur qui est alors
+retournée depuis la fonction extérieure.</p><p>Lorsque cette fonction renvoyée (<code>ajouterDeux</code> ou <code>ajouterCinq</code>) est appelée,
+un nouvel environnement ―&nbsp;dans lequel la variable <code>nombre</code> a une valeur&nbsp;― est
+créé comme un sous-environnement de l’environnement capturé (dans lequel
+<code>quantite</code> a une valeur). Ces deux valeurs sont ajoutées, et le résultat est
+renvoyé.</p></div><hr/><div class="block"><p>Au-delà du fait que différentes fonctions peuvent contenir des variables de
+même nom sans qu’elles ne se mélangent, ces règles de portée permettent
+également aux fonctions de s’appeler <em>elles-mêmes</em> sans que ça ne pose de
+problèmes. Une fonction qui s’appelle elle-même est qualifiée de récursive. La
+<a name="key13"></a>récursion permet de donner certaines définitions intéressantes. Jetez un coup
+d’œil à cette implémentation de <code>puissance</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">puissance</span>(<span class="variabledef">base</span>, <span class="variabledef">exposant</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">exposant</span> == <span class="atom">0</span>)
+    <span class="keyword">return</span> <span class="atom">1</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="localvariable">base</span> * <span class="variable">puissance</span>(<span class="localvariable">base</span>, <span class="localvariable">exposant</span> - <span class="atom">1</span>);
+}</pre><p>C’est très proche de ce que les mathématiciens définissent comme
+l’exponentiation et, à mes yeux, c’est du code bien plus propre que dans la
+version initiale. C’est pour ainsi dire une boucle, mais sans <code>while</code>, <code>for</code>,
+ni même un effet de bord visible en local. En s’appelant elle-même, la fonction
+produit le même effet.</p><p>Il reste toutefois un problème important : dans la plupart des navigateurs,
+cette deuxième version est à peu près dix fois plus lente que la première. En
+JavaScript, faire tourner une boucle est bien plus économique qu’appeler une
+fonction à de multiples reprises.</p></div><hr/><div class="block"><p><a name="key14"></a>Le dilemme entre vitesse et <a name="key15"></a>élégance est intéressant. Il
+n’apparaît pas seulement quand on décide de faire ou non une récursion. Dans de
+nombreuses situations, une solution élégante, intuitive et souvent plus courte
+peut être remplacée par une solution plus sophistiquée mais plus rapide.</p><p>Dans le cas de la fonction <code>puissance</code> ci-dessus la version peu élégante est
+encore suffisamment simple et facile à lire. Cela n’aurait pas d’intérêt de la
+remplacer par une version récursive. Pourtant il arrive souvent que les
+concepts que traite un programme deviennent si complexes qu’il s’avère tentant
+de renoncer à un peu d’efficacité pour gagner en simplicité.</p><p>La règle de base, qui a été répétée par de nombreux programmeurs et que
+j’approuve de toutes mes forces, c’est de ne pas s’inquiéter de l’efficacité
+tant que le programme ne devient pas trop lent. Lorsque c’est le cas, trouvez
+quelles parties ralentissent l’exécution et commencez à viser l’efficacité
+plutôt que l’élégance.</p><p>Bien entendu, la règle ci-dessus ne signifie pas qu’on devrait démarrer en
+ignorant complètement le critère de performance. Dans de nombreux cas, comme la
+fonction <code>puissance</code>, on ne gagne que très peu de simplicité avec l’approche «
+élégante&nbsp;». Dans d’autres cas, un programmeur expérimenté peut voir tout de
+suite que la simplicité ne sera jamais assez rapide.</p><p>La raison pour laquelle j’en fais toute une histoire est que bizarrement
+beaucoup de programmeurs se concentrent fanatiquement sur l’efficacité, y
+compris dans les plus détails les plus insignifiants. Résultat, les programmes
+sont plus longs, plus compliqués et souvent moins corrects, ils prennent plus
+de temps à écrire que leur équivalent simple et ne s’exécutent plus vite que de
+façon marginale.</p></div><hr/><div class="block"><p>Mais revenons à nos récursions. Un concept étroitement lié à la récursion est
+une chose qu’on appelle la <a name="key16"></a>pile. Quand on appelle une fonction, on donne le
+contrôle au corps de cette fonction. Quand le corps est exécuté, le code qui a
+appelé la fonction reprend. Pendant que le corps est exécuté, l’ordinateur doit
+se souvenir du contexte à partir duquel on a appelé la fonction pour savoir où
+reprendre par la suite. L’endroit où ce contexte est stocké est appelé la pile.</p><p>Le fait qu’on l’appelle une «&nbsp;pile&nbsp;» vient du fait que, comme nous l’avons vu,
+un corps de fonction peut appeler à nouveau une fonction. À chaque fois qu’une
+fonction est appelée, un autre contexte doit être stocké. On peut se le
+représenter comme une pile de contextes. À chaque appel de fonction, le
+contexte courant est mis sur le haut de la pile. Quand une fonction se termine,
+le contexte du haut de la pile en est retiré pour être restauré.</p><p>Cette pile nécessite un espace de stockage dans la mémoire de l’ordinateur.
+Quand la pile prend trop d’ampleur, l’ordinateur abandonne l’exécution en cours
+avec un message du genre «&nbsp;plus d’espace disponible dans la pile&nbsp;» ou «&nbsp;trop de
+récursions&nbsp;». Mieux vaut s’en souvenir quand on écrit des fonctions récursives.</p><pre class="code invalid"><span class="keyword">function</span> <span class="variable">poule</span>() {
+  <span class="keyword">return</span> <span class="variable">oeuf</span>();
+}
+<span class="keyword">function</span> <span class="variable">oeuf</span>() {
+  <span class="keyword">return</span> <span class="variable">poule</span>();
+}
+<span class="variable">print</span>(<span class="variable">poule</span>() + <span class="string">&quot; était là en premier.&quot;</span>);</pre><p>Non seulement cet exemple nous expose une manière très intéressante d’écrire un
+programme qui plante, mais il montre aussi qu’une fonction n’a pas à s’appeler
+elle-même directement pour être récursive. Si elle appelle une autre fonction
+qui (directement ou non) appelle à nouveau la première, elle est tout de même
+récursive.</p></div><hr/><div class="block"><p>La récursion n’est pas toujours seulement une alternative moins efficace à une
+boucle. Certains problèmes sont bien plus faciles à résoudre avec une récursion
+qu’avec des boucles. Il s’agit le plus souvent de problèmes qui exigent
+l’exploration de plusieurs «&nbsp;branches&nbsp;», chacune d’elles pouvant à son tour se
+subdiviser en autres branches.</p><p>Réfléchissez à cette énigme : en partant du nombre 1 et en lui ajoutant
+toujours 5 ou bien en le multipliant toujours par 3, on peut générer une
+quantité infinie de nouveaux nombres. Comment écririez-vous une fonction qui,
+étant donné un nombre, essaie de trouver une suite d’additions et de
+multiplications qui produise ce nombre&nbsp;?</p><p>Par exemple le nombre 13 peut être obtenu en multipliant d’abord 1 par 3, puis
+en ajoutant deux fois 5. En revanche, on ne peut pas obtenir le nombre 15.</p><p>Voici la solution :</p><pre class="code"><span class="keyword">function</span> <span class="variable">trouverSequence</span>(<span class="variabledef">objectif</span>) {
+  <span class="keyword">function</span> <span class="variabledef">trouver</span>(<span class="variabledef">debut</span>, <span class="variabledef">historique</span>) {
+    <span class="keyword">if</span> (<span class="localvariable">debut</span> == <span class="localvariable">objectif</span>)
+      <span class="keyword">return</span> <span class="localvariable">historique</span>;
+    <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">debut</span> &gt; <span class="localvariable">objectif</span>)
+      <span class="keyword">return</span> <span class="atom">null</span>;
+    <span class="keyword">else</span>
+      <span class="keyword">return</span> <span class="localvariable">trouver</span>(<span class="localvariable">debut</span> + <span class="atom">5</span>, <span class="string">&quot;(&quot;</span> + <span class="localvariable">historique</span> + <span class="string">&quot; + 5)&quot;</span>) ||
+             <span class="localvariable">trouver</span>(<span class="localvariable">debut</span> * <span class="atom">3</span>, <span class="string">&quot;(&quot;</span> + <span class="localvariable">historique</span> + <span class="string">&quot; * 3)&quot;</span>);
+  }
+  <span class="keyword">return</span> <span class="localvariable">trouver</span>(<span class="atom">1</span>, <span class="string">&quot;1&quot;</span>);
+}
+
+<span class="variable">print</span>(<span class="variable">trouverSequence</span>(<span class="atom">24</span>));</pre><p>Notez que le programme ne trouve pas forcément la plus <em>courte</em> suite
+d’opérations, il estime avoir rempli sa mission dès qu’il trouve une
+combinaison quelconque d’opérations.</p><p>La fonction interne <code>trouver</code>, en s’appelant elle-même de deux façons
+différentes, explore à la fois la possibilité d’ajouter 5 au nombre courant et
+celle de le multiplier par 3. Quand le nombre voulu est trouvé, elle renvoie la
+chaîne <code>historique</code>, qui est utilisée pour enregistrer tous les opérateurs mis
+en œuvre pour parvenir au résultat. Elle vérifie également si le nombre courant
+est plus grand que <code>objectif</code> qui est le nombre recherché, puisque si c’est le
+cas, nous devons interrompre l’exploration de cette branche car elle ne peut
+nous donner le nombre que nous voulons.</p><p>L’utilisation de l’opérateur <code>||</code> dans l’exemple peut être compris comme «
+renvoyer la solution trouvée en ajoutant 5 à <code>debut</code> et, si cela échoue,
+renvoyer la solution trouvée en multipliant <code>debut</code> par 3&nbsp;». On peut aussi
+écrire d’une façon plus verbeuse de la façon suivante :</p><pre class="preformatted">else {
+  var trouve = trouver(debut + 5, &quot;(&quot; + historique + &quot; + 5)&quot;);
+  if (trouve == null)
+    trouve = trouver(debut * 3, historique + &quot; * 3&quot;);
+  return trouve;
+}</pre></div><hr/><div class="block"><p>Même si les définitions de fonctions interviennent comme des instructions au
+milieu du reste du programme, elles ne font pas partie de la même chronologie.</p><pre class="code"><span class="variable">print</span>(<span class="string">&quot;Le futur dit : &quot;</span>, <span class="variable">futur</span>());
+
+<span class="keyword">function</span> <span class="variable">futur</span>() {
+  <span class="keyword">return</span> <span class="string">&quot;Nous n’avons TOUJOURS pas de voitures volantes.&quot;</span>;
+}</pre><p>Ce qui se passe c’est que l’ordinateur examine toutes les définitions de
+fonctions et les stocke dans les fonctions associées, <em>avant</em> de commencer à
+exécuter le reste du programme. Il en va de même avec les fonctions qui sont
+définies à l’intérieur d’autres fonctions. Quand la fonction externe est
+appelée, la première chose qui se passe est que toutes les fonctions internes
+sont ajoutées au nouvel environnement.</p></div><hr/><div class="block"><p>Il existe une autre façon de définir des valeurs de type fonction, ressemblant
+davantage à la façon dont les autres valeurs sont créées. Quand le mot-clé
+<code>function</code> est utilisé dans un endroit où une expression est attendue, il est
+considéré comme une expression qui produit une valeur de type fonction. Les
+fonctions créées de cette façon n’ont même pas besoin d’être nommées (bien
+qu’il soit autorisé de le faire).</p><pre class="code"><span class="keyword">var</span> <span class="variable">ajouter</span> = <span class="keyword">function</span>(<span class="variabledef">a</span>, <span class="variabledef">b</span>) {
+  <span class="keyword">return</span> <span class="localvariable">a</span> + <span class="localvariable">b</span>;
+};
+<span class="variable">show</span>(<span class="variable">ajouter</span>(<span class="atom">5</span>, <span class="atom">5</span>));</pre><p>Notez le point-virgule après la définition de <code>ajouter</code>. Les définitions
+normales de fonctions n’en ont pas besoin, mais cette instruction a la
+structure générale de <code>var ajouter = 22;</code> et donc nécessite un
+point-virgule.</p><p>Ce type de valeur est appelé <a name="key17"></a>fonction anonyme, parce que la fonction définie
+n’a alors pas de nom. Parfois il est inutile de donner un nom aux fonctions,
+comme dans l’exemple précédent de <code>creerFonctionAjouter</code> :</p><pre class="code"><span class="keyword">function</span> <span class="variable">creerFonctionAjouter</span>(<span class="variabledef">quantite</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span> (<span class="variabledef">nombre</span>) {
+    <span class="keyword">return</span> <span class="localvariable">nombre</span> + <span class="localvariable">quantite</span>;
+  };
+}</pre><p>Puisque dans la première version de <code>creerFonctionAjouter</code>, la fonction
+<code>ajouter</code> n’a servi qu’une fois, le nom n’est pas nécessaire et nous pouvons
+directement retourner la valeur de la fonction.</p></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 3.2</div><div class="exercise"><p>Écrivez une fonction <code>plusGrandQue</code>, qui prend un nombre en argument et
+retourne une fonction qui représente un test. Quand cette nouvelle fonction est
+appelée avec un simple nombre comme argument, elle retourne un booléen : <code>true</code>
+si le nombre donné est plus grand que le nombre utilisé pour créer la fonction,
+et <code>false</code> sinon.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">plusGrandQue</span>(<span class="variabledef">x</span>) {
+  <span class="keyword">return</span> <span class="keyword">function</span>(<span class="variabledef">y</span>) {
+    <span class="keyword">return</span> <span class="localvariable">y</span> &gt; <span class="localvariable">x</span>;
+  };
+}
+
+<span class="keyword">var</span> <span class="variable">plusGrandQueDix</span> = <span class="variable">plusGrandQue</span>(<span class="atom">10</span>);
+<span class="variable">show</span>(<span class="variable">plusGrandQueDix</span>(<span class="atom">9</span>));</pre></div></div><hr/><div class="block"><p>Essayez cela :</p><pre class="code"><span class="variable">alert</span>(<span class="string">&quot;Salut&quot;</span>, <span class="string">&quot;Bonsoir&quot;</span>, <span class="string">&quot;Comment allez-vous&nbsp;?&quot;</span>, <span class="string">&quot;Au revoir&quot;</span>);</pre><p>La fonction <code>alert</code> n’accepte officiellement qu’un argument. Cependant, quand
+vous l’appelez ainsi, l’ordinateur ne se plaint pas, il ignore juste les autres
+arguments.</p><pre class="code"><span class="variable">show</span>();</pre><p>Vous pouvez même, apparemment, vous passer d’arguments. Quand un argument n’est
+pas transmis, sa valeur dans la fonction est <code>undefined</code>.</p><p>Dans le chapitre suivant, nous verrons un moyen pour que le corps de la
+fonction connaisse la liste exacte des arguments qui lui sont donnés. Cela peut
+être utile, par exemple, pour réaliser une fonction qui accepte n’importe quel
+nombre d’arguments : <code>print</code> se comporte ainsi.</p><pre class="code"><span class="variable">print</span>(<span class="string">&quot;R&quot;</span>, <span class="atom">2</span>, <span class="string">&quot;D&quot;</span>, <span class="atom">2</span>);</pre><p>Bien sûr, un inconvénient est qu’il est aussi possible de donner un nombre
+incorrect d’arguments aux fonctions qui doivent en recevoir un nombre fixe,
+comme <code>alert</code>, et de ne pas en être prévenu.</p></div><ol class="footnotes"><li><a name="footnote1"></a>Techniquement, cela ne devrait pas être nécessaire, mais je suppose que les
+concepteurs de JavaScript se sont dits que cela clarifierait les choses si le
+corps des fonctions était toujours entouré d’accolades.</li><li><a name="footnote2"></a>Techniquement, une fonction pure ne peut utiliser la valeur d’aucune
+variable externe. Ces valeurs pourraient changer et cela pourrait faire
+renvoyer une valeur différente pour les mêmes arguments. En pratique, le
+programmeur peut considérer certaines variables comme «&nbsp;constantes&nbsp;» ―&nbsp;elles
+ne sont pas censées changer&nbsp;― et considérer les fonctions qui utilisent
+uniquement des variables constantes comme des fonctions pures. Les variables
+qui contiennent une fonction sont souvent de bons exemples de variables
+constantes.</li></ol><div class="navigation"><a href="chapter2.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter4.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

@@ -1,0 +1,272 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Requêtes HTTP -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'xhr';</script><div class="navigation"><a href="chapter13.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="appendix1.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 14: </span>Requêtes HTTP</h1><div class="block"><p>Comme mentionné dans le <a href="chapter11.html">chapitre 11</a>, les communications sur le World Wide Web se
+passent via le protocole <a name="key1"></a>HTTP. Une simple <a name="key2"></a>requête pourrait
+ressembler à ça :</p><pre class="preformatted">GET /files/fruit.txt HTTP/1.1
+Host: eloquentjavascript.net
+User-Agent: Le Navigateur Imaginaire</pre><p>Ce qui demande au serveur <code>eloquentjavascript.net</code> le fichier
+<code>files/fruit.txt</code>. En plus, la requête spécifie que la version de HTTP utilisée
+est 1.1 (la version 1.0 est encore utilisée et fonctionne légèrement
+différemment). La ligne <code>Host</code> et <code>User-Agent</code> suivent un même modèle : elles
+commencent par un mot qui identifie l’information qu’elle contient, suivi par
+deux points et l’information elle-même. Ces lignes sont appelées «&nbsp;<a name="key3"></a>en-têtes
+». L’en-tête <code>User-Agent</code> dit au serveur quel navigateur (ou autre type de
+programme) a lancé la requête. D’autres en-têtes sont souvent utilisés tout le
+long, par exemple pour déclarer quels types de documents le client peut
+comprendre, ou pour spécifier le langage qu’il préfère.</p><p>Après avoir reçu la requête ci-dessus, le serveur peut envoyer la <a name="key4"></a>réponse
+suivante :</p><pre class="preformatted">HTTP/1.1 200 OK
+Last-Modified: Mon, 23 Jul 2007 08:41:56 GMT
+Content-Length: 24
+Content-Type: text/plain
+
+pommes, oranges, bananes</pre><p>La première ligne indique encore la version du protocole HTTP utilisée, suivie
+par l’état de la requête. Dans ce cas, le code d’état est <code>200</code>, ce qui
+signifie «&nbsp;OK, rien d’anormal ne s’est produit, je vous envoie les fichiers&nbsp;».
+Viennent ensuite quelques en-têtes indiquant (dans ce cas) la dernière fois que
+le fichier a été modifié, sa longueur et son type (texte brut). Après
+l’en-tête, vous obtenez une ligne blanche suivie par le fichier lui-même.</p><p>En plus des requêtes commençant par <code>GET</code>, indiquant que le client veut
+seulement récupérer le document, le mot Post peut aussi être utilisé pour
+indiquer que des informations seront envoyées avec la requête dont on attend
+que le serveur les traite d’une manière ou d’une autre.<a class="footref" href="#footnote1">1</a></p></div><hr/><div class="block"><p>Lorsque vous cliquez sur un lien, soumettez un formulaire ou encouragez de
+quelque manière votre navigateur à aller sur une nouvelle page, il fera une
+requête HTTP et déchargera immédiatement l’ancienne page pour afficher le
+nouveau document. Dans les situations classiques, c’est exactement ce que vous
+voulez ―&nbsp;c’est la manière dont le Web fonctionne traditionnellement. Parfois
+cependant, un programme JavaScript veut communiquer avec le serveur sans avoir
+à recharger la page. Le bouton «&nbsp;Load&nbsp;» de la console, par exemple, peut
+charger des fichiers sans quitter la page.</p><p>Pour être capable de faire des choses comme celle-là, le programme JavaScript
+doit faire une requête HTTP lui-même. Les navigateurs actuels fournissent une
+interface pour faire cela. Comme pour ouvrir une fenêtre, cette interface est
+sujette à certaines restrictions. Pour empêcher les scripts de faire quoi que
+ce soit d’effrayant, il est uniquement permis de faire une requête HTTP sur le
+domaine d’où vient la page actuelle.</p></div><hr/><div class="block"><p><a name="key5"></a>Un objet utilisé pour faire une requête HTTP peut, dans la
+plupart des navigateurs, être créé en faisant <code>new XMLHttpRequest()</code>. Les
+versions plus anciennes d’Internet Explorer qui inventa originellement cette
+technique nécessitent de faire <code>new ActiveXObject(&quot;Msxml2.XMLHTTP&quot;)</code>, ou pour
+des versions encore plus anciennes <code>new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;)</code>.
+<a name="key6"></a><code>ActiveXObject</code> est l’interface d’Internet Explorer à différentes
+spécificités de ce navigateur. Nous sommes déjà habitués à écrire des fonctions
+pour prendre en charge les incompatibilités, alors faisons le encore une fois :</p><pre class="code"><span class="keyword">function</span> <span class="variable">makeHttpObject</span>() {
+  <span class="keyword">try</span> {<span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">XMLHttpRequest</span>();}
+  <span class="keyword">catch</span> (<span class="variabledef">erreur</span>) {}
+  <span class="keyword">try</span> {<span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">ActiveXObject</span>(<span class="string">&quot;Msxml2.XMLHTTP&quot;</span>);}
+  <span class="keyword">catch</span> (<span class="variabledef">erreur</span>) {}
+  <span class="keyword">try</span> {<span class="keyword">return</span> <span class="keyword">new</span> <span class="variable">ActiveXObject</span>(<span class="string">&quot;Microsoft.XMLHTTP&quot;</span>);}
+  <span class="keyword">catch</span> (<span class="variabledef">erreur</span>) {}
+
+  <span class="keyword">throw</span> <span class="keyword">new</span> <span class="variable">Error</span>(<span class="string">&quot;La création de l’objet pour les requêtes HTTP n’a pas pu avoir lieu.&quot;</span>);
+}
+
+<span class="variable">show</span>(typeof(<span class="variable">makeHttpObject</span>()));</pre><p>La fonction encapsulatrice essaie de créer l’objet des trois manières en
+utilisant <code>try</code> et <code>catch</code> pour détecter celles qui échouent. Si aucune des
+manières ne fonctionne, ce qui peut être le cas avec les plus vieux navigateurs
+ou les navigateurs avec des paramètres de sécurité stricts, une erreur est
+signalée.</p><p>Maintenant, pourquoi cet objet est-il appelé <em>XML</em> HTTP request&nbsp;? C’est un nom
+un peu trompeur. <a name="key7"></a>XML est un moyen de stocker des données textuelles. Il
+utilise des balises et des attributs comme HTML, mais est plus structuré et
+flexible ―&nbsp;pour stocker vos propres sortes de données vous pouvez définir vos
+propres types de balises XML. Ces objets requêtes HTTP ont certaines
+fonctionnalités intégrées pour s’occuper de la récupération de documents XML,
+raison pour laquelle ils ont XML dans leur nom. Ils peuvent cependant gérer
+également d’autres types de documents, et d’après mon expérience sont utilisés
+aussi souvent pour des requêtes non-XML.</p></div><hr/><div class="block"><p>Maintenant que nous avons notre objet HTTP, nous pouvons l’utiliser pour
+fabriquer une requête.</p><pre class="code"><span class="keyword">var</span> <span class="variable">requete</span> = <span class="variable">makeHttpObject</span>();
+<span class="variable">requete</span>.<span class="property">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;files/fruit.txt&quot;</span>, <span class="atom">false</span>);
+<span class="variable">requete</span>.<span class="property">send</span>(<span class="atom">null</span>);
+<span class="variable">print</span>(<span class="variable">requete</span>.<span class="property">responseText</span>);</pre><p>La méthode <a name="key8"></a><code>open</code> est utilisée pour configurer la requête. Dans ce cas, nous
+choisissons de fabriquer une requête <code>GET</code> pour notre fichier <code>fruit.txt</code>.
+L’<a name="key9"></a>URL donnée ici est facultative, elle ne contient pas la partie <code>http://</code> ou
+le nom d’un serveur, ce qui signifie qu’elle va chercher le fichier sur le
+serveur d’où vient le document courant. Le troisième paramètre, <code>false</code>, sera
+examiné dans un moment. Après que <code>open</code> ait été appelé, la véritable requête
+peut être faite avec la méthode <a name="key10"></a><code>send</code>. Lorsque la requête est une requête
+<code>POST</code>, les données à envoyer au serveur (comme une chaîne de caractères)
+peuvent être passées par cette méthode. Pour les requêtes <code>GET</code>, il y a juste à
+passer <code>null</code>.</p><p>Une fois que la requête a été faite, la propriété <a name="key11"></a><code>responseText</code> de l’objet
+requête contient le contenu du document récupéré. Les en-têtes que le serveur a
+renvoyés peuvent être inspectés avec les fonctions <a name="key12"></a><code>getResponseHeader</code> et
+<a name="key13"></a><code>getAllResponseHeaders</code>. La première cherche un en-tête particulier tandis
+que la seconde nous donne une chaîne de caractères contenant tous les en-têtes.
+Ceux-ci peuvent être utiles en certaines occasions pour obtenir des
+informations supplémentaires sur le document.</p><pre class="code"><span class="variable">print</span>(<span class="variable">requete</span>.<span class="property">getAllResponseHeaders</span>());
+<span class="variable">show</span>(<span class="variable">requete</span>.<span class="property">getResponseHeader</span>(<span class="string">&quot;Last-Modified&quot;</span>));</pre><p>Si pour une quelconque raison, vous voulez ajouter des en-têtes à la requête
+qui est envoyée au serveur, vous pouvez utiliser la méthode
+<a name="key14"></a><code>setRequestHeader</code>. Elle prend deux chaînes de caractères en arguments, le
+nom et la valeur de l’en-tête.</p><p>Le code de réponse, qui était <code>200</code> dans l’exemple, peut être trouvé dans la
+propriété <a name="key15"></a><code>status</code>. Si quelque chose se passe mal, ce code obscur l’indiquera
+immédiatement. Par exemple, <code>404</code> signifie que le fichier que vous avez demandé
+n’existe pas. Le <a name="key16"></a><code>statusText</code> contient une description légèrement moins
+énigmatique de l’état.</p><pre class="code"><span class="variable">show</span>(<span class="variable">requete</span>.<span class="property">status</span>);
+<span class="variable">show</span>(<span class="variable">requete</span>.<span class="property">statusText</span>);</pre><p>Lorsque vous voulez vérifier si une requête a fonctionné, comparer <code>status</code>
+avec <code>200</code> est en général suffisant. En théorie, le serveur pourrait retourner
+le code <code>304</code> dans certaines situations pour indiquer que l’ancienne version du
+document stockée par le navigateur dans son «&nbsp;<a name="key17"></a>cache&nbsp;» est encore à jour.
+Cependant, il semble que les navigateurs vous protègent de cela en définissant
+<code>status</code> à <code>200</code> même lorsqu’il vaut <code>304</code>. Il faut également savoir que si
+vous faites une requête à travers un protocole non-HTTP<a class="footref" href="#footnote2">2</a>, comme FTP, <code>status</code>
+ne sera pas utilisable parce que le protocole n’utilise pas les codes d’états
+HTTP.</p></div><hr/><div class="block"><p>Lorsqu’une requête est faite comme dans l’exemple suivant, l’appel à la méthode
+<code>send</code> ne rend pas la main tant que la requête n’est pas terminée. C’est
+pratique car cela signifie que <code>responseText</code> est disponible après l’envoi de
+<code>send</code> et que l’on peut immédiatement l’utiliser. Il y a cependant un problème.
+Lorsque le serveur est lent ou que le fichier est lourd, faire une requête peut
+prendre un certain temps. Tant qu’elle est en train d’être faite, le programme
+attend, ce qui fait que le navigateur tout entier attend. Jusqu’à ce que le
+programme s’achève, l’utilisateur ne peut rien faire, même pas faire défiler la
+page. Les pages qui tournent sur un réseau local rapide et fiable pourraient
+s’en sortir en faisant des requêtes comme cela. Les pages sur l’immense et
+imprévisible Internet ne peuvent pas, pour ce qui les concerne, en faire
+autant.</p><p>Lorsque le troisième argument de <code>open</code> est <code>true</code>, la requête est définie pour
+être «&nbsp;<a name="key18"></a>asynchrone&nbsp;». Cela signifie que <code>send</code> rendra la main immédiatement
+pendant que la requête se fera en arrière-plan.</p><pre class="code"><span class="variable">requete</span>.<span class="property">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;files/fruit.xml&quot;</span>, <span class="atom">true</span>);
+<span class="variable">requete</span>.<span class="property">send</span>(<span class="atom">null</span>);
+<span class="variable">show</span>(<span class="variable">requete</span>.<span class="property">responseText</span>);</pre><p>Mais attendez un moment, et…</p><pre class="code"><span class="variable">print</span>(<span class="variable">requete</span>.<span class="property">responseText</span>);</pre><p>«&nbsp;Attendez un moment&nbsp;» peut être implémenté avec <code>setTimeout</code> ou quelque chose
+du même genre, mais il existe un meilleur moyen. Un objet requête a une
+propriété <a name="key19"></a><code>readyState</code> indiquant l’état dans lequel il se trouve. Il passera
+à <code>4</code> lorsque le document aura été complètement chargé, et aura une valeur
+inférieure avant cela<a class="footref" href="#footnote3">3</a>. Pour réagir au changement de cet état, nous pouvons
+définir la propriété <a name="key20"></a><code>onreadystatechange</code> de l’objet par une fonction. Cette
+fonction sera appelée à chaque fois que l’état change.</p><pre class="code"><span class="variable">requete</span>.<span class="property">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;files/fruit.xml&quot;</span>, <span class="atom">true</span>);
+<span class="variable">requete</span>.<span class="property">send</span>(<span class="atom">null</span>);
+<span class="variable">requete</span>.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (<span class="variable">requete</span>.<span class="property">readyState</span> == <span class="atom">4</span>)
+    <span class="variable">show</span>(<span class="variable">requete</span>.<span class="property">responseText</span>.<span class="property">length</span>);
+};</pre></div><hr/><div class="block"><p>Lorsque le fichier récupéré par l’objet requête est un document XML, la
+propriété <a name="key21"></a><code>responseXML</code> de la requête contiendra une représentation de ce
+document. Cette représentation fonctionne de la même manière que l’objet DOM
+examiné dans le <a href="chapter12.html">chapitre 12</a>, mis à part qu’il n’a pas de fonctionnalités spécifiques
+au HTML telles que <code>style</code> ou <code>innerHTML</code>. <code>responseXML</code> nous fournit un objet
+document dont la propriété <code>documentElement</code> fait référence à la balise
+extérieure du document XML.</p><pre class="code"><span class="keyword">var</span> <span class="variable">catalogue</span> = <span class="variable">requete</span>.<span class="property">responseXML</span>.<span class="property">documentElement</span>;
+<span class="variable">show</span>(<span class="variable">catalogue</span>.<span class="property">childNodes</span>.<span class="property">length</span>);</pre><p>De tels documents XML peuvent être utilisés pour échanger des informations
+structurées avec le serveur. Leur forme ―&nbsp;des balises contenant d’autres
+balises&nbsp;― est souvent très adaptée pour le stockage de choses qu’il serait
+difficile de représenter seulement avec du texte plat. Cependant, l’interface
+DOM est plutôt mal fichue pour extraire des informations, et les documents XML
+sont connus pour être verbeux : Le document <code>fruit.xml</code> a l’air imposant alors
+qu’il dit seulement «&nbsp;les pommes sont rouges, les oranges sont orange et les
+bananes sont jaunes&nbsp;».</p></div><hr/><div class="block"><p>Les programmeurs JavaScript ont trouvé une alternative à XML appelée <a href="http://www.json.org">JSON</a>. Elle utilise la notation JavaScript élémentaire des
+valeurs pour représenter les informations hiérarchisées sous une forme plus
+minimaliste. Un document JSON est un fichier contenant un seul objet JavaScript
+ou un tableau, pouvant lui-même contenir d’autres objets, des tableaux, des
+chaînes de caractères, des nombres, des booléens ou la valeur null. Par
+exemple, regardez <code>fruit.json</code> :</p><pre class="code"><span class="variable">requete</span>.<span class="property">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;files/fruit.json&quot;</span>, <span class="atom">true</span>);
+<span class="variable">requete</span>.<span class="property">send</span>(<span class="atom">null</span>);
+<span class="variable">requete</span>.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>() {
+  <span class="keyword">if</span> (<span class="variable">requete</span>.<span class="property">readyState</span> == <span class="atom">4</span>)
+    <span class="variable">print</span>(<span class="variable">requete</span>.<span class="property">responseText</span>);
+};</pre><p>Un morceau de texte comme celui-ci peut être converti en valeur JavaScript
+normale en utilisant la fonction <a name="key22"></a><code>eval</code>. Des parenthèses doivent être
+ajoutées autour de lui avant d’appeler <code>eval</code>, car sinon JavaScript pourrait
+interpréter un objet (entouré d’accolades) comme un bloc de code et engendrer
+une erreur.</p><pre class="code"><span class="keyword">function</span> <span class="variable">evalJSON</span>(<span class="variabledef">json</span>) {
+  <span class="keyword">return</span> <span class="variable">eval</span>(<span class="string">&quot;(&quot;</span> + <span class="localvariable">json</span> + <span class="string">&quot;)&quot;</span>);
+}
+<span class="keyword">var</span> <span class="variable">fruit</span> = <span class="variable">evalJSON</span>(<span class="variable">requete</span>.<span class="property">responseText</span>);
+<span class="variable">show</span>(<span class="variable">fruit</span>);</pre><p>Lorsque vous exécutez <code>eval</code> sur un morceau de texte, vous devez garder à
+l’esprit que cela signifie que vous permettez à ce bout de texte d’exécuter
+arbitrairement n’importe quel code. Comme JavaScript ne nous permet de faire
+des requêtes que sur notre propre domaine, vous connaîtrez généralement de
+manière précise le genre de texte que vous récupérez et cela ne pose pas de
+problème. Dans d’autres situations, cela peut se révéler dangereux.</p></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 14.1</div><div class="exercise"><p>Écrivez une fonction appelée <code>serializeJSON</code> qui, lorsqu’on lui fournit une
+valeur JavaScript, crée une chaîne de caractères avec la représentation JSON de
+la valeur. Les valeurs simples comme les nombres et les booléens peuvent
+simplement être données à la fonction <code>String</code> pour les convertir en chaînes de
+caractères. Les objets et les tableaux peuvent être traités par récursion.</p><p>Il faut reconnaître que les tableaux peuvent être sournois car ils sont du type
+«&nbsp;<code>object</code>&nbsp;». Vous pouvez utiliser <code>instanceof Array</code>, mais cela fonctionnera
+uniquement pour les tableaux créés dans la même fenêtre ―&nbsp;les autres
+utiliseront le prototype d’<code>Array</code> des autres fenêtres et <code>instanceof</code> renverra
+<code>false</code>. Une astuce est de convertir la propriété <code>constructor</code> en chaîne de
+caractères et de voir si elle contient «&nbsp;<code>function Array</code>&nbsp;».</p><p>Quand vous convertissez une chaîne, vous devez faire attention à échapper ses
+caractères. Si vous utilisez des guillemets doubles autour de la chaîne, les
+caractères à échapper sont <code>\&quot;</code>, <code>\\</code>, <code>\f</code>, <code>\b</code>, <code>\n</code>, <code>\t</code>, <code>\r</code>, et <code>\v</code><a class="footref" href="#footnote4">4</a>.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">serializeJSON</span>(<span class="variabledef">valeur</span>) {
+  <span class="keyword">function</span> <span class="variabledef">isArray</span>(<span class="variabledef">valeur</span>) {
+    <span class="keyword">return</span> <span class="string">/^\s*function Array/</span>.<span class="property">test</span>(<span class="variable">String</span>(<span class="localvariable">valeur</span>.<span class="property">constructor</span>));
+  }
+
+  <span class="keyword">function</span> <span class="variabledef">serializeArray</span>(<span class="variabledef">valeur</span>) {
+    <span class="keyword">return</span> <span class="string">&quot;[&quot;</span> + <span class="variable">map</span>(<span class="variable">serializeJSON</span>, <span class="localvariable">valeur</span>).<span class="property">join</span>(<span class="string">&quot;, &quot;</span>) + <span class="string">&quot;]&quot;</span>;
+  }
+  <span class="keyword">function</span> <span class="variabledef">serializeObject</span>(<span class="variabledef">valeur</span>) {
+    <span class="keyword">var</span> <span class="variabledef">proprietes</span> = [];
+    <span class="variable">forEachIn</span>(<span class="localvariable">valeur</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+      <span class="localvariable">proprietes</span>.<span class="property">push</span>(<span class="variable">serializeString</span>(<span class="localvariable">nom</span>) + <span class="string">&quot;: &quot;</span> +
+                      <span class="variable">serializeJSON</span>(<span class="localvariable">valeur</span>));
+    });
+    <span class="keyword">return</span> <span class="string">&quot;{&quot;</span> + <span class="localvariable">proprietes</span>.<span class="property">join</span>(<span class="string">&quot;, &quot;</span>) + <span class="string">&quot;}&quot;</span>;
+  }
+  <span class="keyword">function</span> <span class="variabledef">serializeString</span>(<span class="variabledef">valeur</span>) {
+    <span class="keyword">var</span> <span class="variabledef">caracteresSpeciaux</span> =
+      {<span class="string">&quot;\&quot;&quot;</span>: <span class="string">&quot;\\\&quot;&quot;</span>, <span class="string">&quot;\\&quot;</span>: <span class="string">&quot;\\\\&quot;</span>, <span class="string">&quot;\f&quot;</span>: <span class="string">&quot;\\f&quot;</span>, <span class="string">&quot;\b&quot;</span>: <span class="string">&quot;\\b&quot;</span>,
+       <span class="string">&quot;\n&quot;</span>: <span class="string">&quot;\\n&quot;</span>, <span class="string">&quot;\t&quot;</span>: <span class="string">&quot;\\t&quot;</span>, <span class="string">&quot;\r&quot;</span>: <span class="string">&quot;\\r&quot;</span>, <span class="string">&quot;\v&quot;</span>: <span class="string">&quot;\\v&quot;</span>};
+    <span class="keyword">var</span> <span class="variabledef">valeurAvecEchappements</span> = <span class="localvariable">valeur</span>.<span class="property">replace</span>(<span class="string">/[\&quot;\\\f\b\n\t\r\v]/g</span>,
+                                <span class="keyword">function</span>(<span class="variabledef">c</span>) {<span class="keyword">return</span> <span class="localvariable">caracteresSpeciaux</span>[<span class="localvariable">c</span>];});
+    <span class="keyword">return</span> <span class="string">&quot;\&quot;&quot;</span> + <span class="localvariable">valeurAvecEchappements</span> + <span class="string">&quot;\&quot;&quot;</span>;
+  }
+
+  <span class="keyword">var</span> <span class="variabledef">type</span> = typeof <span class="localvariable">valeur</span>;
+  <span class="keyword">if</span> (<span class="localvariable">type</span> == <span class="string">&quot;object&quot;</span> &amp;&amp; <span class="localvariable">isArray</span>(<span class="localvariable">valeur</span>))
+    <span class="keyword">return</span> <span class="localvariable">serializeArray</span>(<span class="localvariable">valeur</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">type</span> == <span class="string">&quot;object&quot;</span>)
+    <span class="keyword">return</span> <span class="localvariable">serializeObject</span>(<span class="localvariable">valeur</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">type</span> == <span class="string">&quot;string&quot;</span>)
+    <span class="keyword">return</span> <span class="localvariable">serializeString</span>(<span class="localvariable">valeur</span>);
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="variable">String</span>(<span class="localvariable">valeur</span>);
+}
+
+<span class="variable">print</span>(<span class="variable">serializeJSON</span>(<span class="variable">fruit</span>));</pre><p>L’astuce utilisée dans <code>serializeString</code> est similaire à celle que nous avons
+vue dans la fonction <code>escapeHTML</code> du <a href="chapter10.html">chapitre 10</a>. Elle utilise un objet pour
+chercher les substitutions nécessaires pour chacun des caractères. Certaines
+d’entre elles, comme <code>&quot;\\\\&quot;</code>, ont l’air assez étranges parce qu’il est
+nécessaire de mettre deux antislash devant chaque antislash dans la chaîne de
+résultat.</p><p>Notez également que les noms de propriétés sont entre guillemets comme des
+chaînes. Pour certaines d’entre elles ce n’est pas nécessaire, mais c’est
+préférable pour ceux qui incluent des espaces et d’autres choses curieuses,
+donc le code joue la sécurité et met tout entre guillemets.</p></div></div><hr/><div class="block"><p>Quand on fait de nombreuses requêtes, on ne souhaite pas, bien entendu, répéter
+à chaque fois le même rituel <code>open</code>, <code>send</code>, <code>onreadystatechange</code>. Voilà à quoi
+peut ressembler une fonction encapsulatrice très simple :</p><pre class="code"><span class="keyword">function</span> <span class="variable">simpleHttpRequest</span>(<span class="variabledef">url</span>, <span class="variabledef">succes</span>, <span class="variabledef">echec</span>) {
+  <span class="keyword">var</span> <span class="variabledef">requete</span> = <span class="variable">makeHttpObject</span>();
+  <span class="localvariable">requete</span>.<span class="property">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="localvariable">url</span>, <span class="atom">true</span>);
+  <span class="localvariable">requete</span>.<span class="property">send</span>(<span class="atom">null</span>);
+  <span class="localvariable">requete</span>.<span class="property">onreadystatechange</span> = <span class="keyword">function</span>() {
+    <span class="keyword">if</span> (<span class="localvariable">requete</span>.<span class="property">readyState</span> == <span class="atom">4</span>) {
+      <span class="keyword">if</span> (<span class="localvariable">requete</span>.<span class="property">status</span> == <span class="atom">200</span>)
+        <span class="localvariable">succes</span>(<span class="localvariable">requete</span>.<span class="property">responseText</span>);
+      <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">echec</span>)
+        <span class="localvariable">echec</span>(<span class="localvariable">requete</span>.<span class="property">status</span>, <span class="localvariable">requete</span>.<span class="property">statusText</span>);
+    }
+  };
+}
+
+<span class="variable">simpleHttpRequest</span>(<span class="string">&quot;files/fruit.txt&quot;</span>, <span class="variable">print</span>);</pre><p>La fonction accède à l’URL qu’on lui donne et appelle la fonction qu’on lui
+donne comme second argument avec le contenu. Quand un troisième argument est
+passé, il sert à indiquer une erreur ―&nbsp;un code d’état différent de <code>200</code>.</p><p>Pour pouvoir faire des requêtes plus complexes, on peut s’arranger pour que la
+fonction accepte des paramètres supplémentaires pour préciser la méthode (<code>GET</code>
+ou <code>POST</code>), une chaîne facultative pour l’envoyer comme donnée, une façon
+d’ajouter des en-têtes supplémentaires et ainsi de suite. Quand vous aurez
+autant d’arguments, vous souhaiterez probablement les passer comme un «&nbsp;objet
+d’arguments&nbsp;» comme nous l’avons vu dans le <a href="chapter9.html">chapitre 9</a>.</p></div><hr/><div class="block"><p>Certains sites web font un usage intensif de la communication entre les
+programmes qui tournent côté client et ceux qui tournent côté serveur. Dans de
+tels systèmes, il peut être pratique de considérer certaines requêtes HTTP
+comme des appels à des fonctions qui s’exécutent sur le serveur. Le client fait
+une requête vers des URL qui identifient les fonctions, leur donnant des
+arguments sous forme de paramètres URL ou de données <code>POST</code>. Le serveur appelle
+alors la fonction, et met le résultat dans un document JSON ou XML qu’il
+renvoie. Si vous écrivez quelques fonctions de support pratiques, ceci peut
+rendre les appels côté serveur presque aussi simples qu’ils le sont côté
+client… à l’exception bien sûr du retour des résultats qui ne sera pas aussi
+instantané.</p></div><ol class="footnotes"><li><a name="footnote1"></a>Ce ne sont pas les seuls types de requêtes. Il y a aussi <code>HEAD</code> pour
+demander uniquement les en-têtes d’un document sans le contenu, <code>PUT</code> pour
+ajouter un document sur un serveur et <code>DELETE</code> pour supprimer un document.
+Ceux-ci ne sont pas utilisés par les navigateurs et ne sont souvent même pas
+pris en charge par les serveurs web.</li><li><a name="footnote2"></a>La partie XML du nom <code>XMLHttpRequest</code> n’est pas la seule à être trompeuse ―
+l’objet peut aussi être utilisé pour une requête à travers des protocoles
+autres que HTTP, <code>Request</code> est donc la seule partie significative qu’il nous
+reste.</li><li><a name="footnote3"></a><code>0</code> («&nbsp;non initialisé&nbsp;») est l’état de l’objet avant qu’<code>open</code> ne soit
+appelé dessus. Appeler <code>open</code> le passe à <code>1</code> («&nbsp;ouvert&nbsp;»). Appeler <code>send</code> le
+fait poursuivre vers <code>2</code> («&nbsp;envoyé&nbsp;»). Lorsque le serveur répond, il passe à
+<code>3</code> («&nbsp;réception&nbsp;»). Enfin, <code>4</code> signifie «&nbsp;chargé&nbsp;».</li><li><a name="footnote4"></a>Nous avons déjà rencontré <code>\n</code>, qui crée une nouvelle ligne. <code>\t</code> est un
+caractère de tabulation, <code>\r</code> un «&nbsp;retour chariot&nbsp;», que certains systèmes
+utilisent au lieu d’un <code>\n</code> pour indiquer une fin de ligne. <code>\b</code> (backspace),
+<code>\v</code> (tabulation verticale), et <code>\f</code> (saut de page) sont utiles quand on
+travaille avec de vieilles imprimantes mais moins utiles quand on parle de
+navigateurs Web.</li></ol><div class="navigation"><a href="chapter13.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="appendix1.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>

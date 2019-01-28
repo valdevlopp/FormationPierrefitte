@@ -1,0 +1,353 @@
+<html><head><link rel="stylesheet" type="text/css" href="css/book.css"/><link rel="stylesheet" type="text/css" href="css/highlight.css"/><link rel="stylesheet" type="text/css" href="css/console.css"/><link rel="stylesheet" type="text/css" href="css/codemirror.css"/><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Le modèle objet de documents -- JavaScript Éloquent</title></head><body><script type="text/javascript" src="js/before.js"> </script><div class="content"><script type="text/javascript">var chapterTag = 'dom';</script><div class="navigation"><a href="chapter11.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter13.html">Chapitre suivant &gt;&gt;</a></div><h1><span class="number">Chapitre 12: </span>Le modèle objet de documents</h1><div class="block"><p>Dans le <a href="chapter11.html">chapitre 11</a> nous avons vu les objets JavaScript qui font référence aux
+balises <code>form</code> et <code>input</code> du document HTML. De tels objets font partie d’une
+structure appelée le <a name="key1"></a>modèle objet de documents (<a name="key2"></a>DOM). Chaque élément du
+document est représenté dans ce modèle, on peut l’examiner et interagir avec
+lui.</p><p>Les documents HTML ont ce qu’on peut appeler une structure hiérarchique. Chaque
+élément (ou balise) à l’exception de la balise de premier niveau <code>&lt;html&gt;</code> est
+contenu dans un autre élément, son parent. Cet élément peut en retour contenir
+d’autres éléments. Vous pouvez vous le représenter comme une sorte d’arbre
+généalogique.</p><div class="illustration"><img src="img/html.png"/></div><p>Le modèle objet de documents est basé sur une telle vue du document. Veuillez
+noter que l’arbre contient deux types d’éléments : les nœuds, représentés comme
+des boîtes bleues et de simples morceaux de texte. Les morceaux de texte sont
+comme nous le verrons assez différents des autres éléments. L’une de ces
+différences est qu’ils n’ont jamais d’enfants.</p><p>Ouvrez le fichier <code>example_alchemy.html</code> qui contient le document présenté dans
+l’image et attachez-y la console.</p><pre class="code"><span class="variable">attach</span>(<span class="variable">window</span>.<span class="property">open</span>(<span class="string">&quot;example_alchemy.html&quot;</span>));</pre><p><a name="key3"></a>L’objet de la racine de l’arbre document, le nœud
+<code>html</code>, peut-être atteint via la propriété <code>documentElement</code> de l’objet
+<code>document</code>. La plupart du temps, nous avons plutôt besoin de la partie <code>body</code>
+du document qui se trouve à <a name="key4"></a><code>document.body</code>.</p></div><hr/><div class="block"><p>Les liens entre ces nœuds sont disponibles sous forme de propriétés de l’objet
+nœud. Chaque objet DOM possède une propriété <a name="key5"></a><code>parentNode</code> qui fait référence
+à l’objet dans lequel il est contenu, si objet il y a. Ces parents ont aussi
+des liens pointant vers leurs enfants. Mais parce qu’il peut y avoir plusieurs
+enfants, ils sont stockés dans un pseudo-tableau appelé <a name="key6"></a><code>childNodes</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>);
+<span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">parentNode</span>);
+<span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">childNodes</span>.<span class="property">length</span>);</pre><p>Par commodité, il y a aussi des liens appelés <a name="key7"></a><code>firstChild</code> et <a name="key8"></a><code>lastChild</code>,
+pointant respectivement au premier et au dernier enfant à l’intérieur d’un nœud
+ou <code>null</code> quand il n’y a pas d’enfant.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">documentElement</span>.<span class="property">firstChild</span>);
+<span class="variable">show</span>(<span class="variable">document</span>.<span class="property">documentElement</span>.<span class="property">lastChild</span>);</pre><p>Enfin, il y a des propriétés nommées <a name="key9"></a><code>nextSibling</code> et <a name="key10"></a><code>previousSibling</code>,
+qui pointent vers les nœuds présents aux côtés d’un autre nœud ― les nœuds qui
+sont des enfants du même parent, venant avant ou après le nœud courant. Encore
+une fois, lorsque ces nœuds ne sont pas présents, la valeur de ces propriétés
+est <code>null</code>.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">previousSibling</span>);
+<span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">nextSibling</span>);</pre></div><hr/><div class="block"><p>Pour savoir si un nœud représente un simple morceau de texte ou un nœud HTML,
+nous pouvons jeter un œil à sa propriété <a name="key11"></a><code>nodeType</code>. Elle contiendra un
+nombre, <code>1</code> pour un nœud classique et <code>3</code> pour un nœud texte. Il existe en fait
+d’autres sortes d’objets qui possèdent un <code>nodeType</code>, comme l’objet <code>document</code>
+qui vaudra <code>9</code>, mais l’usage le plus commun de cette propriété est la
+distinction entre les nœuds textes et les autres nœuds.</p><pre class="code"><span class="keyword">function</span> <span class="variable">isTextNode</span>(<span class="variabledef">noeud</span>) {
+  <span class="keyword">return</span> <span class="localvariable">noeud</span>.<span class="property">nodeType</span> == <span class="atom">3</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">isTextNode</span>(<span class="variable">document</span>.<span class="property">body</span>));
+<span class="variable">show</span>(<span class="variable">isTextNode</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">firstChild</span>.<span class="property">firstChild</span>));</pre><p>Les nœuds classiques ont une propriété appelée <a name="key12"></a><code>nodeName</code>, indiquant le type
+de balise HTML qu’ils représentent. En revanche, les nœuds textes ont une
+propriété <a name="key13"></a><code>nodeValue</code>, ayant pour valeur leur contenu texte.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">firstChild</span>.<span class="property">nodeName</span>);
+<span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">firstChild</span>.<span class="property">firstChild</span>.<span class="property">nodeValue</span>);</pre><p>Les propriétés <code>nodeName</code> sont toujours mises en majuscules, c’est quelque
+chose qui doit être pris en compte si jamais vous voulez les comparer à quoi
+que ce soit.</p><pre class="code"><span class="keyword">function</span> <span class="variable">isImage</span>(<span class="variabledef">noeud</span>) {
+  <span class="keyword">return</span> !<span class="variable">isTextNode</span>(<span class="localvariable">noeud</span>) &amp;&amp; <span class="localvariable">noeud</span>.<span class="property">nodeName</span> == <span class="string">&quot;IMG&quot;</span>;
+}
+
+<span class="variable">show</span>(<span class="variable">isImage</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">lastChild</span>));</pre></div><hr/><div class="block"><a name="exercise1"></a><div class="exercisenum">Ex. 12.1</div><div class="exercise"><p>Écrivez une fonction <code>asHTML</code> qui, appelée avec un nœud DOM, produira une
+chaîne représentant le texte HTML de ce nœud et de ses éléments. Vous pouvez
+ignorer les attributs, afficher juste les nœuds comme <code>&lt;nodename&gt;</code>. La fonction
+<code>escapeHTML</code> du <a href="chapter10.html">chapitre 10</a> est disponible afin d’échapper correctement le
+contenu des nœuds textes.</p><p>Indice : Récursion!</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">asHTML</span>(<span class="variabledef">noeud</span>) {
+  <span class="keyword">if</span> (<span class="variable">isTextNode</span>(<span class="localvariable">noeud</span>))
+    <span class="keyword">return</span> <span class="variable">escapeHTML</span>(<span class="localvariable">noeud</span>.<span class="property">nodeValue</span>);
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">noeud</span>.<span class="property">childNodes</span>.<span class="property">length</span> == <span class="atom">0</span>)
+    <span class="keyword">return</span> <span class="string">&quot;&lt;&quot;</span> + <span class="localvariable">noeud</span>.<span class="property">nodeName</span> + <span class="string">&quot;/&gt;&quot;</span>;
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> <span class="string">&quot;&lt;&quot;</span> + <span class="localvariable">noeud</span>.<span class="property">nodeName</span> + <span class="string">&quot;&gt;&quot;</span> +
+           <span class="variable">map</span>(<span class="variable">asHTML</span>, <span class="localvariable">noeud</span>.<span class="property">childNodes</span>).<span class="property">join</span>(<span class="string">&quot;&quot;</span>) +
+           <span class="string">&quot;&lt;/&quot;</span> + <span class="localvariable">noeud</span>.<span class="property">nodeName</span> + <span class="string">&quot;&gt;&quot;</span>;
+}
+
+<span class="variable">print</span>(<span class="variable">asHTML</span>(<span class="variable">document</span>.<span class="property">body</span>));</pre></div></div><hr/><div class="block"><p>En réalité, les nœuds ont déjà quelque chose de similaire à <code>asHTML</code>. Leur
+propriété <a name="key14"></a><code>innerHTML</code> peut être utilisée afin de récupérer le texte HTML <em>à
+l’intérieur</em> du nœud, sans les balises du nœud en question. Quelques
+navigateurs Web, mais pas tous, prennent aussi en charge la propriété
+<code>outerHTML</code>, qui inclut le nœud lui-même.</p><pre class="code"><span class="variable">print</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">innerHTML</span>);</pre><p>Certaines de ces propriétés peuvent aussi être modifiées. Modifier le
+<code>innerHTML</code> d’un nœud ou la <code>nodeValue</code> d’un nœud texte changera son contenu. À
+noter que dans le premier cas, la chaîne donnée est interprétée comme du HTML
+alors que dans le second cas elle est interprétée comme du simple texte.</p><pre class="code"><span class="variable">document</span>.<span class="property">body</span>.<span class="property">firstChild</span>.<span class="property">firstChild</span>.<span class="property">nodeValue</span> =
+  <span class="string">&quot;Chapitre 1 : La grande importance de la bouteille&quot;</span>;</pre><p>Ou…</p><pre class="code"><span class="variable">document</span>.<span class="property">body</span>.<span class="property">firstChild</span>.<span class="property">innerHTML</span> =
+  <span class="string">&quot;Connaissiez-vous déjà la balise «&nbsp;blink&nbsp;»&nbsp;? &lt;blink&gt;Oh joie&nbsp;!&lt;/blink&gt;&quot;</span>;</pre></div><hr/><div class="block"><p>Nous avons accédé à des nœuds au travers d’une série de propriétés <code>firstChild</code>
+et <code>lastChild</code>. Cela peut fonctionner, mais c’est assez verbeux et facilement
+cassable ―&nbsp;si nous ajoutons un autre nœud au début de notre document,
+<code>document.body.firstChild</code> ne pointera plus sur l’élément <code>h1</code> et si le code
+prétend le contraire il se trompe. En plus de cela, certains navigateurs Web
+ajouteront des nœuds textes pour des choses comme les espaces et les retours à
+la ligne entre les balises alors que d’autres non. La représentation exacte de
+l’arbre DOM peut varier.</p><p>Comme alternative, il vous est possible de donner un attribut <code>id</code> aux éléments
+auxquels vous avez besoin d’accéder. Dans la page d’exemple, l’image à un id
+<code>&quot;image&quot;</code>, nous pouvons l’utiliser pour retrouver l’image.</p><pre class="code"><span class="keyword">var</span> <span class="variable">image</span> = <span class="variable">document</span>.<span class="property">getElementById</span>(<span class="string">&quot;image&quot;</span>);
+<span class="variable">show</span>(<span class="variable">image</span>.<span class="property">src</span>);
+<span class="variable">image</span>.<span class="property">src</span> = <span class="string">&quot;img/ostrich.png&quot;</span>;</pre><p><a name="key15"></a>Quand vous tapez <code>getElementById</code>, notez que la
+dernière lettre est en minuscule. Faites donc attention, lorsque vous le
+taperez souvent, au syndrome du canal carpien. Parce que
+<code>document.getElementById</code> est un nom ridiculement long pour une opération aussi
+commune, l’abréger par <a name="key16"></a><code>$</code> est devenu une convention au sein des développeurs
+JavaScript. <code>$</code>, comme vous vous en souvenez peut-être, est considéré comme une
+lettre par JavaScript et c’est donc un nom de variable valide.</p><pre class="code"><span class="keyword">function</span> <span class="variable">$</span>(<span class="variabledef">id</span>) {
+  <span class="keyword">return</span> <span class="variable">document</span>.<span class="property">getElementById</span>(<span class="localvariable">id</span>);
+}
+<span class="variable">show</span>(<span class="variable">$</span>(<span class="string">&quot;image&quot;</span>));</pre><p>Les nœuds DOM ont aussi une méthode <a name="key17"></a><code>getElementsByTagName</code> (un autre nom
+sympa et court), qui appelée avec un nom de balise, retourne un tableau de tous
+les nœuds de ce type contenu dans le nœud sur lequel la méthode a été appelée.</p><pre class="code"><span class="variable">show</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">getElementsByTagName</span>(<span class="string">&quot;BLINK&quot;</span>)[<span class="atom">0</span>]);</pre></div><hr/><div class="block"><p>Une autre chose que nous pouvons faire avec ces nœuds est d’en créer de
+nouveaux nous-même. Cela rend possible l’ajout d’éléments dans un document, qui
+pourront être utilisés pour créer des effets intéressants. Malheureusement
+l’interface permettant cela est extrêmement mal fichue. Mais il est possible de
+remédier à cela avec des fonctions d’aide.</p><p><a name="key18"></a><a name="key19"></a>L’objet <code>document</code>
+possède les méthodes <code>createElement</code> et <code>createTextNode</code>. La première est
+utilisée pour créer un nœud classique, la seconde, comme son nom le suggère,
+pour créer un nœud texte.</p><pre class="code"><span class="keyword">var</span> <span class="variable">deuxiemeEntete</span> = <span class="variable">document</span>.<span class="property">createElement</span>(<span class="string">&quot;H1&quot;</span>);
+<span class="keyword">var</span> <span class="variable">deuxiemeChapitre</span> = <span class="variable">document</span>.<span class="property">createTextNode</span>(<span class="string">&quot;Chapitre 2 : Magie intense&quot;</span>);</pre><p>Nous voulons ensuite mettre le titre dans l’élément <code>h1</code>, puis ajouter cet
+élément au document. Le moyen le plus simple de le faire est la méthode
+<a name="key20"></a><code>appendChild</code> qui peut-être appelée sur chaque nœud qui n’est pas un nœud
+texte.</p><pre class="code"><span class="variable">deuxiemeEntete</span>.<span class="property">appendChild</span>(<span class="variable">deuxiemeChapitre</span>);
+<span class="variable">document</span>.<span class="property">body</span>.<span class="property">appendChild</span>(<span class="variable">deuxiemeEntete</span>);</pre><p>Souvent, vous voudrez aussi ajouter des attributs à ces nouveaux nœuds . Par
+exemple, une balise <code>img</code> (image) est plutôt inutile sans la propriété <code>src</code>
+qui dit au navigateur quelle image il doit afficher. La plupart des attributs
+peuvent être retrouvés directement comme des propriétés du nœud DOM mais il y a
+aussi les méthodes <a name="key21"></a><code>setAttribute</code> et <a name="key22"></a><code>getAttribute</code>, qui sont utilisées
+pour accéder aux attributs de façon plus générale :</p><pre class="code"><span class="keyword">var</span> <span class="variable">nouvelleImage</span> = <span class="variable">document</span>.<span class="property">createElement</span>(<span class="string">&quot;IMG&quot;</span>);
+<span class="variable">nouvelleImage</span>.<span class="property">setAttribute</span>(<span class="string">&quot;src&quot;</span>, <span class="string">&quot;img/Hiva Oa.png&quot;</span>);
+<span class="variable">document</span>.<span class="property">body</span>.<span class="property">appendChild</span>(<span class="variable">nouvelleImage</span>);
+<span class="variable">show</span>(<span class="variable">nouvelleImage</span>.<span class="property">getAttribute</span>(<span class="string">&quot;src&quot;</span>));</pre></div><hr/><div class="block"><p>Mais, lorsque l’on veut créer davantage que quelques nœuds simples , il devient
+assez assommant de créer chaque nœud avec un appel vers
+<code>document.createElement</code> ou <code>document.createTextNode</code>, et ensuite d’y ajouter
+les attributs et les éléments un par un. Heureusement, il n’est pas trop
+difficile d’écrire une fonction qui ferait le plus gros du travail pour nous.
+Avant de s’y mettre, il y a un petit détail qu’il faut prendre en compte : la
+méthode <code>setAttribute</code>, qui fonctionne correctement sur la plupart des
+navigateurs, ne fonctionne pas toujours sur Internet Explorer. Les noms de
+certains attributs HTML ont déjà un sens particulier en JavaScript, de ce fait,
+la propriété de l’objet correspondant obtient un nom ajusté. Plus
+spécifiquement, l’attribut <code>class</code> devient <a name="key23"></a><code>className</code>, <code>for</code> devient
+<code>htmlFor</code> et <code>checked</code> est renommé en <code>defaultChecked</code>. Sur Internet Explorer,
+<code>setAttribute</code> et <code>getAttribute</code> fonctionnent aussi avec ces noms ajustés, à la
+place des noms HTML originaux ce qui peut être source de confusion. En plus de
+cela l’attribut <a name="key24"></a><code>style</code>, qui sera abordé plus tard dans ce chapitre avec
+<code>class</code>, ne peut être défini avec <code>setAttribute</code> sur ce navigateur.</p><p>Une solution de contournement pourrait ressembler à quelque chose comme ça :</p><pre class="code"><span class="keyword">function</span> <span class="variable">setNodeAttribute</span>(<span class="variabledef">noeud</span>, <span class="variabledef">attribut</span>, <span class="variabledef">valeur</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">attribut</span> == <span class="string">&quot;class&quot;</span>)
+    <span class="localvariable">noeud</span>.<span class="property">className</span> = <span class="localvariable">valeur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">attribut</span> == <span class="string">&quot;checked&quot;</span>)
+    <span class="localvariable">noeud</span>.<span class="property">defaultChecked</span> = <span class="localvariable">valeur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">attribut</span> == <span class="string">&quot;for&quot;</span>)
+    <span class="localvariable">noeud</span>.<span class="property">htmlFor</span> = <span class="localvariable">valeur</span>;
+  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="localvariable">attribut</span> == <span class="string">&quot;style&quot;</span>)
+    <span class="localvariable">noeud</span>.<span class="property">style</span>.<span class="property">cssText</span> = <span class="localvariable">valeur</span>;
+  <span class="keyword">else</span>
+    <span class="localvariable">noeud</span>.<span class="property">setAttribute</span>(<span class="localvariable">attribut</span>, <span class="localvariable">valeur</span>);
+}</pre><p>À chaque fois qu’Internet Explorer dévie du comportement des autres
+navigateurs, il fait quelque chose qui fonctionne dans tous les cas. Ne vous
+inquiétez pas des détails, c’est ce genre d’astuces sales dont nous aimerions
+ne pas avoir besoin mais que les navigateurs non conformes nous obligent à
+écrire. Considérant ceci, il est possible d’écrire une simple fonction pour
+créer des éléments DOM.</p><pre class="code"><span class="keyword">function</span> <span class="variable">dom</span>(<span class="variabledef">nom</span>, <span class="variabledef">attributs</span>) {
+  <span class="keyword">var</span> <span class="variabledef">noeud</span> = <span class="variable">document</span>.<span class="property">createElement</span>(<span class="localvariable">nom</span>);
+  <span class="keyword">if</span> (<span class="localvariable">attributs</span>) {
+    <span class="variable">forEachIn</span>(<span class="localvariable">attributs</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>, <span class="variabledef">valeur</span>) {
+      <span class="variable">setNodeAttribute</span>(<span class="localvariable">noeud</span>, <span class="localvariable">nom</span>, <span class="localvariable">valeur</span>);
+    });
+  }
+  <span class="keyword">for</span> (<span class="keyword">var</span> <span class="variabledef">i</span> = <span class="atom">2</span>; <span class="localvariable">i</span> &lt; <span class="localvariable">arguments</span>.<span class="property">length</span>; <span class="localvariable">i</span>++) {
+    <span class="keyword">var</span> <span class="variabledef">noeudEnfant</span> = <span class="localvariable">arguments</span>[<span class="localvariable">i</span>];
+    <span class="keyword">if</span> (typeof <span class="localvariable">noeudEnfant</span> == <span class="string">&quot;string&quot;</span>)
+      <span class="localvariable">noeudEnfant</span> = <span class="variable">document</span>.<span class="property">createTextNode</span>(<span class="localvariable">noeudEnfant</span>);
+    <span class="localvariable">noeud</span>.<span class="property">appendChild</span>(<span class="localvariable">noeudEnfant</span>);
+  }
+  <span class="keyword">return</span> <span class="localvariable">noeud</span>;
+}
+
+<span class="keyword">var</span> <span class="variable">nouveauParagraphe</span> =
+  <span class="variable">dom</span>(<span class="string">&quot;P&quot;</span>, <span class="atom">null</span>, <span class="string">&quot;Un paragraphe avec un &quot;</span>,
+      <span class="variable">dom</span>(<span class="string">&quot;A&quot;</span>, {<span class="property">href</span>: <span class="string">&quot;http://fr.wikipedia.org/wiki/Alchimie&quot;</span>},
+          <span class="string">&quot;lien&quot;</span>),
+      <span class="string">&quot; à l’intérieur.&quot;</span>);
+<span class="variable">document</span>.<span class="property">body</span>.<span class="property">appendChild</span>(<span class="variable">nouveauParagraphe</span>);</pre><p>La fonction <a name="key25"></a><code>dom</code> crée un arbre DOM. Son premier argument donne le nom de la
+balise du nœud, son second argument est un objet contenant l’attribut du nœud,
+ou <code>null</code> quand aucun attribut n’est requis. Après quoi, n’importe quel nombre
+d’arguments peut suivre et ils seront ajoutés au nœud comme enfants nœuds.
+Quand des chaînes apparaissent ici, elles sont ajoutées dans un nœud texte.</p></div><hr/><div class="block"><p><code>appendChild</code> n’est pas le seul moyen d’insérer des nœuds dans un autre nœud.
+Quand le nouveau nœud ne doit pas apparaître à la fin de son parent, la méthode
+<a name="key26"></a><code>insertBefore</code> peut-être utilisée pour le placer avant un autre nœud enfant.
+Elle prend le nouveau nœud comme premier argument et l’élément existant comme
+second argument.</p><pre class="code"><span class="keyword">var</span> <span class="variable">lien</span> = <span class="variable">nouveauParagraphe</span>.<span class="property">childNodes</span>[<span class="atom">1</span>];
+<span class="variable">nouveauParagraphe</span>.<span class="property">insertBefore</span>(<span class="variable">dom</span>(<span class="string">&quot;STRONG&quot;</span>, <span class="atom">null</span>, <span class="string">&quot;super &quot;</span>), <span class="variable">lien</span>);</pre><p>Si un nœud possèdant déjà un <code>parentNode</code> est placé ailleurs, il est
+automatiquement supprimé de sa position actuelle ―&nbsp;les nœuds ne peuvent pas
+exister dans le document à plus d’un endroit à la fois.</p><p>Quand un nœud doit être remplacé par un autre, utilisez la méthode
+<a name="key27"></a><code>replaceChild</code>, qui prend encore le nouveau nœud comme premier argument et le
+nœud existant comme second argument.</p><pre class="code"><span class="variable">nouveauParagraphe</span>.<span class="property">replaceChild</span>(<span class="variable">document</span>.<span class="property">createTextNode</span>(<span class="string">&quot;mauvais &quot;</span>),
+                          <span class="variable">nouveauParagraphe</span>.<span class="property">childNodes</span>[<span class="atom">1</span>]);</pre><p>Et finalement, il y a <a name="key28"></a><code>removeChild</code> pour supprimer un nœud enfant. À noter
+que cette méthode doit être appelée sur le <em>parent</em> du nœud à supprimer, en lui
+donnant l’enfant comme argument.</p><pre class="code"><span class="variable">nouveauParagraphe</span>.<span class="property">removeChild</span>(<span class="variable">nouveauParagraphe</span>.<span class="property">childNodes</span>[<span class="atom">1</span>]);</pre></div><hr/><div class="block"><a name="exercise2"></a><div class="exercisenum">Ex. 12.2</div><div class="exercise"><p>Écrivez la fonction utile <a name="key29"></a><code>removeElement</code> qui supprime de son nœud parent le
+nœud DOM donné en paramètre</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">removeElement</span>(<span class="variabledef">noeud</span>) {
+  <span class="keyword">if</span> (<span class="localvariable">noeud</span>.<span class="property">parentNode</span>)
+    <span class="localvariable">noeud</span>.<span class="property">parentNode</span>.<span class="property">removeChild</span>(<span class="localvariable">noeud</span>);
+}
+
+<span class="variable">removeElement</span>(<span class="variable">nouveauParagraphe</span>);</pre></div></div><hr/><div class="block"><p>Pendant la création de nœud et le déplacement de nœuds, il est nécessaire de
+prendre en compte la règle suivante : les nœuds ne sont pas autorisés à être
+insérés dans un autre document que celui dans lequel ils ont été créés. Ce qui
+veut dire que si vous avez des pages ou des fenêtres supplémentaires ouvertes,
+vous ne pouvez pas prendre un fragment de document de l’un pour le placer dans
+un autre et que les nœuds créés avec les méthodes d’un objet <code>document</code> doivent
+rester dans ce document. Certains navigateurs, notamment Firefox, n’appliquent
+pas cette restriction, de ce fait un programme qui la viole pourra fonctionner
+correctement dans ce navigateur mais pas dans d’autres.</p></div><hr/><div class="block"><p>Un exemple de quelque chose d’utile qui peut être fait avec cette fonction
+<code>dom</code> est un programme qui prend des objets JavaScript et en fait un résumé
+dans un <a name="key30"></a>tableau. Les tableaux, en HTML, sont créés avec un ensemble de
+balises commençant par <code>t</code>, quelque chose comme :</p><pre class="preformatted">&lt;table&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt; &lt;th&gt;Arbre  &lt;/th&gt; &lt;th&gt;Fleurs  &lt;/th&gt; &lt;/tr&gt;
+    &lt;tr&gt; &lt;td&gt;Pommier&lt;/td&gt; &lt;td&gt;Blanches&lt;/td&gt; &lt;/tr&gt;
+    &lt;tr&gt; &lt;td&gt;Corail &lt;/td&gt; &lt;td&gt;Rouges  &lt;/td&gt; &lt;/tr&gt;
+    &lt;tr&gt; &lt;td&gt;Pin    &lt;/td&gt; &lt;td&gt;Aucune  &lt;/td&gt; &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</pre><p>Chaque élément <code>tr</code> est une ligne du tableau. Les éléments <code>th</code> et <code>td</code> sont
+les cellules du tableau, <code>td</code> pour des cellules normales, <code>th</code> pour les
+cellules d’en-tête qui seront affichées dans un style plus visible. La balise
+<code>tbody</code> (table body) n’a pas à être incluse quand un tableau est écrit en HTML,
+mais s’il est construit avec des nœuds DOM, elle doit être ajoutée car Internet
+Explorer refuse d’afficher les tableaux créés sans <code>tbody</code>.</p></div><hr/><div class="block"><a name="exercise3"></a><div class="exercisenum">Ex. 12.3</div><div class="exercise"><p>La fonction <code>makeTable</code> prend deux tableaux en arguments. Le premier contient
+les objets JavaScript qu’il doit récapituler et le second contient des chaînes,
+qui nomment les colonnes du tableau et les propriétés des objets qui doivent
+être affichées dans ces colonnes. Ce qui suit devrait produire le tableau
+ci-dessus :</p><pre class="code invalid"><span class="variable">makeTable</span>([{<span class="property">Arbre</span>: <span class="string">&quot;Pommier&quot;</span>, <span class="property">Fleurs</span>: <span class="string">&quot;Blanches&quot;</span>},
+           {<span class="property">Arbre</span>: <span class="string">&quot;Corail&quot;</span>, <span class="property">Fleurs</span>: <span class="string">&quot;Rouges&quot;</span>},
+           {<span class="property">Arbre</span>: <span class="string">&quot;Pin&quot;</span>, <span class="property">Fleurs</span>: <span class="string">&quot;Aucune&quot;</span>}],
+          [<span class="string">&quot;Arbre&quot;</span>, <span class="string">&quot;Fleurs&quot;</span>]);</pre><p>Écrivez cettte fonction.</p></div><div class="solution"><pre class="code"><span class="keyword">function</span> <span class="variable">makeTable</span>(<span class="variabledef">donnees</span>, <span class="variabledef">colonnes</span>) {
+  <span class="keyword">var</span> <span class="variabledef">ligneEntete</span> = <span class="variable">dom</span>(<span class="string">&quot;TR&quot;</span>);
+  <span class="variable">forEach</span>(<span class="localvariable">colonnes</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>) {
+    <span class="localvariable">ligneEntete</span>.<span class="property">appendChild</span>(<span class="variable">dom</span>(<span class="string">&quot;TH&quot;</span>, <span class="atom">null</span>, <span class="localvariable">nom</span>));
+  });
+
+  <span class="keyword">var</span> <span class="variabledef">corps</span> = <span class="variable">dom</span>(<span class="string">&quot;TBODY&quot;</span>, <span class="atom">null</span>, <span class="localvariable">ligneEntete</span>);
+  <span class="variable">forEach</span>(<span class="localvariable">donnees</span>, <span class="keyword">function</span>(<span class="variabledef">objet</span>) {
+    <span class="keyword">var</span> <span class="variabledef">ligne</span> = <span class="variable">dom</span>(<span class="string">&quot;TR&quot;</span>);
+    <span class="variable">forEach</span>(<span class="localvariable">colonnes</span>, <span class="keyword">function</span>(<span class="variabledef">nom</span>) {
+      <span class="localvariable">ligne</span>.<span class="property">appendChild</span>(<span class="variable">dom</span>(<span class="string">&quot;TD&quot;</span>, <span class="atom">null</span>, <span class="variable">String</span>(<span class="localvariable">objet</span>[<span class="localvariable">nom</span>])));
+    });
+    <span class="localvariable">corps</span>.<span class="property">appendChild</span>(<span class="localvariable">ligne</span>);
+  });
+
+  <span class="keyword">return</span> <span class="variable">dom</span>(<span class="string">&quot;TABLE&quot;</span>, <span class="atom">null</span>, <span class="localvariable">corps</span>);
+}
+
+<span class="keyword">var</span> <span class="variable">table</span> = <span class="variable">makeTable</span>(<span class="variable">document</span>.<span class="property">body</span>.<span class="property">childNodes</span>,
+                      [<span class="string">&quot;nodeType&quot;</span>, <span class="string">&quot;tagName&quot;</span>]);
+<span class="variable">document</span>.<span class="property">body</span>.<span class="property">appendChild</span>(<span class="variable">table</span>);</pre><p>N’oubliez par de convertir les valeurs des objets en chaînes avant de les
+ajouter au tableau ―&nbsp;notre fonction <code>dom</code> comprend seulement les chaînes et
+les nœuds DOM.</p></div></div><hr/><div class="block"><p>Le sujet des <a name="key31"></a>feuilles de style est étroitement lié à HTML et
+au modèle objet de documents. C’est un vaste sujet et je ne l’aborderai pas
+entièrement. Mais quelques notions sur les feuilles de styles sont nécessaires
+pour beaucoup de techniques intéressantes en JavaScript, nous allons donc en
+voir les rudiments.</p><p>Aux débuts de l’HTML, le seul moyen de changer l’apparence des éléments dans un
+document était de leur donner des attributs supplémentaires ou de les contenir
+dans des balises supplémentaires. Comme <code>center</code> qui permet de centrer les
+éléments horizontalement ou <code>font</code> pour changer le style ou la couleur de la
+police. La plupart du temps, cela veut dire que si vous vouliez que les
+paragraphes ou les tableaux de votre document apparaissent d’une certaine
+façon, vous deviez ajouter un ensemble d’attributs et de balises à <em>chacun des
+éléments</em>. Cela a rapidement ajouté beaucoup de «&nbsp;bruits parasites&nbsp;» aux
+documents et les a rendus particulièrement compliqués à écrire ou à modifier à
+la main.</p><p>Évidemment, les gens étant des singes ingénieux, quelqu’un a proposé une
+solution. Les feuilles de style sont un moyen de déclarer quelque chose comme «
+Dans ce document, tous les paragraphes utiliseront la police Comic Sans et
+seront mauves et tous les tableaux auront une fine bordure verte&nbsp;». Vous
+spécifiez ces règles une fois pour toutes, en haut du document ou dans un
+fichier séparé et elles affecteront le document entier. Voici, pour exemple,
+une feuille de style permettant d’afficher les en-têtes centrés avec une taille
+de 22 points et de faire en sorte que les paragraphes utilisent la police et la
+couleur mentionnées plus haut quand ils appartiennent à la classe «&nbsp;moche&nbsp;».</p><pre class="preformatted">&lt;style type=&quot;text/css&quot;&gt;
+  h1 {
+    font-size: 22pt;
+    text-align: center;
+  }
+
+  p.moche{
+    font-family: Comic Sans MS;
+    color: purple;
+  }
+&lt;/style&gt;</pre><p>Les classes sont un concept lié aux styles. Si vous avez différentes sortes de
+paragraphes, des moches et des jolis par exemple, et que vous ne voulez pas
+attribuer le style à tous les éléments <code>p</code>, alors les <a name="key32"></a>classes peuvent être
+utilisées pour les distinguer. Le style précédent ne sera appliqué qu’aux
+paragraphes comme :</p><pre class="preformatted">&lt;p class=&quot;moche&quot;&gt;Miroir, miroir…&lt;/p&gt;</pre><p>Et c’est aussi le sens de la propriété <a name="key33"></a><code>className</code> qui était brièvement
+mentionnée dans la fonction <code>setNodeAttribute</code>. L’attribut <a name="key34"></a><code>style</code> peut être
+utilisé afin d’ajouter des éléments de styles directement à un élément. Par
+exemple, ceci donne pour notre image une bordure en trait continu de 4 pixels
+(&quot;px&quot;).</p><pre class="code"><span class="variable">setNodeAttribute</span>(<span class="variable">$</span>(<span class="string">&quot;image&quot;</span>), <span class="string">&quot;style&quot;</span>,
+                 <span class="string">&quot;border-width: 4px; border-style: solid;&quot;</span>);</pre></div><hr/><div class="block"><p>On peut aller bien plus loin avec les styles : certains sont hérités par les
+nœuds enfants de leurs nœuds parents et interfèrent les uns avec les autres de
+façon complexe et intéressante, mais en ce qui concerne la programmation DOM,
+la chose la plus importante à savoir est que chaque nœud DOM possède une
+propriété <code>style</code>, qui peut être utilisée pour manipuler le style de ce nœud et
+qu’il y a quelques styles qui peuvent être utilisés pour que les nœuds fassent
+des choses extraordinaires.</p><p>Cette propriété <code>style</code> fait référence à un objet, qui possède des propriétés
+pour chaque élément de ce style. Nous pouvons par exemple décider que la
+bordure de l’image sera verte.</p><pre class="code"><span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">borderColor</span> = <span class="string">&quot;green&quot;</span>;
+<span class="variable">show</span>(<span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">borderColor</span>);</pre><p>Veuillez noter que dans les feuilles de style, les mots sont séparés par des
+traits d’unions comme dans <code>border-color</code>, alors qu’en JavaScript, les lettres
+majuscules sont utilisées pour séparer les différents mots, comme dans
+<code>borderColor</code>.</p><p>Un exemple de style très pratique est <code>display: none</code>. Il peut être utilisé
+pour temporairement cacher un nœud : quand <a name="key35"></a><code>style.display</code> est <code>&quot;none&quot;</code>,
+l’élément n’apparaît plus du tout à la personne qui visualise le document, même
+s’il existe. Plus tard, <code>display</code> peut être affecté d’une chaîne vide et
+l’élément réapparaîtra.</p><pre class="code"><span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;none&quot;</span>;</pre><p>Et pour faire revenir notre image :</p><pre class="code"><span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">display</span> = <span class="string">&quot;&quot;</span>;</pre></div><hr/><div class="block"><p>Il existe d’autres types de style dont on peut user et abuser de façon
+intéressante, ceux liés au positionnement. Dans un document HTML simple, le
+navigateur s’occupe de déterminer la position de l’écran et de tous les
+éléments ―&nbsp;chaque élément est mis à la suite ou au-dessous de l’élément qui le
+précède et les nœuds ne se chevauchent pas (en général).</p><p><a name="key36"></a>Quand la propriété <code>position</code> de sa propriété style vaut
+<code>&quot;absolute&quot;</code>, un nœud est retiré du flux normal du document. Il n’a plus sa
+place dans le document mais en quelque sorte au-dessus de lui. Les styles
+<code>left</code> et <code>top</code> peuvent ensuite être utilisés pour influencer sa position.
+Ceux-ci peuvent être utilisés pour de nombreux usages, que ce soit pour faire
+un nœud qui suivrait obstinément le curseur de la souris ou pour faire des «
+fenêtres&nbsp;» qui s’ouvriraient au-dessus du reste du document.</p><pre class="code"><span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">position</span> = <span class="string">&quot;absolute&quot;</span>;
+<span class="keyword">var</span> <span class="variable">angle</span> = <span class="atom">0</span>;
+<span class="keyword">var</span> <span class="variable">spin</span> = <span class="variable">setInterval</span>(<span class="keyword">function</span>() {
+  <span class="variable">angle</span> += <span class="atom">0.1</span>;
+  <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">left</span> = (<span class="atom">100</span> + <span class="atom">100</span> * <span class="variable">Math</span>.<span class="property">cos</span>(<span class="variable">angle</span>)) + <span class="string">&quot;px&quot;</span>;
+  <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">top</span> = (<span class="atom">100</span> + <span class="atom">100</span> * <span class="variable">Math</span>.<span class="property">sin</span>(<span class="variable">angle</span>)) + <span class="string">&quot;px&quot;</span>;
+}, <span class="atom">100</span>);</pre><p>Si vous n’êtes pas familier de la trigonométrie, faites-moi confiance quand je
+vous dis que le cosinus et le sinus sont utilisés pour construire des
+coordonnées reposant sur le contour d’un cercle. Dix fois par seconde, l’angle
+sur lequel on a placé l’image est modifié et les nouvelles coordonnées sont
+calculées. C’est une erreur commune lorsqu’on attribue des styles comme cela
+d’oublier d’ajouter <code>&quot;px&quot;</code> à la valeur. Dans la plupart des cas, attribuer un
+nombre sans unité à un style ne fonctionne pas donc vous devez ajouter <code>&quot;px&quot;</code>
+pour pixels, <code>&quot;%&quot;</code> pour pourcentage, <code>&quot;em&quot;</code> pour cadratin (la largeur d’un
+caractère <code>M</code>) ou encore <code>&quot;pt&quot;</code> pour points.</p><p>(Maintenant, mettons une image pour nous reposer encore…)</p><pre class="code"><span class="variable">clearInterval</span>(<span class="variable">spin</span>);</pre><p>L’emplacement qui est traité comme 0,0 pour ces positions dépend de la place du
+nœud dans le document. Lorsqu’il est placé à l’intérieur d’un autre nœud qui a
+<code>position: absolute</code> ou <code>position: relative</code>, le coin supérieur gauche de ce
+nœud est utilisé. Sinon, c’est le coin supérieur gauche du document.</p></div><hr/><div class="block"><p><a name="key37"></a><a name="key38"></a>Un dernier aspect des nœuds DOM avec lequel il
+est sympa de jouer est leur taille. Il existe des types de style nommés <code>width</code>
+(largeur) et <code>height</code> (hauteur), qui sont utilisés pour définir la taille
+absolue d’un élément.</p><pre class="code"><span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">width</span> = <span class="string">&quot;400px&quot;</span>;
+<span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">style</span>.<span class="property">height</span> = <span class="string">&quot;200px&quot;</span>;</pre><p>Mais lorsque vous avez besoin de définir précisément la taille d’un élément, il
+y a un problème épineux à prendre en compte. Certains navigateurs, dans
+certaines circonstances, considèrent que ces tailles correspondent à la taille
+extérieure de l’objet, incluant les bordures et les marges intérieures.
+D’autres navigateurs, dans d’autres circonstances, ne tiennent pas compte de la
+largeur des bordures et des marges. Ainsi, si vous définissez la taille d’un
+objet qui a une bordure ou une marge, il n’apparaîtra pas toujours à la même
+taille.</p><p>Heureusement, vous pouvez examiner la taille intérieure et extérieure du nœud,
+ce qui, si vous avez vraiment besoin de définir précisément la taille de
+quelque chose, peut être utilisé pour compenser le comportement du navigateur.
+Les propriétés <a name="key39"></a><code>offsetWidth</code> et <a name="key40"></a><code>offsetHeight</code> vous donnent la taille
+extérieure de votre élément (la place qu’il occupe dans le document), tandis
+que les propriétés <a name="key41"></a><code>clientWidth</code> et <a name="key42"></a><code>clientHeight</code> vous donnent la place à
+l’intérieur de l’objet, s’il y en a.</p><pre class="code"><span class="variable">print</span>(<span class="string">&quot;Dimension extérieure: &quot;</span>, <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">offsetWidth</span>,
+      <span class="string">&quot; sur &quot;</span>, <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">offsetHeight</span>, <span class="string">&quot; pixels.&quot;</span>);
+<span class="variable">print</span>(<span class="string">&quot;Dimension intérieure: &quot;</span>, <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">clientWidth</span>,
+      <span class="string">&quot; sur &quot;</span>, <span class="variable">$</span>(<span class="string">&quot;image&quot;</span>).<span class="property">clientHeight</span>, <span class="string">&quot; pixels.&quot;</span>);</pre></div><hr/><div class="block"><p>Si vous avez consciencieusement suivi et utilisé tous les exemples de ce
+chapitre et peut-être effectué vous-même quelques expériences supplémentaires,
+vous aurez complètement saccagé le malheureux document initial qui nous a servi
+de point de départ. Laissez-moi vous faire les gros yeux une minute et vous
+dire de ne surtout pas faire subir le même traitement à de vraies pages.
+Parfois la tentation sera grande d’ajouter des tas de choses bling-bling et qui
+bougent. Retenez-vous, sinon vos pages deviendront certainement illisibles ou
+même, si vous allez assez loin, pourraient provoquer de temps en temps une
+crise d’épilepsie.  </p></div><div class="navigation"><a href="chapter11.html">&lt;&lt; Chapitre précédent</a> | <a href="contents.html">Table des matières</a> | <a href="index.html">Couverture</a> | <a href="chapter13.html">Chapitre suivant &gt;&gt;</a></div><div class="footer">© <a href="mailto:marijnh@gmail.com">Marijn Haverbeke</a> et <a href="contributors.html">contributeurs</a> (<a href="http://creativecommons.org/licenses/by/3.0/deed.fr">licence</a>), écrit entre mars et juillet 2007, dernière modification le 3 mai 2015.</div></div><script type="text/javascript" src="js/mochi.js"> </script><script type="text/javascript" src="js/codemirror.js"> </script><script type="text/javascript" src="js/ejs.js"> </script></body></html>
