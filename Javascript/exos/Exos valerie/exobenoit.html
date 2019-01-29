@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>EXO7</title>
+    <script>
+        function changeColor() {
+            document.getElementById('txt').style.backgroundColor = 'red';
+        }
+    </script>
+</head>
+
+<body>
+    <p id="txt">
+        VIDE
+    </p>
+    <p id="liste_users">
+        LISTE USERS
+    </p>
+    <button onclick="changeColor()">CHANGER LA COULEUR</button>
+    <noscript>
+        Javascript est désactivé.
+    </noscript>
+    <script>
+        console.log("Javascript est lancé.")
+        var d = new Date(); // object
+        var i = 8; // number
+        var txt = "8"; // string
+        var isDone = false; // boolean
+        var importedUsers = []; //
+        var d2 = {};
+        var additionne = i + Number.parseFloat(txt);
+        var i_txt = (i === txt);
+        // console.log(d);
+        document.getElementById('txt').innerText = "SALUT TOUT L'MONDE";
+        document.getElementById('txt').style.fontSize = '30px';
+        var myUsers = [
+            { name: "Marie", birthday: "1988-10-12" },
+            { name: "Laurent", birthday: "1975-01-03" },
+            { name: "Rositta", birthday: "1961-03-04" },
+            { name: "Philippine", birthday: "1969-01-28" }
+        ]; //Ceci est un objet dans un tabelau {}=objet / les crochets représentent le tableau
+
+
+        var message2 = "";
+        // for(var i=0 ; i<myUsers.length ; i++) {
+        //   message2 += myUsers[i].name + ", naissance : " + myUsers[i].birthday +"<br>";
+        // }
+
+        // var x;
+        // for (x in myUsers) {
+        //     message2 += myUsers[x].name + " ";
+        // }
+
+        // var i=0 ;
+        // while(i<myUsers.length) { message2 += myUsers[i].name + " "; i++;}
+        // var i=0 ;
+        // do {
+        //   message2 += myUsers[i].name + " "; i++;
+        // } while(i<myUsers.length) ;
+
+        document.getElementById('liste_users').innerHTML = message2; //on dit au navigateur dans le document html prend l'élément par l'id.
+
+    </script>
+</body>
+
+</html>

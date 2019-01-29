@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Jour et Nuit</title>
+</head>
+
+<body>
+
+    <img id="paysage" src="">
+
+    <script>
+
+        var aujourdhui = new Date();
+        var h = aujourdhui.getHours();
+        // h = prompt("Quelle est l'heure en cours ?");
+        if (h < 18 && h >= 7) {
+            document.getElementById('paysage').src = 'img/jour.jpg';
+        }
+        else {
+            document.getElementById('paysage').src = 'img/nuit.jpg';
+        }
+
+    </script>
+</body>
+
+</html>

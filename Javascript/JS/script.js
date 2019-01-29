@@ -103,13 +103,13 @@ var n = null,
 var tt = 25;//type number
 tt = true; // type boolean
 tt = null; // type null
-//t = "tt";  type string
+t = "tt";  //type string
 
 
 /**
  * Pour tester le type de la valeur, on utilise généralement la méthode "typeof()"
  */
-alert(typeof(tt));
+alert(typeof (tt));
 
 // déclarer une variable de manière explicite ou implicite
 var maVariable = 'toto';//"maVariable" est ce qu'on appelle une écriture camel case.
@@ -138,13 +138,13 @@ var unChiffre = "12";
 
 document.write(unChiffre + '<br>');//12
 
-document.write(typeof(unChiffre) + '<br>');//string
+document.write(typeof (unChiffre) + '<br>');//string
 
 unChiffre = parseInt(unChiffre);
 
 document.write(unChiffre + '<br>');//12
 
-document.write(typeof(unChiffre) + '<br>');//number
+document.write(typeof (unChiffre) + '<br>');//number
 
 
 //Méthode(ou fonction) parseFloat()
@@ -153,13 +153,13 @@ var nb_en_lettre = "12.22";
 
 document.write(nb_en_lettre + '<br>');//12.22
 
-document.write(typeof(nb_en_lettre) + '<br>');//string
+document.write(typeof (nb_en_lettre) + '<br>');//string
 
 nb_en_lettre = parseFloat(nb_en_lettre);
 
 document.write(nb_en_lettre + '<br>');//12.22
 
-document.write(typeof(nb_en_lettre) + '<br>');//number
+document.write(typeof (nb_en_lettre) + '<br>');//number
 
 //Méthode toString(), qui sert a convertir en chaîne de caractère
 
@@ -167,12 +167,12 @@ var nb_en_lettre = 258;
 
 document.write(nb_en_lettre + '<br>');
 
-document.write(typeof(nb_en_lettre) + '<br>');
+document.write(typeof (nb_en_lettre) + '<br>');
 
 nb_en_lettre = nb_en_lettre.toString();// Entre parenthèse la base de calcul, voir: https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Objets_globaux/Number/toString
 
 document.write(nb_en_lettre + '<br>');
 
-document.write(typeof(nb_en_lettre) + '<br>');// string
+document.write(typeof (nb_en_lettre) + '<br>');// string
 
 // alert("Hello, je me lance depuis le fichier script.js !!");
