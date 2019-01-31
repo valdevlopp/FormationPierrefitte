@@ -1,18 +1,26 @@
 var myUsers = [
-    { name: "Dupont", firstname: "Marie", birthday: "1988-10-12" },
-    { name: "Gomes", firstname: "Laurent", birthday: "1975-01-03" },
-    { name: "Lemoult", firstname: "Rositta", birthday: "1961-03-04" },
-    { name: "Kaya", firstname: "Philippine", birthday: "1969-01-29" }
+    { img: "https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg", name: "Dupont", firstname: "Marie", birthday: "1988-10-12" },
+
+    { img: "https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260", name: "Gomes", firstname: "Laurent", birthday: "1975-01-03" },
+
+    { img: "https://helpx.adobe.com/content/dam/help/en/stock/how-to/visual-reverse-image-search/_jcr_content/main-pars/image/visual-reverse-image-search-v2_1000x560.jpg", name: "Lemoult", firstname: "Rositta", birthday: "1961-03-04" },
+
+    { img: "https://theadsgroup.com/content/uploads/2012/12/unicorn-wallpaper.jpg", name: "Kaya", firstname: "Philippine", birthday: "1969-01-29" }
 ];
 
 function bouton() {
     var nom = document.getElementById("inputName").value; // on cré une variable avec un nom(nom), on lui indique avec document qu'il aille prendre l'élément id ("inputName") avec la valeur de celui-ci
     var prénom = document.getElementById("inputFirstname").value;
     var naissance = document.getElementById("inputBirthday").value;
+    var defaultImage = 'https://helpx.adobe.com/content/dam/help/en/stock/how-to/visual-reverse-image-search/_jcr_content/main-pars/image/visual-reverse-image-search-v2_1000x560.jpg';
+    var userImage = document.getElementById("inputUserImage").value || defaultImage;
+
     if ((prénom) && (naissance)) {
-        myUsers.push({ name: nom, firstname: prénom, birthday: naissance });
-        listUsers += '<div class="card mt-2 ml-2" style="width: 16rem;">'; // j'ai ajouté mt(margin top) et ml (margin left) 
-        listUsers += '<img src="https://helpx.adobe.com/content/dam/help/en/stock/how-to/visual-reverse-image-search/_jcr_content/main-pars/image/visual-reverse-image-search-v2_1000x560.jpg" class="card-img-top" alt="papillon">';
+        myUsers.push({ name: nom, firstname: prénom, birthday: naissance, img: userImage });
+        listUsers += '<div class="card mt-2 ml-2" style="width: 16rem;">'; // j'ai ajouté mt(margin top) et ml (margin left)
+        listUsers += '<img src="'
+        listUsers += userImage;
+        listUsers += '" class="card-img-top" alt="papillon">'
         listUsers += '<div class="card-body">';
         listUsers += '<h5 class="card-title">' + nom + " " + prénom + '</h5>';
         listUsers += '<p class="card-text">' + naissance + '</p>';
@@ -21,7 +29,7 @@ function bouton() {
         listUsers += '</div>';
     } // La méthode push ajoute un ou plusieurs éléments à la fin d'un tableau et retourne la nouvelle taille du tableau.
     else {
-        alert('le champ est vide');
+        alert('champ non validé');
     }
     console.log(myUsers); // Cette fonctionnalité affiche un message dans la Console Web. Dans les faits, on indique que l'on veut retrouver notre tableau dans la console (F12)
 
@@ -29,7 +37,7 @@ function bouton() {
 
     afficherLesUtilisateurs();
 }
-// les functions doivent être mis a la suite les unes des
+// les fonctions doivent être misent à la suite les unes des autres
 function afficherLesUtilisateurs() {
 
     document.getElementById('list_user').innerHTML = listUsers; // Ici on indique que js doit prendre l'élément id (<div id="list_user" class="row"> à l'interieur de notre fichier html et l'affecter à (listUsers) de notre fichier js.
@@ -79,7 +87,7 @@ for (i = 0; i < myUsers.length; i++) { //La boucle est créée afin que le js li
 }
 
 listUsers += '</div>';
-afficherLesUtilisateurs();
+afficherLesUtilisateurs(); // Rappel de notre fonction
 
 document.addEventListener('keydown', function (e) {
     if ((e.which == 13) || (e.keyCode == 13)) {
