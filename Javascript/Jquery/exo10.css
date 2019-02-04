@@ -1,0 +1,16 @@
+.horizontal{
+    width: 1000px;
+    background-color: grey;
+}
+
+.sub-level{
+    background-color: red;
+}
+
+li{
+    list-style-type: none;
+}
+
+.alt{
+background-color: yellow;
+}
