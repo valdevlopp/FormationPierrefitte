@@ -1,0 +1,33 @@
+//Les virgules permettent de séparer les membres d'un tableau ou, comme ici, d'un objet .
+A noter : pas de virgule pour le dernier membre d'un objet, sinon,
+il ne sera pas valide et vous aurez des erreurs lors de l'analyse du fichier.
+
+
+
+{
+  "my_users": [
+  {
+    "image": "https://cdn.pixabay.com/photo/2016/06/18/17/42/image-1465348_960_720.jpg",
+    "name": "Valerie",
+    "birthday": 1988-10-13
+  },
+  {
+    "img": "https://images.pexels.com/photos/67636/rose-blue-flower-rose-blooms-67636.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+    "name": "Laurent",
+    "birthday": 1986-10-12
+  },
+  {
+    "img": "https://www.wonderslist.com/wp-content/uploads/2014/08/The-Spectacular-Spider-Man.jpg",
+    "name": "Spidi",
+    "birthday": 1991-05-31
+  },
+
+  {
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3QBfx1BamamTjzbZFiPJv-jYNd_S5KYdgp80HHSGpOt4L69bR",
+    "name": "Spidi",
+    "birthday": 1991-05-31
+  }
+
+  
+]
+}
