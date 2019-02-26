@@ -1,0 +1,253 @@
+/*Style général*/
+
+*
+{
+    margin: 0;
+    padding: 0;
+}
+
+body
+{
+font-family: 'American Typewriter', serif;
+background-color: rgb(206, 206, 206);
+}
+
+/*En tête du site*/
+header
+{
+    background: white;
+    border-bottom: 2px solid rgb(186, 186, 186);
+    height: 140px;
+}
+
+/*Menu langues*/
+
+.boutonmenuprincipal
+{
+    background-color: white;
+    color: black;
+    border: 5px black;
+    border-style: outset black;
+    cursor: pointer;
+    font-size: 20px;
+    float: right;
+    padding-top: 10px;
+ }
+
+.boutonmenuprincipal:hover
+{
+     background-color: rgb(186, 186, 186);
+}
+
+.dropdown
+{
+    position: relative;
+    display: inline-block;
+    float: right;
+    padding-right: 13%;
+}
+
+.dropdown-child
+{
+    display: none;
+    background-color: rgb(186, 186, 186);
+    min-width: 50px;
+}
+
+.dropdown-child a
+{
+    color: white;
+    padding: 20px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown:hover .dropdown-child
+{
+    display: block;
+}
+
+/*Logo de l'entreprise*/
+
+.logo,h1
+{
+    padding-left: 10%;
+}
+
+h1
+{
+    width: 15%;
+    font-size: 0.8em;
+    margin-top: 25px;
+    float: left;
+}
+
+/* Navigation*/
+nav
+{
+    width: 100%;
+    margin-top: 25px;
+    margin-left: 13.6%;
+}
+
+.nav_links
+{
+    display: flex;
+    margin-left: 36%; 
+}
+
+ul li
+{
+    list-style-type: none;
+}
+
+
+a
+{ 
+    color: black;
+    text-decoration: none;
+    padding-right: 37px;
+}
+
+/*Container*/
+#container
+{
+    width: 80%;
+    margin: auto;
+}
+
+/* Bannière */
+
+
+.banner1
+{
+    background: url(../img/bandeau3.jpg)no-repeat;
+    background-size: 100% 100%;
+    width: 100%;
+    height: 500px;
+}
+
+
+.titreh4
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 4px;
+    background-color: rgb(4, 139, 154);
+    color: white;
+}
+
+.position
+{
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-left: 4px;
+    color: rgb(4, 139, 154);
+    font-weight: bold;
+}
+
+p .fas
+{
+    margin: 4px;
+}
+
+/*Section Carte*/
+.card
+{
+    display: flex;
+}
+
+.card1
+{
+    padding-right: 21px;
+    padding-bottom: 38px;
+}
+
+.card2
+{
+    padding-right: 21px;
+    padding-bottom: 38px;
+}
+
+.card3
+{
+    padding-bottom: 38px;
+}
+
+h3
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: rgb(169, 234, 254);
+    font-size: 22px;
+    color: lightslategrey;
+    text-align: center;
+    border: 1px solid rgb(175, 175, 175);
+}
+
+.image
+{
+    width: 400px;
+    height: 106px;
+    padding-left: 13px;
+    padding-right: 10px;
+    padding-top: 7px;
+    margin-left: 8%;
+}
+
+.background
+{
+    background-color: white;
+    border-top: 0.5px solid rgb(175, 175, 175);
+    border-right: 1.5px solid rgb(175, 175, 175);
+    border-left: 1.5px solid rgb(175, 175, 175);
+    border-bottom: 1.5px solid rgb(175, 175, 175);
+    padding-bottom: 9px;
+}
+
+p 
+{
+    padding-left: 10px;
+    padding-top: 16px;
+    padding-bottom: 16px;
+}
+
+strong
+{
+    color: rgb(4, 139, 154);
+}
+
+hr
+{
+    margin-top: 9px;
+    margin-bottom: 9px;
+}
+
+.card_links
+{
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+
+
+/*Footer*/
+
+.foot
+{
+    background: white;
+    height: 109px;
+}
+
+.foot_links
+{
+    display: flex;
+    padding-left: 10%;
+    padding-top: 32px;
+}
+
+.links
+{
+    font-weight: bold;
+    color:rgb(4, 139, 154);
+    padding-right: 6px;
+}
