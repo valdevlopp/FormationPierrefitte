@@ -1,0 +1,15 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+col-1 {
+    flex: 4% !important; 
+}
+
+/* .collapse navbar-collapse
+{
+    position: absolute;
+    z-index: 6;
+} */
+

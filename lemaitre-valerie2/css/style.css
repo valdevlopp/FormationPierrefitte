@@ -1,0 +1,184 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+
+.navbar {
+    opacity: 30%;
+    width: 100%;
+    position: absolute;
+    z-index: 6;
+    
+}
+
+.navbar-toggler
+{
+    margin-left: 95%!important;
+}
+
+.navbar-nav
+{
+    margin-left: 14px;
+}
+
+ .nav-link
+ {
+     color: black!important;
+
+ }
+
+ .fas
+ {
+     color:black;
+ }
+
+ .nav-item
+ {
+     list-style-type: none;
+ }
+
+ .adresse
+ {
+     margin-left: 25%;
+     flex: 0 0 16.666667%;
+     max-width: 10.666667%!important;
+ }
+
+ .col-1 {
+    -ms-flex: 0 0 8.333333%;
+    flex: 0 0 8.333333%;
+    max-width: 3.333333%!important;
+ }
+
+ .col-2 {
+    -ms-flex: 0 0 16.666667%;
+    flex: 0 0 16.666667%;
+    max-width: 11.666667%!important;
+ }
+
+ .form
+ {
+    position: relative;
+    bottom: 75px;
+    width: 97%;
+ }
+
+/***** groupe formulaire*****/
+/* 
+.input-group-prepend {
+    margin-right: -1px;
+    background: gray;
+    height: 31px;
+}
+
+/***** adresse de départ*******/
+
+/* .input-group {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+} */
+
+
+/* .btn-outline-secondary {
+    color: rgba(0,0,0,.9);
+    background: #6c757d;
+    height: 33px;
+    margin-right: -22px;
+    width: 215px;
+    border-radius: 0;
+} */
+
+/***** date*******/
+
+ /* .form-control {
+    display: block;
+    width: 100%;
+    height: calc(1.5rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 0px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+} */
+
+/* .form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding-top: 35%;
+    padding-left: 8%;
+} */ */
+
+/* .btn-outline-secondary {
+    color: #f8f9fa;
+    background: #6c757d;
+    padding-top: 3px;
+    width: 221px;
+    height: 31px;
+}
+
+.form-inline .form-control {
+    display: inline-block;
+    width: auto;
+    vertical-align: middle;
+    margin-left: 50px;
+    border-radius: 0;
+} */ */
+
+/***** icon calendrier*******/
+
+.far {
+    font-weight: 500;
+}
+
+.fa-2x {
+    font-size: 1.1em;
+}
+
+.btn-outline-success {
+    color: #212529;
+    background: #616161;
+    height: 28px;
+    margin-bottom: 12px;
+}
+
+.fa-angle-right:before {
+    color: black;
+}
+
+.fa-angle-left:before {
+    color: black;
+}
+
+
+/***** button valider*******/
+
+.btn-outline-valide {
+    color: #f8f9fa;
+    background: #6c757d;
+    padding-top: 3px;
+    width: 182px;
+    height: 31px;
+    border-radius: 0;
+}
+
+
+/***** button reservation*******/
+
+.btn-outline-reservation {
+    color: #f8f9fa;
+    background: #6c757d;
+    padding-top: 3px;
+    width: 182px;
+    height: 31px;
+}
